@@ -14,12 +14,13 @@ import x7.repository.redis.JedisConnector_Persistence;
 
 
 public class RepositoryBooter {
-	
-	private final static String MYSQL = "mysql";
+
 	
 	private final static String MONGO_DB = "mongodb";
 	
-	private final static String HBASE = "hbase";
+	private final static String TiDB = "tidb";
+	
+	private final static String LEVEL_DB = "leveldb";
 
 	private static RepositoryBooter instance = null;
 	
@@ -73,7 +74,7 @@ public class RepositoryBooter {
 		
 		switch (repository){
 		
-		case MYSQL:
+		default:
 			DataSourcePool pool = DataSourceFactory.get(dataSourceType);
 			DaoInitializer.init(pool.get(), pool.getR());
 			DaoInitializer.init(pool.getDsMapW(), pool.getDsMapR());
@@ -82,6 +83,8 @@ public class RepositoryBooter {
 			break;
 		
 		}
+		
+			
 		
 		if (Configs.isTrue(ConfigKey.IS_CACHEABLE)){
 			Repositories.getInstance().setCacheResolver(CacheResolver.getInstance());

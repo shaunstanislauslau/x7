@@ -10,7 +10,6 @@ import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.config.Configs;
 import x7.core.repository.Persistence;
-import x7.core.repository.SqlFieldType;
 import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
 import x7.repository.ConfigKey;
@@ -29,7 +28,7 @@ public class MapperFactory implements Mapper {
 	 *            BeanMapper.QUERY)
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public static String getSql(Class clz, String type) {
 
 		Map<String, String> sqlMap = sqlsMap.get(clz);
@@ -43,7 +42,7 @@ public class MapperFactory implements Mapper {
 
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({  "rawtypes" })
 	public static String tryToCreate(Class clz) {
 
 		Map<String, String> sqlMap = sqlsMap.get(clz);
@@ -67,7 +66,7 @@ public class MapperFactory implements Mapper {
 		return Parser.get(clz).getBeanElementList();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({  "rawtypes" })
 	public static void parseBean(Class clz) {
 
 		Parsed parsed = Parser.get(clz);
@@ -75,8 +74,8 @@ public class MapperFactory implements Mapper {
 		String repository = Configs.getString(ConfigKey.REPOSITORY);
 		repository = repository.toLowerCase();
 		switch (repository) {
-		case "mysql":
-			MySql mysql = new MySql();
+		default:
+			StandardSql mysql = new StandardSql();
 			mysql.getTableSql(clz);
 			mysql.getRefreshSql(clz);
 			mysql.getRemoveSql(clz);
@@ -87,15 +86,11 @@ public class MapperFactory implements Mapper {
 			mysql.getPaginationSql(clz);
 			mysql.getCount(clz);
 			return;
-
-		case "oracle":
-
-			break;
 		}
 
 	}
 
-	public static class MySql implements Interpreter {
+	public static class StandardSql implements Interpreter {
 		public String getRefreshSql(Class clz) {
 
 			Parsed parsed = Parser.get(clz);
