@@ -335,8 +335,8 @@ public class MapperFactory implements Mapper {
 		public String getTableSql(Class clz) {
 
 			String repository = Configs.getString(ConfigKey.REPOSITORY);
-			if (!repository.toLowerCase().equals("mysql"))
-				return "";
+//			if (!repository.toLowerCase().equals("mysql"))
+//				return "";
 
 			List<BeanElement> temp = Parser.get(clz).getBeanElementList();
 			Map<String, BeanElement> map = new HashMap<String, BeanElement>();
@@ -361,18 +361,19 @@ public class MapperFactory implements Mapper {
 				sb.append("   ").append(keyOne);
 
 				BeanElement be = map.get(keyOne);
-				String sqlType = be.getSqlType();
+				String sqlType = Mapper.getSqlTypeRegX(be);
+				
 				System.out.println("p = " + be.property + " sqlType = " + sqlType);
-				if (sqlType.equals("int")) {
-					sb.append(" int(11) NOT NULL");
-				} else if (sqlType.equals("bigint")) {
-					sb.append(" bigint(13) NOT NULL");
-				} else if (sqlType.equals("varchar")) {
-					sb.append(" varchar(").append(be.length).append(") NOT NULL");
+				if (sqlType.equals(Dialect.INT)) {
+					sb.append(Dialect.INT + " NOT NULL");
+				} else if (sqlType.equals(Dialect.LONG)) {
+					sb.append(Dialect.LONG + " NOT NULL");
+				} else if (sqlType.equals(Dialect.STRING)) {
+					sb.append(Dialect.STRING).append("(").append(be.length).append(") NOT NULL");
 				}
 
 				if (!parsed.isNotAutoIncreament()) {
-					sb.append("	AUTO_INCREMENT, ");
+					sb.append(Dialect.INCREAMENT).append(", ");//FIXME ORACLE
 				} else {
 					sb.append(", ");
 				}
@@ -382,26 +383,26 @@ public class MapperFactory implements Mapper {
 			} else {// boolean, TINYINT(1) DEFAULT 0 NULL;
 
 				BeanElement be = map.get(keyOne);
-				String sqlType = be.getSqlType();
+				String sqlType = Mapper.getSqlTypeRegX(be);
 				System.out.println("p = " + be.property + " sqlType = " + sqlType);
 				sb.append("   ").append(keyOne);
-				if (sqlType.equals("int")) {
-					sb.append(" int(11) NOT NULL,");
-				} else if (sqlType.equals("bigint")) {
-					sb.append(" bigint(13) NOT NULL,");
-				} else if (sqlType.equals("varchar")) {
-					sb.append(" varchar(").append(be.length).append(") NOT NULL,");
+				if (sqlType.equals(Dialect.INT)) {
+					sb.append(Dialect.INT + " NOT NULL,");
+				} else if (sqlType.equals(Dialect.LONG)) {
+					sb.append(Dialect.LONG + " NOT NULL,");
+				} else if (sqlType.equals(Dialect.STRING)) {
+					sb.append(Dialect.STRING).append("(").append(be.length).append(") NOT NULL,");
 				}
 				sb.append("\n");
 
 				keyTwo = parsed.getKey(Persistence.KEY_TWO);
 				BeanElement beTwo = map.get(keyTwo);
-				sqlType = beTwo.getSqlType();
+				sqlType = Mapper.getSqlTypeRegX(beTwo);
 				sb.append("   ").append(keyTwo);
-				if (sqlType.equals("int")) {
-					sb.append(" int(11) NOT NULL,");
-				} else if (sqlType.equals("bigint")) {
-					sb.append(" bigint(13) NOT NULL,");
+				if (sqlType.equals(Dialect.INT)) {
+					sb.append(Dialect.INT + " NOT NULL,");
+				} else if (sqlType.equals(Dialect.LONG)) {
+					sb.append(Dialect.LONG + " NOT NULL,");
 				}
 				sb.append("\n");
 				map.remove(keyOne);
@@ -409,28 +410,18 @@ public class MapperFactory implements Mapper {
 			}
 
 			for (BeanElement be : map.values()) {
-				// `name` varchar(60) DEFAULT NULL,
+				String sqlType = Mapper.getSqlTypeRegX(be);
 				sb.append("   ").append(be.property).append(" ");
 
-				if (be.getSqlType().equals("float") || be.getSqlType().equals("double")
-						|| be.getSqlType().equals("decimal")) {
-					sb.append("decimal");
+				if (sqlType.equals(Dialect.BIG)) {
+					sb.append(Dialect.BIG + " NULL ");
 				} else {
-					sb.append(be.getSqlType());
+					sb.append(sqlType);
 				}
-				System.out.println(be.getProperty() + " : " + be.getSqlType() + ", length : " + be.length);
+				System.out.println(be.getProperty() + " : " + sqlType + ", length : " + be.length);
+		
 
-				if (be.getSqlType().equals("float")) {
-					sb.append("(15,2) NULL ");
-				} else if (be.getSqlType().equals("double")) {
-					sb.append("(15,2) NULL");
-				} else if (be.getSqlType().equals("decimal")) {
-					sb.append("(15,2) NULL");
-				} else if (be.length > 0){
-					sb.append("(").append(be.length).append(")");
-				}
-
-				if (be.getSqlType().equals(SqlFieldType.DATE)) {
+				if (sqlType.equals(Dialect.DATE)) {
 					if (be.property.equals("createTime")) {
 						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP,").append("\n");
 					} else if (be.property.equals("refreshTime")) {
@@ -451,9 +442,11 @@ public class MapperFactory implements Mapper {
 			}
 
 			for (BeanElement be : list) {
-				sb.append("   ").append(be.property).append(" ").append(be.sqlType).append(",").append("\n");
+				String sqlType = Mapper.getSqlTypeRegX(be);
+				sb.append("   ").append(be.property).append(" ").append(sqlType).append(",").append("\n");
 			}
 
+			
 			if (isSinglePk) {
 				sb.append("   PRIMARY KEY (").append(keyOne).append(")");
 			} else {
@@ -461,9 +454,13 @@ public class MapperFactory implements Mapper {
 			}
 
 			sb.append("\n");
-			sb.append(") ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+			sb.append(") ").append(Dialect.ENGINE).append(";");
 
 			String sql = sb.toString();
+
+			System.out.println(sql);
+			sql = Dialect.match(sql, repository, CREATE_TABLE);
+			
 			sql = BeanUtilX.mapper(sql, parsed);
 			System.out.println(sql);
 

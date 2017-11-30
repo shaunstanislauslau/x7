@@ -61,27 +61,6 @@ public class BeanElement {
 		return mapper.equals("") ? property : mapper;
 	}
 
-	public String getSqlType() {// FIXME
-		String name = clz.getName();
-		if (name.contains("Date")) {
-			return SqlFieldType.DATE;
-		} else if (name.contains("String")) {
-			return SqlFieldType.VARCHAR;
-		} else if (name.contains("int") || name.contains("Integer")) {
-			return SqlFieldType.INT;
-		} else if (name.contains("long") || name.contains("Long")) {
-			return SqlFieldType.LONG;
-		} else if (name.contains("double") || name.contains("Double")) {
-			return SqlFieldType.DOUBLE;
-		} else if (name.contains("float") || name.contains("Float")) {
-			return SqlFieldType.FLOAT;
-		} else if (name.contains("BigDecimal") ) {
-			return SqlFieldType.DECIMAL;
-		} else if (name.contains("boolean") || name.contains("Boolean")) {
-			return SqlFieldType.BYTE;
-		} 
-		return sqlType;
-	}
 
 	@Override
 	public String toString() {
