@@ -1048,7 +1048,7 @@ public class DaoImpl implements Dao {
 		int rows = pagination.getRows();
 		int start = (page - 1) * rows;
 
-		sql = sql + " LIMIT " + start + "," + rows;
+		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
 
 		PreparedStatement pstmt = null;
 		BeanElement tempEle = null;
@@ -1832,7 +1832,7 @@ public class DaoImpl implements Dao {
 		int rows = pagination.getRows();
 		int start = (page - 1) * rows;
 
-		sql = sql + " LIMIT " + start + "," + rows;
+		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
 
 		sql = sql.replace("*", criteriaFetch.getResultScript());
 
