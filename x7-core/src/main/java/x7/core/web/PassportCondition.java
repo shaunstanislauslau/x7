@@ -9,17 +9,20 @@ public class PassportCondition implements Serializable{
 	 */
 	private static final long serialVersionUID = 3614725530323252344L;
 
-	private long passportId;
+	private String passportId;
 	private long subId;
 	private String name;
 	private String token;
 	private String passportType;
 	private String device;
 	public long getPassportId() {
-		return passportId;
+		return Long.valueOf(passportId);
 	}
-	public void setPassportId(long id) {
+	public void setPassportId(String id) {
 		this.passportId = id;
+	}
+	public String getPassportName(){
+		return this.passportId;
 	}
 	public long getSubId() {
 		return subId;
