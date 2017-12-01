@@ -16,18 +16,16 @@ public class ResultSetUtil {
 	public static <T> void initObj(T obj, ResultSet rs, BeanElement tempEle, List<BeanElement> eles)
 			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (BeanElement ele : eles) {
+			tempEle = ele;
 			Method method = ele.setMethod;
 			String mapper = ele.getMapper();
 			if (ele.isJson) {
 				String str = rs.getString(mapper);
 				if (ele.clz == Map.class) {
-					tempEle = ele;
 					method.invoke(obj, JsonX.toMap(str));
 				} else if (ele.clz == List.class) {
-					tempEle = ele;
 					method.invoke(obj, JsonX.toList(str, ele.geneType));
 				} else {
-					tempEle = ele;
 					method.invoke(obj, JsonX.toObject(str, ele.clz));
 				}
 			} else if (ele.clz.getSimpleName().toLowerCase().equals("double")) {
@@ -42,7 +40,6 @@ public class ResultSetUtil {
 					method.invoke(obj, new BigDecimal((String.valueOf(v))));
 				}
 			}else {
-				tempEle = ele;
 				method.invoke(obj, rs.getObject(mapper));
 			}
 		}
