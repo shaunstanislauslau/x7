@@ -2,6 +2,7 @@ package x7.repository.dao;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -245,7 +246,8 @@ public class DaoImpl implements Dao {
 					Object value = ele.getMethod.invoke(o);
 					if (value == null) {
 						if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
-								|| ele.clz == Double.class || ele.clz == Float.class)
+								|| ele.clz == Double.class || ele.clz == Float.class 
+								|| ele.clz == BigDecimal.class || ele.clz == Byte.class)
 							value = 0;
 						pstmt.setObject(i++, value);
 					} else {
@@ -418,7 +420,8 @@ public class DaoImpl implements Dao {
 				Object value = ele.getMethod.invoke(obj);
 				if (value == null) {
 					if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
-							|| ele.clz == Double.class || ele.clz == Float.class)
+							|| ele.clz == Double.class || ele.clz == Float.class
+							|| ele.clz == BigDecimal.class || ele.clz == Byte.class)
 						value = 0;
 					pstmt.setObject(i++, value);
 				} else {

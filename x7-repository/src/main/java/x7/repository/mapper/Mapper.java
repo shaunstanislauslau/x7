@@ -129,7 +129,7 @@ public interface Mapper {
 						put(BYTE,		"tinyint(1)");
 						put(INT,		"int(11)");
 						put(LONG,		"bigint(13)");
-						put(BIG,		"decimal((15,2)");
+						put(BIG,		"decimal(15,2)");
 						put(STRING,		"varchar");
 						put(TEXT,		"text");
 						put(LONG_TEXT,	"longtext");

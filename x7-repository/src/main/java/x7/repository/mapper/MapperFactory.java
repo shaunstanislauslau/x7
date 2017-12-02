@@ -408,32 +408,29 @@ public class MapperFactory implements Mapper {
 				String sqlType = Mapper.getSqlTypeRegX(be);
 				sb.append("   ").append(be.property).append(" ");
 
+				sb.append(sqlType);
+				
 				if (sqlType.equals(Dialect.BIG)) {
-					sb.append(Dialect.BIG + " NULL ");
-				} else {
-					sb.append(sqlType);
-				}
-				System.out.println(be.getProperty() + " : " + sqlType + ", length : " + be.length);
-		
-
-				if (sqlType.equals(Dialect.DATE)) {
+					sb.append(" DEFAULT 0.00 ");
+				} else if (sqlType.equals(Dialect.DATE)) {
 					if (be.property.equals("createTime")) {
-						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP,").append("\n");
+						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP");
 					} else if (be.property.equals("refreshTime")) {
-						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,").append("\n");
+						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
 					} else {
-						sb.append(" NULL,").append("\n");
+						sb.append(" NULL");
 					}
-				} else {
+				} else if (sqlType.equals(Dialect.STRING)) {
+					sb.append("(").append(be.length).append(") NOT NULL");
+				}else{
 					if (be.clz == Boolean.class || be.clz == boolean.class || be.clz == Integer.class
-							|| be.clz == int.class || be.clz == Long.class || be.clz == long.class
-							|| be.clz == Double.class || be.clz == double.class || be.clz == Float.class
-							|| be.clz == float.class) {
-						sb.append(" DEFAULT 0,").append("\n");
+							|| be.clz == int.class || be.clz == Long.class || be.clz == long.class) {
+						sb.append(" DEFAULT 0");
 					} else {
-						sb.append(" DEFAULT NULL,").append("\n");
+						sb.append(" DEFAULT NULL");
 					}
 				}
+				sb.append(",").append("\n");
 			}
 
 			for (BeanElement be : list) {
