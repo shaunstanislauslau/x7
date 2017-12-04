@@ -15,7 +15,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -23,9 +22,9 @@ import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import x7.config.PathUtil;
 import x7.core.async.ScheduledTaskService;
 import x7.core.bean.KV;
+import x7.core.config.Configs;
 import x7.core.template.ITemplateable;
 import x7.core.template.Templates;
 import x7.core.util.TimeUtil;
@@ -99,7 +98,7 @@ public class ExcelParser {
 	public void init() throws Exception {
 		// 获取excel.xml配置路径
 
-		String root = PathUtil.getRoot();
+		String root = Configs.localAddress;
 
 		File configFile = new File(root + "config/excel.xml");
 		if (configFile.lastModified() <= configLastModifiedTime)
@@ -156,7 +155,7 @@ public class ExcelParser {
 	public void parse() throws Exception {
 
 		// 获取当前运行路径
-		String root = PathUtil.getRoot();
+		String root = Configs.localAddress;
 
 		// 获取当前路径对应的文件夹
 		File folder = new File(root + "config/excel/");
