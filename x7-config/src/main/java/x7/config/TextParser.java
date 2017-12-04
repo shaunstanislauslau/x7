@@ -16,10 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import x7.core.config.Configs;
 import x7.core.util.KeyUtil;
+import x7.core.util.StringUtil;
 
 
 
 public class TextParser{
+	
 	private static TextParser instance = null;
 	private  Map<String, Object> map = null;
 	
@@ -34,20 +36,12 @@ public class TextParser{
 	}
 	
 	
-	
 	public void load(String localAddress, String configSpace){
 		
 		map = Configs.referMap(configSpace);
 		
 		try{
-//			String root = PathUtil.getRoot();
-//
-//			if (configSpace == null || configSpace.equals("")){
-//				readConfigs(root + "config", null);
-//			}else{
-//				readConfigs(root + "config" + "/"+ configSpace, configSpace);
-//			}
-			
+
 			readConfigs(localAddress + "/"+ configSpace, configSpace);
 
 		}catch (Exception e){
@@ -130,7 +124,7 @@ public class TextParser{
 		if (file.isDirectory()){
 			for (String childStr : file.list()){
 				if (childStr.endsWith(".txt") || childStr.endsWith(".properties") || childStr.endsWith(".cfg") || childStr.endsWith(".init")){
-					System.out.println(".... " + childStr);
+					System.out.println("\n[" + space + "/" + childStr + "]");
 					readConfig(path+"/"+childStr, space);
 				}else if (! childStr.contains(".")){
 					if (space == null || space.equals("")){
@@ -156,39 +150,40 @@ public class TextParser{
 			fis=new FileInputStream(path);
 			br=new BufferedReader(new InputStreamReader(fis,"utf-8"));
 			String dataStr="";
-			while((dataStr=br.readLine())!=null){
-				if(dataStr.contains("=")){
-					//等号左边为key，等号右边为value
-					String key=dataStr.substring(0,dataStr.indexOf("=")).trim();
-					String value=dataStr.substring(dataStr.indexOf("=")+1);
-					
-					if (space != null && !space.equals("")){
-						key = space + "." + key;
-					}
-					
-					if (key.contains(".")){
-						List<String> keyList = KeyUtil.getKeyList(key);
-						int size = keyList.size();
 
-						Map<String, Object> mapObject = map;
-						int length = size - 1;
-						for (int i = 0; i < length; i++) {
-							String k = keyList.get(i);
-							Object o = mapObject.get(k);
-							if (o == null){
-								o = new ConcurrentHashMap<String,Object>();
-								mapObject.put(k, o);
-							}
-							mapObject = (Map<String, Object>) o;
-						}
-						mapObject.put(keyList.get(length), value);
-					}else {
-						map.put(key, value);
-					}
+			String key = null;
+			String value = null;
+			
+			while((dataStr=br.readLine())!=null){
+				
+				if (dataStr.startsWith("#"))
+					continue;
+				if(dataStr.contains("=")){
+					
+					put (key, value, space);
+					key = null;
+					value = null;
+					
+					//等号左边为key，等号右边为value
+					key=dataStr.substring(0,dataStr.indexOf("=")).trim();
+					value=dataStr.substring(dataStr.indexOf("=")+1);
+						
+					
+				}else{
+					if (StringUtil.isNullOrEmpty(dataStr))
+						continue;
+					if (dataStr.equals("\n"))
+						continue;
+					value += "\n";
+					value += dataStr;
 				}
+				
 			}
+			
+			put (key, value, space);
+			key = null;
+			value = null;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			try {
@@ -198,6 +193,39 @@ public class TextParser{
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	
+	private void put(String key, String value, String space) {
+		if (key!=null){
+			System.out.println(key + "=" + value);
+			if (space != null && !space.equals("")){
+				key = space + "." + key;
+			}
+			
+			value = value.trim();
+			
+			if (key.contains(".")){
+				List<String> keyList = KeyUtil.getKeyList(key);
+				int size = keyList.size();
+
+				Map<String, Object> mapObject = map;
+				int length = size - 1;
+				for (int i = 0; i < length; i++) {
+					String k = keyList.get(i);
+					Object o = mapObject.get(k);
+					if (o == null){
+						o = new ConcurrentHashMap<String,Object>();
+						mapObject.put(k, o);
+					}
+					mapObject = (Map<String, Object>) o;
+				}
+				mapObject.put(keyList.get(length), value);
+			}else {
+				map.put(key, value);
+			}
+		}
+		
 	}
 	
 	/**
