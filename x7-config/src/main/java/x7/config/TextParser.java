@@ -123,7 +123,9 @@ public class TextParser{
 		File file = new File(path);
 		if (file.isDirectory()){
 			for (String childStr : file.list()){
-				if (childStr.endsWith(".txt") || childStr.endsWith(".properties") || childStr.endsWith(".cfg") || childStr.endsWith(".init")){
+				if (childStr.endsWith(".txt") || childStr.endsWith(".properties") || childStr.endsWith(".cfg") || childStr.endsWith(".init")
+						|| childStr.endsWith(".js")
+						|| childStr.endsWith(".json")){
 					System.out.println("\n[" + space + "/" + childStr + "]");
 					readConfig(path+"/"+childStr, space);
 				}else if (! childStr.contains(".")){
