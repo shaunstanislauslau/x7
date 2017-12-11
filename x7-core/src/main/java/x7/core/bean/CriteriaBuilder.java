@@ -10,13 +10,9 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import x7.core.bean.BeanElement;
-import x7.core.bean.Parsed;
-import x7.core.bean.Parser;
 import x7.core.bean.Criteria.Fetch;
 import x7.core.repository.Persistence;
 import x7.core.util.BeanMapUtil;
-import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
 import x7.core.util.NumberUtil;
 import x7.core.util.StringUtil;
@@ -1283,6 +1279,9 @@ public class CriteriaBuilder {
 					clzTableMapper.put(key, tableName);//clzName, tableName
 					for (String property : list){
 						String mapper = parsed.getMapper(property);
+						if (StringUtil.isNullOrEmpty(mapper)){
+							mapper = property;//dynamic
+						}
 						fetchMapper.put(key + "." +property, tableName + "." + mapper);
 					}
 				}

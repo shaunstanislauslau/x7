@@ -742,6 +742,9 @@ public class DaoImpl implements Dao {
 						String key = rsmd.getColumnLabel(i);
 						String value = rs.getString(i);
 						String property = parsed.getProperty(key);
+						if (StringUtil.isNullOrEmpty(property)){
+							property = key;
+						}
 						mapR.put(property, value);
 					}
 
@@ -1930,7 +1933,7 @@ public class DaoImpl implements Dao {
 					list.add(mapR);
 
 					for (String property : columnList) {
-						String mapper = fetch.getFetchMapper().property(property);
+						String mapper = fetch.getFetchMapper().mapper(property);
 						mapR.put(property, rs.getObject(mapper));
 					}
 
