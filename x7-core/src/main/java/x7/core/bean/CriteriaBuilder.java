@@ -1,5 +1,6 @@
 package x7.core.bean;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1515,9 +1516,18 @@ public class CriteriaBuilder {
 		BeanElement be = getBeanElement(property);
 
 		if (be == null) {
+			if (v instanceof Long 
+					|| v instanceof Integer
+					|| v instanceof BigDecimal
+					|| v instanceof Double 
+					|| v instanceof Float
+					|| v instanceof Byte )
+				return false;
+			
 			String s = v.toString();
 			boolean isNumeric = NumberUtil.isNumeric(s);
 			if (isNumeric) {
+				
 				if (s.contains(".")) {
 					return Double.valueOf(s) == 0;
 				}
