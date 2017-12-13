@@ -789,10 +789,12 @@ public class CriteriaBuilder {
 		Object v = null;
 		if (clz == String.class) {
 			v = value;
-		} else if (clz == int.class || clz == Integer.class) {
-			v = Integer.valueOf(value);
 		} else if (clz == long.class || clz == Long.class) {
 			v = Long.valueOf(value);
+		} else if (clz == BigDecimal.class) {
+			v = new BigDecimal(value);
+		} else if (clz == int.class || clz == Integer.class) {
+			v = Integer.valueOf(value);
 		} else if (clz == double.class || clz == Double.class) {
 			v = Double.valueOf(value);
 		} else if (clz == float.class || clz == Float.class) {
@@ -805,7 +807,10 @@ public class CriteriaBuilder {
 			}
 		} else if (clz == short.class || clz == Short.class) {
 			v = Short.valueOf(value);
-		} else if (clz == Date.class) {
+		} else if (clz == byte.class || clz == Byte.class ){
+			v = Byte.valueOf(value);
+		}else if (clz == Date.class) {
+		
 			if (value.contains("-")) {
 				v = TimeUtil.getDate(value);
 			} else {
@@ -1447,8 +1452,13 @@ public class CriteriaBuilder {
 	private boolean isNumber(Object v) {
 		Class<?> vType = v.getClass();
 
-		boolean isNumber = (vType == long.class || vType == int.class || vType == Long.class || vType == Integer.class
-				|| vType == double.class || vType == Double.class || vType == float.class || vType == Float.class);
+		boolean isNumber = (vType == long.class || vType == Long.class 
+				|| vType == int.class || vType == Integer.class
+				|| vType == BigDecimal.class
+				|| vType == double.class || vType == Double.class 
+				|| vType == float.class || vType == Float.class
+				|| vType == short.class || vType == Short.class
+				|| vType == byte.class || vType == Byte.class);
 
 		return isNumber;
 	}
@@ -1521,6 +1531,7 @@ public class CriteriaBuilder {
 					|| v instanceof BigDecimal
 					|| v instanceof Double 
 					|| v instanceof Float
+					|| v instanceof Short
 					|| v instanceof Byte )
 				return false;
 			
@@ -1557,6 +1568,11 @@ public class CriteriaBuilder {
 		}
 		if (vType == double.class) {
 			return Double.valueOf(s) == 0;
+		}if (vType == short.class) {
+			return Short.valueOf(s) == 0;
+		}
+		if (vType == byte.class) {
+			return Byte.valueOf(s) == 0;
 		}
 		if (vType == boolean.class) {
 			if (s.contains(".")) {
