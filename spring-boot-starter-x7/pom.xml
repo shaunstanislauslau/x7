@@ -32,22 +32,12 @@
 		</dependency>
 		<dependency>
 			<groupId>x7</groupId>
-			<artifactId>x7-base</artifactId>
-			<version>0.5.7</version>
-		</dependency>
-		<dependency>
-			<groupId>x7</groupId>
 			<artifactId>x7-config</artifactId>
 			<version>0.5.7</version>
 		</dependency>
 		<dependency>
 			<groupId>x7</groupId>
 			<artifactId>x7-repository</artifactId>
-			<version>0.5.7</version>
-		</dependency>
-		<dependency>
-			<groupId>x7</groupId>
-			<artifactId>x7-net</artifactId>
 			<version>0.5.7</version>
 		</dependency>
     </dependencies>
