@@ -13,6 +13,9 @@ public class Configs {
 
 	private static String space = null;
 	
+	public static String localAddress;
+	public static String remoteAddress;
+	
 	public static void setConfigSpace(String configSpace) {
 		map.put("x7.config.space", configSpace);
 	}

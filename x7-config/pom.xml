@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>x7</groupId>
 		<artifactId>x7</artifactId>
-		<version>0.0.7</version>
+		<version>0.5.7</version>
 	</parent>
 
 	<artifactId>x7-config</artifactId>
 	<packaging>jar</packaging>
 
 	<name>x7-config</name>
-	<url>https://github.com/x7-framework/x7</url>
+	<url>http://maven.apache.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>x7</groupId>
 			<artifactId>x7-core</artifactId>
-			<version>0.0.7</version>
+			<version>0.5.7</version>
 			<scope>compile</scope>
 		</dependency>
 

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -6,14 +6,14 @@
 	<parent>
 		<groupId>x7</groupId>
 		<artifactId>x7</artifactId>
-		<version>0.0.7</version>
+		<version>0.5.7</version>
 	</parent>
 
 	<artifactId>x7-core</artifactId>
 	<packaging>jar</packaging>
 
 	<name>x7-core</name>
-	<url>https://github.com/x7-framework/x7</url>
+	<url>http://maven.apache.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,6 +34,7 @@
 
 	<profiles>
 		<profile>
+			<!-- 本地环境 -->
 			<id>local</id>
 			<properties>
 
