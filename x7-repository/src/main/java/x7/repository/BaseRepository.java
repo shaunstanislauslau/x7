@@ -48,6 +48,7 @@ public abstract class BaseRepository<T> {
 		this.clz = (Class)params[0];
 		
 		System.out.println("______BaseRepository, " + this.clz.getName());
+		HealthChecker.repositoryList.add(this);
 	}
 
 	protected Object preMapping(String methodName, Object... s) {
@@ -534,4 +535,17 @@ public abstract class BaseRepository<T> {
 		return Repositories.getInstance().list(criteria, pagination);
 	}
 
+	
+	public static class  HealthChecker {
+		
+		
+		private static List<BaseRepository> repositoryList = new ArrayList<BaseRepository>();
+		
+		protected static void onStarted (){
+			
+			for (BaseRepository repository : repositoryList) {
+				repository.get(1);
+			}
+		}
+	}
 }

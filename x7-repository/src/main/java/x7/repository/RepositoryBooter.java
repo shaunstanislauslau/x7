@@ -4,6 +4,7 @@ package x7.repository;
 import java.util.List;
 
 import x7.core.config.Configs;
+import x7.repository.BaseRepository.HealthChecker;
 import x7.repository.dao.DaoInitializer;
 import x7.repository.dao.DaoWrapper;
 import x7.repository.dao.ShardingDaoImpl;
@@ -37,6 +38,7 @@ public class RepositoryBooter {
 		if (instance == null) {
 			instance = new RepositoryBooter();
 			init(dataSourceType);
+			HealthChecker.onStarted();
 		}
 	}
 	
@@ -83,7 +85,7 @@ public class RepositoryBooter {
 			break;
 		
 		}
-		
+
 			
 		
 		if (Configs.isTrue(ConfigKey.IS_CACHEABLE)){
