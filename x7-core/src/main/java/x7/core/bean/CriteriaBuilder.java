@@ -1526,14 +1526,14 @@ public class CriteriaBuilder {
 		BeanElement be = getBeanElement(property);
 
 		if (be == null) {
-			if (v instanceof Long 
-					|| v instanceof Integer
-					|| v instanceof BigDecimal
-					|| v instanceof Double 
-					|| v instanceof Float
-					|| v instanceof Short
-					|| v instanceof Byte )
-				return false;
+//			if (v instanceof Long 
+//					|| v instanceof Integer
+//					|| v instanceof BigDecimal
+//					|| v instanceof Double 
+//					|| v instanceof Float
+//					|| v instanceof Short
+//					|| v instanceof Byte )
+//				return false;
 			
 			String s = v.toString();
 			boolean isNumeric = NumberUtil.isNumeric(s);
