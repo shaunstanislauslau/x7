@@ -19,6 +19,7 @@ import x7.core.bean.IQuantity;
 import x7.core.util.StringUtil;
 import x7.core.web.Pagination;
 import x7.repository.exception.PersistenceException;
+import x7.repository.mapper.MapperFactory;
 import x7.repository.redis.JedisConnector_Persistence;
 
 /**
@@ -34,6 +35,10 @@ public abstract class BaseRepository<T> {
 	public Map<String, String> map = new HashMap<String, String>();
 
 	private Class<T> clz;
+	
+	protected Class<T> getClz(){
+		return clz;
+	}
 
 	public BaseRepository() {
 		parse();
@@ -544,7 +549,13 @@ public abstract class BaseRepository<T> {
 		protected static void onStarted (){
 			
 			for (BaseRepository repository : repositoryList) {
-				repository.get(1);
+
+				try{
+					Class clz = repository.getClz();
+					MapperFactory.tryToCreate(clz);
+				}catch (Exception e) {
+					
+				}
 			}
 		}
 	}
