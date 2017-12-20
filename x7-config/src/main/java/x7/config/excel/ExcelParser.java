@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -318,7 +320,7 @@ public class ExcelParser {
 				String str = rowArr[index].getContents();
 				if (str == null || str.trim().equals(""))
 					str = "";
-				switch (field.getType().getName()) {
+				switch (field.getType().getSimpleName().toLowerCase()) {
 				case "int":
 					bean.getClass().getDeclaredMethod(getSetter(field.getName()), int.class).invoke(bean,
 							str.equals("") ? 0 : Integer.valueOf(str));
@@ -331,12 +333,24 @@ public class ExcelParser {
 					bean.getClass().getDeclaredMethod(getSetter(field.getName()), double.class).invoke(bean,
 							str.equals("") ? 0 : Double.valueOf(str));
 					break;
-				case "String":
+				case "float":
+					bean.getClass().getDeclaredMethod(getSetter(field.getName()), double.class).invoke(bean,
+							str.equals("") ? 0 : Float.valueOf(str));
+					break;
+				case "bigdecimal":
+					bean.getClass().getDeclaredMethod(getSetter(field.getName()), BigDecimal.class).invoke(bean,
+							str.equals("") ? new BigDecimal(0) : new BigDecimal(str));
+					break;
+				case "string":
 					bean.getClass().getDeclaredMethod(getSetter(field.getName()), String.class).invoke(bean, str);
 					break;
 				case "boolean":
 					bean.getClass().getDeclaredMethod(getSetter(field.getName()), boolean.class).invoke(bean,
 							str.equals("1") ? true : false);
+					break;
+				case "date":
+					bean.getClass().getDeclaredMethod(getSetter(field.getName()), boolean.class).invoke(bean,
+							str.equals("") ? null : new Date(Long.valueOf(str)));
 					break;
 				default:
 					bean.getClass().getDeclaredMethod(getSetter(field.getName()), String.class).invoke(bean, str);
