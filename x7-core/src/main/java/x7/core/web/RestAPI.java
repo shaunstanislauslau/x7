@@ -13,6 +13,7 @@ public interface RestAPI {
 	
 	String OK = "OK";
 	String FAIL = "FAIL";
+	String TOAST_SIGN_EXCEPTION = "SIGN UNAVAILABLE";
 	
 	interface Signed {
 		String sign ();
@@ -83,7 +84,7 @@ public interface RestAPI {
 				return result;
 			
 			if (! result.getSign().equals(signed.sign()))
-				throw new SignException("SIGN UNAVAILABLE");
+				throw new SignException(TOAST_SIGN_EXCEPTION);
 			
 			return result;
 		}
