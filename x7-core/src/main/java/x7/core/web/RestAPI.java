@@ -76,9 +76,9 @@ public interface RestAPI {
 	
 	public static class Callback {
 		
-		public static Result parse (String responseStr, Signed signed){
+		public static Message parse (String responseStr, Signed signed){
 			
-			Result result = JsonX.toObject(responseStr, Result.class);
+			Message result = JsonX.toObject(responseStr, Message.class);
 			if (result.getStatus().equals(FAIL))
 				return result;
 			
@@ -89,8 +89,29 @@ public interface RestAPI {
 		}
 		
 	}
+	
+	public static class SendMessage {
+		public static Message toast(String str) {
+			Message message = new Message();
+			message.setStatus(FAIL);
+			message.setBody(str);
+			return message;
+		}
 
-	public static class Result {
+		public static Message ok(Object obj, Signed signed) {
+
+			Message message = new Message();
+			message.setStatus(OK);
+			message.setBody(obj);
+			message.setUserId(signed.getUserId());
+			message.setTime(signed.getTime());
+			message.setSign(signed.sign());
+			return message;
+
+		}
+	}
+
+	public static class Message {
 
 		private String status;
 		private Object body;
@@ -98,24 +119,6 @@ public interface RestAPI {
 		private long time;
 		private String sign;
 
-		public static Result toast(String message) {
-			Result apiResult = new Result();
-			apiResult.setStatus(FAIL);
-			apiResult.setBody(message);
-			return apiResult;
-		}
-
-		public static Result ok(Object result, Signed signed) {
-
-			Result api = new Result();
-			api.setStatus(OK);
-			api.setBody(result);
-			api.setUserId(signed.getUserId());
-			api.setTime(signed.getTime());
-			api.setSign(signed.sign());
-			return api;
-
-		}
 
 		public String getStatus() {
 			return status;
@@ -159,7 +162,7 @@ public interface RestAPI {
 
 		@Override
 		public String toString() {
-			return "Result [status=" + status + ", body=" + body + ", userId=" + userId
+			return "Message [status=" + status + ", body=" + body + ", userId=" + userId
 					+ ", time=" + time + ", sign=" + sign + "]";
 		}
 
