@@ -466,12 +466,15 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 				try{
 					Class clz = repository.getClz();
-					MapperFactory.tryToCreate(clz);
+					String sql = MapperFactory.tryToCreate(clz);
 					String test = MapperFactory.getSql(clz, Mapper.CREATE);
 					if (StringUtil.isNullOrEmpty(test)){
 						System.out.println("FAILED TO START X7-REPOSITORY, check Bean: " + clz);
 						System.exit(1);
 					}
+					
+					Repositories.getInstance().execute(clz.newInstance(), sql);
+					
 				}catch (Exception e) {
 					
 				}

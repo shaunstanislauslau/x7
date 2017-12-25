@@ -173,7 +173,6 @@ public class DaoImpl implements Dao {
 			return false;
 		Object obj = objList.get(0);
 		Class clz = obj.getClass();
-		filterTryToCreate(clz);
 
 		String sql = MapperFactory.getSql(clz, Mapper.CREATE);
 
@@ -246,8 +245,8 @@ public class DaoImpl implements Dao {
 					Object value = ele.getMethod.invoke(o);
 					if (value == null) {
 						if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
-								|| ele.clz == Double.class || ele.clz == Float.class 
-								|| ele.clz == BigDecimal.class || ele.clz == Byte.class)
+								|| ele.clz == Double.class || ele.clz == Float.class || ele.clz == BigDecimal.class
+								|| ele.clz == Byte.class)
 							value = 0;
 						pstmt.setObject(i++, value);
 					} else {
@@ -302,8 +301,6 @@ public class DaoImpl implements Dao {
 	protected boolean remove(Object obj, Connection conn) {
 
 		Class clz = obj.getClass();
-
-		filterTryToCreate(clz);
 
 		String sql = MapperFactory.getSql(clz, Mapper.REMOVE);
 
@@ -362,8 +359,6 @@ public class DaoImpl implements Dao {
 
 		Class clz = obj.getClass();
 
-		filterTryToCreate(clz);
-
 		String sql = MapperFactory.getSql(clz, Mapper.CREATE);
 
 		List<BeanElement> eles = MapperFactory.getElementList(clz);
@@ -420,8 +415,8 @@ public class DaoImpl implements Dao {
 				Object value = ele.getMethod.invoke(obj);
 				if (value == null) {
 					if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
-							|| ele.clz == Double.class || ele.clz == Float.class
-							|| ele.clz == BigDecimal.class || ele.clz == Byte.class)
+							|| ele.clz == Double.class || ele.clz == Float.class || ele.clz == BigDecimal.class
+							|| ele.clz == Byte.class)
 						value = 0;
 					pstmt.setObject(i++, value);
 				} else {
@@ -486,8 +481,6 @@ public class DaoImpl implements Dao {
 
 		@SuppressWarnings("rawtypes")
 		Class clz = obj.getClass();
-
-		filterTryToCreate(clz);
 
 		Parsed parsed = Parser.get(clz);
 
@@ -589,7 +582,6 @@ public class DaoImpl implements Dao {
 	}
 
 	protected <T> T get(Class<T> clz, long idOne, Connection conn) {
-		filterTryToCreate(clz);
 
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isCombinedKey()) {
@@ -650,7 +642,6 @@ public class DaoImpl implements Dao {
 	}
 
 	protected <T> T get(Class<T> clz, long idOne, long idTwo, Connection conn) {
-		filterTryToCreate(clz);
 
 		List<T> list = new ArrayList<T>();
 
@@ -703,16 +694,14 @@ public class DaoImpl implements Dao {
 		}
 		return get(clz, idOne, idTwo, conn);
 	}
-	
+
 	protected List<Map<String, Object>> list(Class clz, String sql, List<Object> conditionList, Connection conn) {
 
 		sql = sql.replace("drop", " ").replace("delete", " ").replace("insert", " ").replace(";", ""); // 手动拼接SQL,
-																										// 必须考虑应用代码的漏洞
+																										// 必须考虑应用代码的漏
 
-		filterTryToCreate(clz);
-		
 		Parsed parsed = Parser.get(clz);
-		
+
 		sql = BeanUtilX.mapper(sql, parsed);
 
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
@@ -742,7 +731,7 @@ public class DaoImpl implements Dao {
 						String key = rsmd.getColumnLabel(i);
 						String value = rs.getString(i);
 						String property = parsed.getProperty(key);
-						if (StringUtil.isNullOrEmpty(property)){
+						if (StringUtil.isNullOrEmpty(property)) {
 							property = key;
 						}
 						mapR.put(property, value);
@@ -768,13 +757,11 @@ public class DaoImpl implements Dao {
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		
+
 		return list(clz, sql, conditionList, conn);
 	}
 
 	public <T> List<T> list(Class<T> clz) {
-
-		filterTryToCreate(clz);
 
 		List<T> list = new ArrayList<T>();
 
@@ -816,8 +803,6 @@ public class DaoImpl implements Dao {
 
 		long id = 0;
 
-		filterTryToCreate(clz);
-
 		String sql = MapperFactory.getSql(clz, Mapper.MAX_ID);
 		System.out.println("SQL getMaxId = " + sql + ", key = " + key);
 
@@ -851,8 +836,6 @@ public class DaoImpl implements Dao {
 	public long getMaxId(Class clz, long key) {
 
 		long id = 0;
-
-		filterTryToCreate(clz);
 
 		String sql = MapperFactory.getSql(clz, Mapper.MAX_ID);
 		System.out.println("SQL getMaxId = " + sql + ", key = " + key);
@@ -888,8 +871,6 @@ public class DaoImpl implements Dao {
 
 		long id = 0;
 
-		filterTryToCreate(clz);
-
 		String sql = MapperFactory.getSql(clz, Mapper.MAX_ID);
 
 		Connection conn = null;
@@ -916,62 +897,9 @@ public class DaoImpl implements Dao {
 		return id;
 	}
 
-	@SuppressWarnings({ "rawtypes", "resource" })
-	private void filterTryToCreate(Class clz) {
-
-		String sql = MapperFactory.tryToCreate(clz);
-		if (sql == null || sql.equals(""))
-			return;
-
-		CountDownLatch countDownLatch = new CountDownLatch(1);
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-
-				Connection conn = null;
-				PreparedStatement pstmt = null;
-				try {
-					conn = getConnection(false);
-					conn.setAutoCommit(true);
-					pstmt = conn.prepareStatement(sql);
-
-					pstmt.execute();
-
-					String index = MapperFactory.getSql(clz, Mapper.INDEX);
-					if (index != null) {
-						pstmt = conn.prepareStatement(index);
-						pstmt.execute();
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-
-				} finally {
-					close(pstmt);
-					close(conn);
-					countDownLatch.countDown();
-				}
-
-			}
-
-		}).start();
-
-		try {
-			countDownLatch.await();
-
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 	protected <T> List<T> list(Object conditionObj, Connection conn) {
 
 		Class clz = conditionObj.getClass();
-
-		filterTryToCreate(clz);
 
 		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
 
@@ -1031,10 +959,8 @@ public class DaoImpl implements Dao {
 		return list(conditionObj, conn);
 	}
 
-
 	protected <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination, Connection conn) {
 		Class clz = criteria.getClz();
-		filterTryToCreate(clz);
 
 		List<Object> valueList = criteria.getValueList();
 
@@ -1107,7 +1033,6 @@ public class DaoImpl implements Dao {
 		return list(criteria, pagination, conn);
 	}
 
-
 	@Override
 	public Object getSum(Object conditionObj, String sumProperty) {
 
@@ -1157,7 +1082,6 @@ public class DaoImpl implements Dao {
 	public Object getSum(String sumProperty, Criteria criteria) {
 
 		Class<?> clz = criteria.getClz();
-		filterTryToCreate(clz);
 		Parsed parsed = Parser.get(clz);
 
 		List<Object> valueList = criteria.getValueList();
@@ -1167,11 +1091,11 @@ public class DaoImpl implements Dao {
 		String sqlSum = sqlArr[2];
 
 		sqlSum = sqlSum.replace(Persistence.PAGINATION, "SUM(*) sum");
-		if (StringUtil.isNotNull(sumProperty)){
+		if (StringUtil.isNotNull(sumProperty)) {
 			sumProperty = parsed.getMapper(sumProperty);
 			sqlSum = sqlSum.replace("*", sumProperty);
 		}
-		
+
 		System.out.println(sqlSum);
 
 		Object count = null;
@@ -1206,6 +1130,7 @@ public class DaoImpl implements Dao {
 
 	/**
 	 * Important getCount
+	 * 
 	 * @param sql
 	 * @param set
 	 * @return
@@ -1289,12 +1214,10 @@ public class DaoImpl implements Dao {
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return getCount(conditionObj,conn);
+		return getCount(conditionObj, conn);
 	}
 
 	protected <T> long getCount(Class<T> clz, long idOne, Connection conn) {
-
-		filterTryToCreate(clz);
 
 		String sql = MapperFactory.getSql(clz, Mapper.COUNT);
 
@@ -1344,8 +1267,6 @@ public class DaoImpl implements Dao {
 	public <T> T getOne(T conditionObj, String orderBy, String sc) {
 
 		Class clz = conditionObj.getClass();
-
-		filterTryToCreate(clz);
 
 		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
 
@@ -1410,8 +1331,6 @@ public class DaoImpl implements Dao {
 
 		Class clz = conditionObj.getClass();
 
-		filterTryToCreate(clz);
-
 		String sql = MapperFactory.getSql(clz, Mapper.PAGINATION);
 
 		Parsed parsed = Parser.get(clz);
@@ -1463,7 +1382,7 @@ public class DaoImpl implements Dao {
 	public boolean execute(Object obj, String sql) {
 
 		Parsed parsed = Parser.get(obj.getClass());
-		
+
 		sql = sql.replace("drop", " ").replace("delete", " ").replace("insert", " ").replace(";", ""); // 手动拼接SQL,
 																										// 必须考虑应用代码的漏洞
 		sql = BeanUtilX.mapper(sql, parsed);
@@ -1498,8 +1417,6 @@ public class DaoImpl implements Dao {
 
 		@SuppressWarnings("rawtypes")
 		Class clz = obj.getClass();
-
-		filterTryToCreate(clz);
 
 		Parsed parsed = Parser.get(clz);
 
@@ -1585,7 +1502,7 @@ public class DaoImpl implements Dao {
 	public Object getCount(String countProperty, Criteria criteria) {
 
 		Class<?> clz = criteria.getClz();
-		filterTryToCreate(clz);
+
 		Parsed parsed = Parser.get(clz);
 
 		List<Object> valueList = criteria.getValueList();
@@ -1631,7 +1548,6 @@ public class DaoImpl implements Dao {
 
 	@Override
 	public <T> List<T> in(Class<T> clz, List<? extends Object> inList) {
-		filterTryToCreate(clz);
 
 		Parsed parsed = Parser.get(clz);
 
@@ -1718,7 +1634,6 @@ public class DaoImpl implements Dao {
 
 	@Override
 	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList) {
-		filterTryToCreate(clz);
 
 		List<T> list = new ArrayList<T>();
 
@@ -1819,7 +1734,6 @@ public class DaoImpl implements Dao {
 			Pagination<Map<String, Object>> pagination, Connection conn) {
 
 		Class clz = criteriaFetch.getClz();
-		filterTryToCreate(clz);
 
 		List<Object> valueList = criteriaFetch.getValueList();
 
@@ -1853,7 +1767,7 @@ public class DaoImpl implements Dao {
 			for (Object obj : valueList) {
 				pstmt.setObject(i++, obj);
 			}
-			
+
 			List<String> resultKeyList = criteriaFetch.getResultList();
 			if (resultKeyList.isEmpty()) {
 				resultKeyList = criteriaFetch.listAllResultKey();
@@ -1896,7 +1810,6 @@ public class DaoImpl implements Dao {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
 		Class clz = fetch.getClz();
-		filterTryToCreate(clz);
 
 		List<Object> valueList = fetch.getValueList();
 
@@ -1922,9 +1835,9 @@ public class DaoImpl implements Dao {
 
 			List<String> columnList = fetch.getResultList();
 			if (columnList.isEmpty()) {
-				columnList = fetch.listAllResultKey();//FIXME ALLWAYS BUG
+				columnList = fetch.listAllResultKey();// FIXME ALLWAYS BUG
 			}
-			
+
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs != null) {
@@ -1974,7 +1887,7 @@ public class DaoImpl implements Dao {
 
 		public List<x7.repository.monitor.mysql.Process> showProcessList(boolean isRead) {
 			String sql = "SHOW PROCESSLIST";
-			
+
 			Connection conn = null;
 			try {
 				conn = getConnection(isRead);
@@ -1982,16 +1895,17 @@ public class DaoImpl implements Dao {
 				throw new RuntimeException("NO CONNECTION");
 			}
 
-			List<Map<String,Object>> mapList = DaoImpl.getInstance().list(x7.repository.monitor.mysql.Process.class,sql,null);
-			
+			List<Map<String, Object>> mapList = DaoImpl.getInstance().list(x7.repository.monitor.mysql.Process.class,
+					sql, null);
+
 			List<x7.repository.monitor.mysql.Process> objList = new ArrayList<x7.repository.monitor.mysql.Process>();
-			
-			for (Map<String,Object> map : mapList) {
-				x7.repository.monitor.mysql.Process process = BeanMapUtil.toObject(x7.repository.monitor.mysql.Process.class, map);
+
+			for (Map<String, Object> map : mapList) {
+				x7.repository.monitor.mysql.Process process = BeanMapUtil
+						.toObject(x7.repository.monitor.mysql.Process.class, map);
 				objList.add(process);
 			}
-			
-			
+
 			return objList;
 		}
 	}

@@ -34,9 +34,9 @@ public interface RestAPI {
 		}
 	}
 	
-	public class RequestMessage {
+	public class RequestMessage<T> {
 		
-		private Object body;
+		private T body;
 		private String id;
 		private long time;
 		private String sign;
@@ -45,10 +45,10 @@ public interface RestAPI {
 			return sign.equals(signed.sign());
 		}
 		
-		public Object getBody() {
+		public T getBody() {
 			return body;
 		}
-		public void setBody(Object body) {
+		public void setBody(T body) {
 			this.body = body;
 		}
 		public String getId() {
@@ -114,10 +114,10 @@ public interface RestAPI {
 		}
 	}
 
-	public static class Message {
+	public static class Message<T> {
 
 		private String status;
-		private Object body;
+		private T body;
 		private String id;
 		private long time;
 		private String sign;
@@ -131,11 +131,11 @@ public interface RestAPI {
 			this.status = status;
 		}
 
-		public Object getBody() {
+		public T getBody() {
 			return body;
 		}
 
-		public void setBody(Object body) {
+		public void setBody(T body) {
 			this.body = body;
 		}
 
