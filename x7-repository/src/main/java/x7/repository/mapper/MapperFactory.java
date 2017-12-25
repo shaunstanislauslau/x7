@@ -75,16 +75,16 @@ public class MapperFactory implements Mapper {
 		repository = repository.toLowerCase();
 		switch (repository) {
 		default:
-			StandardSql mysql = new StandardSql();
-			mysql.getTableSql(clz);
-			mysql.getRefreshSql(clz);
-			mysql.getRemoveSql(clz);
-			mysql.getQuerySql(clz);
-			mysql.getLoadSql(clz);
-			mysql.getMaxIdSql(clz);
-			mysql.getCreateSql(clz);
-			mysql.getPaginationSql(clz);
-			mysql.getCount(clz);
+			StandardSql sql = new StandardSql();
+			sql.getTableSql(clz);
+			sql.getRefreshSql(clz);
+			sql.getRemoveSql(clz);
+			sql.getQuerySql(clz);
+			sql.getLoadSql(clz);
+			sql.getMaxIdSql(clz);
+			sql.getCreateSql(clz);
+			sql.getPaginationSql(clz);
+			sql.getCount(clz);
 			return;
 		}
 
