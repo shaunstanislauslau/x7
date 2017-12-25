@@ -18,7 +18,7 @@ public interface RestAPI {
 	interface Signed {
 		String sign ();
 		long getTime();
-		String getUserId();
+		String getId();
 	}
 	
 	public static class SignException extends RuntimeException{
@@ -37,12 +37,12 @@ public interface RestAPI {
 	public class RequestMessage {
 		
 		private Object body;
-		private String userId;
+		private String id;
 		private long time;
 		private String sign;
 		
 		public boolean isSigned(Signed signed) {
-			return sign.endsWith(signed.sign());
+			return sign.equals(signed.sign());
 		}
 		
 		public Object getBody() {
@@ -51,12 +51,14 @@ public interface RestAPI {
 		public void setBody(Object body) {
 			this.body = body;
 		}
-		public String getUserId() {
-			return userId;
+		public String getId() {
+			return id;
 		}
-		public void setUserId(String userId) {
-			this.userId = userId;
+
+		public void setId(String id) {
+			this.id = id;
 		}
+
 		public long getTime() {
 			return time;
 		}
@@ -71,7 +73,7 @@ public interface RestAPI {
 		}
 		@Override
 		public String toString() {
-			return "RequestMessage [body=" + body + ", userId=" + userId + ", time=" + time + ", sign=" + sign + "]";
+			return "RequestMessage [body=" + body + ", id=" + id + ", time=" + time + ", sign=" + sign + "]";
 		}
 	}
 	
@@ -104,7 +106,7 @@ public interface RestAPI {
 			Message message = new Message();
 			message.setStatus(OK);
 			message.setBody(obj);
-			message.setUserId(signed.getUserId());
+			message.setId(signed.getId());
 			message.setTime(signed.getTime());
 			message.setSign(signed.sign());
 			return message;
@@ -116,7 +118,7 @@ public interface RestAPI {
 
 		private String status;
 		private Object body;
-		private String userId;
+		private String id;
 		private long time;
 		private String sign;
 
@@ -137,12 +139,12 @@ public interface RestAPI {
 			this.body = body;
 		}
 
-		public String getUserId() {
-			return userId;
+		public String getId() {
+			return id;
 		}
 
-		public void setUserId(String userId) {
-			this.userId = userId;
+		public void setId(String id) {
+			this.id = id;
 		}
 
 		public long getTime() {
@@ -163,7 +165,7 @@ public interface RestAPI {
 
 		@Override
 		public String toString() {
-			return "Message [status=" + status + ", body=" + body + ", userId=" + userId
+			return "Message [status=" + status + ", body=" + body + ", id=" + id
 					+ ", time=" + time + ", sign=" + sign + "]";
 		}
 
