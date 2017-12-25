@@ -60,6 +60,13 @@ public class Parser {
 			String str = Configs.getString("x7.db.naming.spec");
 			if (StringUtil.isNotNull(str)){
 				isNoSpec = false;
+			}else {
+				for (BeanElement element : elementList) {
+					if (!element.getProperty().equals(element.getMapper())){
+						isNoSpec = false;
+						break;
+					}
+				}
 			}
 		}catch (Exception e){
 			e.printStackTrace();
@@ -69,13 +76,14 @@ public class Parser {
 		BeanUtilX.parseKey(parsed, clz);
 
 		/*
-		 * tableName, 支持领域建表
+		 * tableName, 
 		 */
 		Persistence p = (Persistence) clz.getAnnotation(Persistence.class);
 		if (p != null) {
 			String tableName = p.mapper();
 			if (!tableName.equals("")) {
 				parsed.setTableName(tableName);
+				parsed.setNoSpec(false);
 			} else {
 				String name = BeanUtil.getByFirstLower(clz.getSimpleName());
 				String mapper = BeanUtil.getMapper(name);
