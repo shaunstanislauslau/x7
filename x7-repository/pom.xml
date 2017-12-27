@@ -90,10 +90,8 @@
 		</profile>
 	</profiles>
 
-
 	<build>
 		<plugins>
-			<!-- 指定多个源代码目录、多个资源文件目录 -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
