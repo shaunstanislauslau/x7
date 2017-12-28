@@ -60,14 +60,14 @@
 		<dependency>
 			<groupId>x7</groupId>
 			<artifactId>x7-core</artifactId>
-			<version>1.0.0M</version>
+			<version>1.0.0.M</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>x7</groupId>
 			<artifactId>x7-config</artifactId>
-			<version>1.0.0M</version>
+			<version>1.0.0.M</version>
 			<scope>compile</scope>
 		</dependency>
 
