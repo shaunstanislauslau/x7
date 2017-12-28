@@ -12,7 +12,7 @@
 
 	<groupId>x7</groupId>
 	<artifactId>x7</artifactId>
-	<version>1.0.0M</version>
+	<version>1.0.0.M</version>
 	<packaging>pom</packaging>
 	<name>x7-pom</name>
 	<description>x7 frame work pom config base on spring boot</description>
