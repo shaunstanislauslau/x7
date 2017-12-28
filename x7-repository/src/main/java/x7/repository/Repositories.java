@@ -23,7 +23,6 @@ import x7.core.repository.Persistence;
 import x7.core.web.Pagination;
 import x7.repository.dao.Dao;
 import x7.repository.dao.ShardingDao;
-import x7.repository.exception.PersistenceException;
 import x7.repository.exception.ShardingException;
 
 /**
@@ -69,48 +68,14 @@ public class Repositories implements IRepository {
 		this.cacheResolver = cacheResolver;
 	}
 
-	private final static String KEY_REGEX = "_";
-
-	/**
-	 * 解析联合主键
-	 * 
-	 * @param key
-	 * @return
-	 */
-	private String[] getKeys(String key) {
-		return key.split(KEY_REGEX);
-	}
-
-	private String getCombinedKey(long keyOne, long keyTwo) {
-		return keyOne + KEY_REGEX + keyTwo;
-	}
-
-	private String getCombinedKey(String keyOne, String keyTwo) {
-		return keyOne + KEY_REGEX + keyTwo;
-	}
-
-	private String getCombinedKey(Integer keyOne, Integer keyTwo) {
-		return keyOne + KEY_REGEX + keyTwo;
-	}
-
 	private String getCacheKey(Object obj, Parsed parsed) {
 		try {
-			if (parsed.isCombinedKey()) {
-				Field field = obj.getClass().getDeclaredField(parsed.getKey(Persistence.KEY_ONE));
-				field.setAccessible(true);
-				String keyOne = field.get(obj).toString();
 
-				field = obj.getClass().getDeclaredField(parsed.getKey(Persistence.KEY_TWO));
-				field.setAccessible(true);
-				String keyTwo = field.get(obj).toString();
+			Field field = obj.getClass().getDeclaredField(parsed.getKey(Persistence.KEY_ONE));
+			field.setAccessible(true);
+			String keyOne = field.get(obj).toString();
+			return keyOne;
 
-				return getCombinedKey(keyOne, keyTwo);
-			} else {
-				Field field = obj.getClass().getDeclaredField(parsed.getKey(Persistence.KEY_ONE));
-				field.setAccessible(true);
-				String keyOne = field.get(obj).toString();
-				return keyOne;
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -130,81 +95,33 @@ public class Repositories implements IRepository {
 
 				T obj = null;
 
-				if (parsed.isCombinedKey()) {
-					String[] keyArr = getKeys(key);
+				Field f = parsed.getKeyField(Persistence.KEY_ONE);
+				if (f.getType() == String.class) {
+					T condition = null;
+					try {
+						condition = clz.newInstance();
+						f.set(condition, key);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
-					Field f = parsed.getKeyField(Persistence.KEY_ONE);
-					if (f.getType() == String.class) {
-						T condition = null;
-						try {
-							Field f2 = parsed.getKeyField(Persistence.KEY_TWO);
-
-							condition = clz.newInstance();
-							f.set(condition, keyArr[0]);
-							try {
-								f2.set(condition, Long.valueOf(keyArr[1]));
-							} catch (Exception e) {
-								f2.set(condition, Integer.valueOf(keyArr[1]));
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-
-						List<T> tempList = null;
-						if (parsed.isSharding()) {
-							throw new ShardingException(
-									"Sharding not supported");
-						} else {
-							tempList = syncDao.list(condition);
-						}
-						if (!tempList.isEmpty()) {
-							obj = tempList.get(0);
-						}
-
+					List<T> tempList = null;
+					if (parsed.isSharding()) {
+						throw new ShardingException("Sharding not supported");
 					} else {
-
-						int idOne = Integer.valueOf(keyArr[0]);
-						int idTwo = Integer.valueOf(keyArr[1]);
-
-						if (parsed.isSharding()) {
-							obj = shardingDao.get(clz, idOne, idTwo);
-						} else {
-							obj = syncDao.get(clz, idOne, idTwo);
-						}
+						tempList = syncDao.list(condition);
+					}
+					if (!tempList.isEmpty()) {
+						obj = tempList.get(0);
 					}
 
 				} else {
-
-					Field f = parsed.getKeyField(Persistence.KEY_ONE);
-					if (f.getType() == String.class) {
-						T condition = null;
-						try {
-							condition = clz.newInstance();
-							f.set(condition, key);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-
-						List<T> tempList = null;
-						if (parsed.isSharding()) {
-							throw new ShardingException(
-									"Sharding not supported");
-						} else {
-							tempList = syncDao.list(condition);
-						}
-						if (!tempList.isEmpty()) {
-							obj = tempList.get(0);
-						}
-
+					long idOne = Long.valueOf(key);
+					if (parsed.isSharding()) {
+						obj = shardingDao.get(clz, idOne);
 					} else {
-						long idOne = Long.valueOf(key);
-						if (parsed.isSharding()) {
-							obj = shardingDao.get(clz, idOne);
-						} else {
-							obj = syncDao.get(clz, idOne);
-						}
+						obj = syncDao.get(clz, idOne);
 					}
-
 				}
 
 				/*
@@ -364,7 +281,6 @@ public class Repositories implements IRepository {
 		return flag;
 	}
 
-
 	@Override
 	public <T> T get(Class<T> clz, long idOne) {
 		Parsed parsed = Parser.get(clz);
@@ -393,34 +309,6 @@ public class Repositories implements IRepository {
 	}
 
 	@Override
-	public <T> T get(Class<T> clz, long idOne, long idTwo) {
-
-		Parsed parsed = Parser.get(clz);
-
-		if (cacheResolver == null || parsed.isNoCache()) {
-			if (parsed.isSharding()) {
-				return shardingDao.get(clz, idOne, idTwo);
-			} else {
-				return syncDao.get(clz, idOne, idTwo);
-			}
-		}
-
-		String key = getCombinedKey(idOne, idTwo);
-		T obj = cacheResolver.get(clz, key);
-
-		if (obj == null) {
-			if (parsed.isSharding()) {
-				obj = shardingDao.get(clz, idOne, idTwo);
-			} else {
-				obj = syncDao.get(clz, idOne, idTwo);
-			}
-			cacheResolver.set(clz, key, obj);
-		}
-
-		return obj;
-	}
-
-	@Override
 	public <T> List<T> list(Object conditionObj) {
 
 		if (conditionObj instanceof CriteriaBuilder || conditionObj instanceof Criteria)
@@ -431,8 +319,7 @@ public class Repositories implements IRepository {
 
 		if (cacheResolver == null || parsed.isNoCache()) {
 			if (parsed.isSharding()) {
-				throw new ShardingException(
-						"Sharding not supported");
+				throw new ShardingException("Sharding not supported");
 			} else {
 				return syncDao.list(conditionObj);
 			}
@@ -446,8 +333,7 @@ public class Repositories implements IRepository {
 
 		if (keyList == null || keyList.isEmpty()) {
 			if (parsed.isSharding()) {
-				throw new ShardingException(
-						"Sharding not supported");
+				throw new ShardingException("Sharding not supported");
 			} else {
 				list = syncDao.list(conditionObj);
 			}
@@ -475,7 +361,7 @@ public class Repositories implements IRepository {
 
 		return sortedList;
 	}
-	
+
 	@Override
 	public <T> T getOne(T conditionObj) {
 		Class<T> clz = (Class<T>) conditionObj.getClass();
@@ -502,9 +388,9 @@ public class Repositories implements IRepository {
 				t = shardingDao.getOne(conditionObj);
 			} else {
 				List<T> list = syncDao.list(conditionObj);
-				if (list.isEmpty()){
+				if (list.isEmpty()) {
 					t = null;
-				}else{
+				} else {
 					t = list.get(0);
 				}
 			}
@@ -514,7 +400,7 @@ public class Repositories implements IRepository {
 			return t;
 		}
 
-		return obj;		
+		return obj;
 	}
 
 	@Override
@@ -524,8 +410,7 @@ public class Repositories implements IRepository {
 
 		if (cacheResolver == null || parsed.isNoCache()) {
 			if (parsed.isSharding()) {
-				throw new ShardingException(
-						"Sharding not supported");
+				throw new ShardingException("Sharding not supported");
 			} else {
 				return (T) syncDao.getOne(conditionObj, orderBy, sc);
 			}
@@ -538,8 +423,7 @@ public class Repositories implements IRepository {
 		if (obj == null) {
 			T t = null;
 			if (parsed.isSharding()) {
-				throw new ShardingException(
-						"Sharding not supported");
+				throw new ShardingException("Sharding not supported");
 			} else {
 				t = syncDao.getOne(conditionObj, orderBy, sc);
 
@@ -553,7 +437,6 @@ public class Repositories implements IRepository {
 		return obj;
 	}
 
-	
 	@Override
 	public <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
 
@@ -627,8 +510,6 @@ public class Repositories implements IRepository {
 		return pagination;
 	}
 
-
-
 	@Override
 	public <T> List<T> list(Class<T> clz) {
 
@@ -680,17 +561,6 @@ public class Repositories implements IRepository {
 		return sortedList;
 	}
 
-	@Override
-	public <T> long getMaxId(Class<T> clz, long key) {
-
-		Parsed parsed = Parser.get(clz);
-		if (parsed.isSharding()) {
-			throw new ShardingException("Sharding not supported: getMaxId(Class<T> clz, int key)");
-		} else {
-			return syncDao.getMaxId(clz, key);
-		}
-
-	}
 
 	@Override
 	public <T> long getMaxId(Class<T> clz) {
@@ -699,16 +569,6 @@ public class Repositories implements IRepository {
 			throw new ShardingException("Sharding not supported: getMaxId(Class<T> clz)");
 		} else {
 			return syncDao.getMaxId(clz);
-		}
-	}
-
-	@Override
-	public <T> long getCount(Class<T> clz, long idOne) {
-		Parsed parsed = Parser.get(clz);
-		if (parsed.isSharding()) {
-			return shardingDao.getCount(clz, idOne);
-		} else {
-			return syncDao.getCount(clz, idOne);
 		}
 	}
 
@@ -802,47 +662,6 @@ public class Repositories implements IRepository {
 		});
 	}
 
-	/**
-	 * 特殊的更新时间方法，不标记缓存时间<br>
-	 * 后台查询时需要在进入查询页面时，调用refreshCache<br>
-	 * 主要是防止登录等操作，而导致了用户的缓存失效<br>
-	 * 建议后台系统走另外一套缓存
-	 * 
-	 * @param obj
-	 */
-	public void refreshTime(final Object obj) {
-
-		asyncService.execute(new Runnable() {
-
-			@Override
-			public void run() {
-
-				try {
-
-					Class clz = obj.getClass();
-					Parsed parsed = Parser.get(clz);
-					String key = getCacheKey(obj, parsed);
-					if (parsed.isSharding()) {
-						shardingDao.refresh(obj);
-						System.err.println("refreshTime: " + obj);
-					} else {
-						syncDao.refresh(obj);
-						System.err.println("refreshTime: " + obj);
-					}
-					if (cacheResolver != null && !parsed.isNoCache()) {
-						if (key != null) {
-							cacheResolver.remove(clz, key);
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
-		});
-
-	}
-
 	protected <T> boolean execute(Object obj, String sql) {
 
 		boolean b;
@@ -880,11 +699,6 @@ public class Repositories implements IRepository {
 	@Override
 	public <T> List<T> in(Class<T> clz, List<? extends Object> inList) {
 		Parsed parsed = Parser.get(clz);
-
-		if (parsed.isCombinedKey()) {
-			throw new RuntimeException(
-					"CombinedKey not supported: in(Class<T> clz, String inProperty, List<Object> inList)");
-		}
 
 		if (parsed.isSharding()) {
 			throw new ShardingException(
@@ -970,7 +784,6 @@ public class Repositories implements IRepository {
 		Class clz = criteriaJoin.getClz();
 		Parsed parsed = Parser.get(clz);
 
-
 		if (parsed.isSharding()) {
 			return shardingDao.list(criteriaJoin, pagination);
 		} else {
@@ -1002,12 +815,11 @@ public class Repositories implements IRepository {
 			cacheResolver.markForRefresh(clz);
 		return this.syncDao.createBatch(list);
 	}
-	
-	
-	protected List<Map<String,Object>> list(Class clz, String sql, List<Object> conditionList) {
+
+	protected List<Map<String, Object>> list(Class clz, String sql, List<Object> conditionList) {
 
 		Parsed parsed = Parser.get(clz);
-		
+
 		if (cacheResolver == null || parsed.isNoCache()) {
 			if (parsed.isSharding()) {
 				throw new ShardingException(
@@ -1016,15 +828,14 @@ public class Repositories implements IRepository {
 				return syncDao.list(clz, sql, conditionList);
 			}
 		}
-		
+
 		String condition = sql + conditionList.toString();
-		
-		
-		List<Map<String,Object>> mapList = cacheResolver.getMapList(clz, condition);
-		
+
+		List<Map<String, Object>> mapList = cacheResolver.getMapList(clz, condition);
+
 		if (mapList == null) {
 			mapList = syncDao.list(clz, sql, conditionList);
-			
+
 			if (mapList != null) {
 				cacheResolver.setMapList(clz, condition, mapList);
 			}

@@ -36,9 +36,6 @@ public interface Dao {
 	 */
 	<T> T get(Class<T> clz, long idOne);
 
-
-	<T> T get(Class<T> clz, long idOne, long idTwo);
-
 	
 	/**
 	 * 根据对象内容查询<br>
@@ -75,13 +72,9 @@ public interface Dao {
 	
 	<T> T getOne(T conditionObj, String orderBy, String sc);
 
-	<T> long getMaxId(Class<T> clz, long idOne);
-
 	<T> long getMaxId(Class<T> clz);
 	
 	long getMaxId(Object obj);
-
-	<T> long getCount(Class<T> clz, long idOne);
 	
 	long getCount(Object obj);
 	

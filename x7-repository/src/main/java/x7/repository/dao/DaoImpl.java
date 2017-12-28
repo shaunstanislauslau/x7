@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
@@ -33,16 +32,13 @@ import x7.core.util.JsonX;
 import x7.core.util.StringUtil;
 import x7.core.web.Pagination;
 import x7.repository.ResultSetUtil;
-import x7.repository.exception.PersistenceException;
 import x7.repository.exception.RollbackException;
 import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
 
 /**
  * 
- * @author sim
- *
- * 
+ * @author Sim
  */
 public class DaoImpl implements Dao {
 
@@ -68,10 +64,6 @@ public class DaoImpl implements Dao {
 
 	public void setDataSource_R(DataSource dataSource_R) {
 		this.dataSource_R = dataSource_R;
-	}
-
-	private Connection getConnectionForMasterId() throws SQLException {
-		return getConnection(dataSource);
 	}
 
 	private Connection getConnection(boolean isRead) throws SQLException {
@@ -149,22 +141,6 @@ public class DaoImpl implements Dao {
 		}
 	}
 
-	private String[] getResultKey(String key) {
-		key = key.trim();
-		String[] kArr = new String[2];
-		kArr[0] = key;
-		kArr[1] = key;
-		if (key.contains(" ")) {
-			String[] arr = key.split(" ");
-			kArr[0] = arr[1];
-			kArr[1] = arr[1];
-		} else {
-			if (key.contains(".")) {
-				kArr[0] = key.substring(key.indexOf(".") + 1);
-			}
-		}
-		return kArr;
-	}
 
 	@Override
 	public boolean createBatch(List<Object> objList) {
@@ -183,7 +159,7 @@ public class DaoImpl implements Dao {
 		PreparedStatement pstmt = null;
 		try {
 			Parsed parsed = Parser.get(clz);
-			boolean isCombinedKey = parsed.isCombinedKey();
+
 			String keyOne = parsed.getKey(Persistence.KEY_ONE);
 
 			Long keyOneValue = 0L;
@@ -196,19 +172,6 @@ public class DaoImpl implements Dao {
 			/*
 			 * 返回自增键
 			 */
-			Long keyTwoValue = null;
-			long keyTwo = 0;
-			boolean flag = false;
-			if (isCombinedKey) {
-				keyTwoValue = parsed.getKeyField(Persistence.KEY_TWO).getLong(obj);
-				if (keyTwoValue == null || keyTwoValue == 0) {
-					keyTwoValue = this.getMaxId_Master(clz, parsed.getKeyField(Persistence.KEY_ONE).getLong(obj)) + 1;// MUST
-					// KEY_ONE
-					System.out.println("keyTwoValue = " + keyTwoValue);
-					keyTwo = keyTwoValue.longValue();
-					flag = true;
-				}
-			}
 
 			conn = getConnection(false);
 
@@ -228,19 +191,7 @@ public class DaoImpl implements Dao {
 
 				int i = 1;
 
-				if (isCombinedKey) {
-					if (flag) {
-						parsed.getKeyField(Persistence.KEY_TWO).set(o, keyTwo++);
-					}
-				}
-
 				for (BeanElement ele : eles) {
-
-					if (!isCombinedKey) {
-						if (!parsed.isNotAutoIncreament() && ele.property.equals(keyOne)) {
-							continue;
-						}
-					}
 
 					Object value = ele.getMethod.invoke(o);
 					if (value == null) {
@@ -322,8 +273,7 @@ public class DaoImpl implements Dao {
 
 			int i = 1;
 
-			SqlUtil.adpterSqlKey(pstmt, parsed.getKeyField(Persistence.KEY_ONE),
-					parsed.getKeyField(Persistence.KEY_TWO), obj, i);
+			SqlUtil.adpterSqlKey(pstmt, parsed.getKeyField(Persistence.KEY_ONE), null, obj, i);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -367,7 +317,6 @@ public class DaoImpl implements Dao {
 		PreparedStatement pstmt = null;
 		try {
 			Parsed parsed = Parser.get(clz);
-			boolean isCombinedKey = parsed.isCombinedKey();
 			String keyOne = parsed.getKey(Persistence.KEY_ONE);
 
 			Long keyOneValue = 0L;
@@ -380,16 +329,6 @@ public class DaoImpl implements Dao {
 			/*
 			 * 返回自增键
 			 */
-			Long keyTwoValue = null;
-			if (isCombinedKey) {
-				keyTwoValue = parsed.getKeyField(Persistence.KEY_TWO).getLong(obj);
-				if (keyTwoValue == null || keyTwoValue == 0) {
-					keyTwoValue = this.getMaxId_Master(clz, parsed.getKeyField(Persistence.KEY_ONE).getLong(obj)) + 1;// MUST
-					// KEY_ONE
-					System.out.println("keyTwoValue = " + keyTwoValue);
-					parsed.getKeyField(Persistence.KEY_TWO).set(obj, keyTwoValue.intValue());
-				}
-			}
 
 			conn.setAutoCommit(false);
 			if (keyOneType != String.class && (keyOneValue == null || keyOneValue == 0)) {
@@ -405,12 +344,6 @@ public class DaoImpl implements Dao {
 
 			int i = 1;
 			for (BeanElement ele : eles) {
-
-				if (!isCombinedKey) {
-					if (!parsed.isNotAutoIncreament() && ele.property.equals(keyOne)) {
-						continue;
-					}
-				}
 
 				Object value = ele.getMethod.invoke(obj);
 				if (value == null) {
@@ -435,18 +368,14 @@ public class DaoImpl implements Dao {
 
 			pstmt.execute();
 
-			if (parsed.isCombinedKey()) { // 有主键自增
-				id = keyTwoValue;
-			} else {
-				if (keyOneType != String.class && (keyOneValue == null || keyOneValue == 0)) {
-					ResultSet rs = pstmt.getGeneratedKeys();
-					if (rs.next()) {
-						id = rs.getLong(1);
-					}
-
-				} else {
-					id = keyOneValue;
+			if (keyOneType != String.class && (keyOneValue == null || keyOneValue == 0)) {
+				ResultSet rs = pstmt.getGeneratedKeys();
+				if (rs.next()) {
+					id = rs.getLong(1);
 				}
+
+			} else {
+				id = keyOneValue;
 			}
 
 			if (isNoBizTx) {
@@ -515,8 +444,7 @@ public class DaoImpl implements Dao {
 			 * 处理KEY
 			 */
 			Field keyOneF = parsed.getKeyField(Persistence.KEY_ONE);
-			Field keyTwoF = parsed.getKeyField(Persistence.KEY_TWO);
-			SqlUtil.adpterSqlKey(pstmt, keyOneF, keyTwoF, obj, i);
+			SqlUtil.adpterSqlKey(pstmt, keyOneF, null, obj, i);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -547,6 +475,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
+	@Override
 	public long create(Object obj) {
 
 		Connection conn = null;
@@ -571,6 +500,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@SuppressWarnings("rawtypes")
+	@Override
 	public boolean remove(Object obj) {
 		Connection conn = null;
 		try {
@@ -584,9 +514,6 @@ public class DaoImpl implements Dao {
 	protected <T> T get(Class<T> clz, long idOne, Connection conn) {
 
 		Parsed parsed = Parser.get(clz);
-		if (parsed.isCombinedKey()) {
-			throw new PersistenceException("CombinedKey object should get(clz, idOne, idTwo)");
-		}
 
 		List<T> list = new ArrayList<T>();
 
@@ -639,60 +566,6 @@ public class DaoImpl implements Dao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 		return get(clz, idOne, conn);
-	}
-
-	protected <T> T get(Class<T> clz, long idOne, long idTwo, Connection conn) {
-
-		List<T> list = new ArrayList<T>();
-
-		String sql = MapperFactory.getSql(clz, Mapper.QUERY_TWO);
-		List<BeanElement> eles = MapperFactory.getElementList(clz);
-
-		PreparedStatement pstmt = null;
-		BeanElement tempEle = null;
-		try {
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			int i = 1;
-
-			pstmt.setObject(i++, idOne);
-			pstmt.setObject(i++, idTwo);
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs != null) {
-				while (rs.next()) {
-					T obj = clz.newInstance();
-					list.add(obj);
-					initObj(obj, rs, tempEle, eles);
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RollbackException(
-					"Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		if (list.isEmpty())
-			return null;
-
-		return list.get(0);
-	}
-
-	public <T> T get(Class<T> clz, long idOne, long idTwo) {
-
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
-		return get(clz, idOne, idTwo, conn);
 	}
 
 	protected List<Map<String, Object>> list(Class clz, String sql, List<Object> conditionList, Connection conn) {
@@ -760,7 +633,8 @@ public class DaoImpl implements Dao {
 
 		return list(clz, sql, conditionList, conn);
 	}
-
+	
+	@Override
 	public <T> List<T> list(Class<T> clz) {
 
 		List<T> list = new ArrayList<T>();
@@ -796,74 +670,6 @@ public class DaoImpl implements Dao {
 		}
 
 		return list;
-	}
-
-	@SuppressWarnings("rawtypes")
-	private long getMaxId_Master(Class clz, long key) {// FIXME
-
-		long id = 0;
-
-		String sql = MapperFactory.getSql(clz, Mapper.MAX_ID);
-		System.out.println("SQL getMaxId = " + sql + ", key = " + key);
-
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnectionForMasterId();
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			int i = 1;
-			pstmt.setObject(i++, key);
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				id = rs.getLong("maxId");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return id;
-	}
-
-	@SuppressWarnings("rawtypes")
-	public long getMaxId(Class clz, long key) {
-
-		long id = 0;
-
-		String sql = MapperFactory.getSql(clz, Mapper.MAX_ID);
-		System.out.println("SQL getMaxId = " + sql + ", key = " + key);
-
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection(true);
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			int i = 1;
-			pstmt.setObject(i++, key);
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				id = rs.getLong("maxId");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return id;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -947,7 +753,6 @@ public class DaoImpl implements Dao {
 		return list;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T> List<T> list(Object conditionObj) {
 		Connection conn = null;
@@ -1064,7 +869,6 @@ public class DaoImpl implements Dao {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next()) {
-				// Object obj = rs.getObject("sum");
 				sum = rs.getObject("sum");
 			}
 
@@ -1114,7 +918,6 @@ public class DaoImpl implements Dao {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next()) {
-				// Object obj = rs.getObject("sum");
 				count = rs.getObject("sum");
 			}
 
@@ -1217,50 +1020,7 @@ public class DaoImpl implements Dao {
 		return getCount(conditionObj, conn);
 	}
 
-	protected <T> long getCount(Class<T> clz, long idOne, Connection conn) {
-
-		String sql = MapperFactory.getSql(clz, Mapper.COUNT);
-
-		long count = 0;
-
-		PreparedStatement pstmt = null;
-		try {
-
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			int i = 1;
-			pstmt.setObject(i++, idOne);
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				Object obj = rs.getObject("count");
-				if (obj != null) {
-					count = ((Long) obj);
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return count;
-	}
-
-	@Override
-	public <T> long getCount(Class<T> clz, long idOne) {
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
-		return getCount(clz, idOne, conn);
-	}
+	
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -1453,8 +1213,7 @@ public class DaoImpl implements Dao {
 			 * 处理KEY
 			 */
 			Field keyOneF = parsed.getKeyField(Persistence.KEY_ONE);
-			Field keyTwoF = parsed.getKeyField(Persistence.KEY_TWO);
-			SqlUtil.adpterRefreshCondition(pstmt, keyOneF, keyTwoF, obj, i, conditionMap);
+			SqlUtil.adpterRefreshCondition(pstmt, keyOneF, null, obj, i, conditionMap);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -1532,7 +1291,6 @@ public class DaoImpl implements Dao {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next()) {
-				// Object obj = rs.getObject("sum");
 				count = rs.getObject("count");
 			}
 
@@ -1550,11 +1308,6 @@ public class DaoImpl implements Dao {
 	public <T> List<T> in(Class<T> clz, List<? extends Object> inList) {
 
 		Parsed parsed = Parser.get(clz);
-
-		if (parsed.isCombinedKey()) {
-			throw new RuntimeException(
-					"CombinedKey not supported: in(Class<T> clz, String inProperty, List<Object> inList)");
-		}
 
 		List<T> list = new ArrayList<T>();
 

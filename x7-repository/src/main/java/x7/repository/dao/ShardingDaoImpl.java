@@ -348,27 +348,6 @@ public class ShardingDaoImpl implements ShardingDao {
 		return false;
 	}
 
-	private <T> T get(Class<T> clz, long idOne, long idTwo, String key) {
-
-		Connection conn = null;
-		try {
-			conn = getConnection(key, true);// FIXME true, need a policy
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
-
-		T t = DaoImpl.getInstance().get(clz, idOne, idTwo, conn);
-		return t;
-	}
-
-	@Override
-	public <T> T get(Class<T> clz, long idOne, long idTwo) {
-
-		tryToParse(clz);
-		String key = getKey(idOne);
-
-		return get(clz, idOne, idTwo, key);
-	}
 
 	private <T> T get(Class<T> clz, long idOne, String key) {
 
@@ -414,26 +393,6 @@ public class ShardingDaoImpl implements ShardingDao {
 		return getOne(conditionObj, key);
 	}
 
-	private <T> long getCount(Class<T> clz, long idOne, String key) {
-
-		Connection conn = null;
-		try {
-			conn = getConnection(key, true);// FIXME true, need a policy
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
-
-		long count = DaoImpl.getInstance().getCount(clz, idOne, conn);
-		return count;
-	}
-
-	@Override
-	public <T> long getCount(Class<T> clz, long idOne) {
-		tryToParse(clz);
-		String key = getKey(idOne);
-
-		return getCount(clz, idOne, key);
-	}
 
 	private <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination, String key) {
 		Connection conn = null;

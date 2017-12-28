@@ -75,15 +75,6 @@ public interface X7Repository<T> {
 	 */
 	T get(long idOne);
 
-	/**
-	 * 
-	 * 根据第一主键和第二主键查条记录，(findByPK)
-	 * 
-	 * @param clz
-	 * @param idOne
-	 * 
-	 */
-	T get(long idOne, long idTwo);
 
 	/**
 	 * LOAD
@@ -110,14 +101,6 @@ public interface X7Repository<T> {
 	 */
 	Pagination<Map<String, Object>> list(Criteria.Fetch criteria, Pagination<Map<String, Object>> pagination);
 
-	/**
-	 * 获取ID
-	 * 
-	 * @param clz
-	 * @param idOne
-	 * 
-	 */
-	long getMaxId(long idOne);
 
 	/**
 	 * 获取�?大ID
@@ -129,30 +112,12 @@ public interface X7Repository<T> {
 
 	long getMaxId(T conditionObj);
 
-	/**
-	 * count
-	 * 
-	 * @param clz
-	 * @param idOne
-	 * 
-	 */
-	long getCount(long idOne);
-
 	long getCount(T conditonObj);
 
 	T getOne(T conditionObj, String orderBy, String sc);
 
 	T getOne(T conditionObj);
 
-	/**
-	 * 特殊的更新时间方法，不标记缓存时间<br>
-	 * 后台查询时需要在进入查询页面时，调用refreshCache<br>
-	 * 主要是防止登录等操作，而导致了用户的缓存失效<br>
-	 * 建议后台系统走另外一套缓存<br>
-	 * 
-	 * @param obj
-	 */
-	void refreshTime(T obj);
 
 	/**
 	 * 配合refreshTime使用，后台按更新时间查询列表之前调用<br>

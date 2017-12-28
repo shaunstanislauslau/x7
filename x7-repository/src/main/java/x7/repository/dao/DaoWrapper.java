@@ -7,7 +7,6 @@ import x7.core.bean.Criteria;
 import x7.core.web.Pagination;
 
 
-
 public class DaoWrapper implements Dao{
 
 	private static DaoWrapper instance;
@@ -40,11 +39,6 @@ public class DaoWrapper implements Dao{
 	}
 
 	@Override
-	public <T> T get(Class<T> clz, long idOne, long idTwo) {
-		return this.dao.get(clz, idOne, idTwo);
-	}
-
-	@Override
 	public List<Map<String,Object>>  list(Class clz, String sql, List<Object> conditionList) {
 		return this.dao.list(clz, sql, conditionList);
 	}
@@ -52,11 +46,6 @@ public class DaoWrapper implements Dao{
 	@Override
 	public <T> List<T> list(Class<T> clz) {
 		return this.dao.list(clz);
-	}
-
-	@Override
-	public <T> long getMaxId(Class<T> clz, long key) {
-		return this.dao.getMaxId(clz, key);
 	}
 
 	@Override
@@ -75,12 +64,6 @@ public class DaoWrapper implements Dao{
 	public <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
 
 		return this.dao.list(criteria, pagination);
-	}
-
-	@Override
-	public <T> long getCount(Class<T> clz, long idOne) {
-		
-		return this.dao.getCount(clz, idOne);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import x7.repository.dao.AsyncDaoWrapper;
 /**
  * 
  * 
- * @author wyan
+ * @author Sim
  * 
  */
 public class AsyncRepository {
@@ -39,11 +39,11 @@ public class AsyncRepository {
 	public static <T> List<T> list(Class<T> clz, long idOne) {
 		return CacheOne.list(clz, idOne);
 	}
-	
+
 	public static <T> T get(Class<T> clz, Object idOne) {
 		return CacheOne.get(clz, idOne);
 	}
-	
+
 	public static <T> T get(Class<T> clz, Object idOne, long idTwo) {
 		return CacheOne.get(clz, idOne, idTwo);
 	}
@@ -55,37 +55,15 @@ public class AsyncRepository {
 			Parsed parsed = Parser.get(clz);
 			Map<String, Object> map1 = new ConcurrentHashMap<String, Object>();
 			map.put(clz, map1);
-			if (parsed.isCombinedKey()) {
 
-				try{
-					for (Object obj : list) {
-						Object idOne = parsed.getKeyField(1).get(Persistence.KEY_ONE);
-						String key = getKey(clz, idOne);
-						
-						Object o =  map1.get(key);
-						if (o == null) {
-							o = new ConcurrentHashMap<Long, Object>(); 
-							map1.put(key,o);
-						}
-						Map<Long,Object> map2 = (Map<Long,Object>)o;
-						Long idTwo = parsed.getKeyField(Persistence.KEY_TWO).getLong(obj);
-						map2.put(idTwo, obj);
-
-					}
-				}catch (Exception e){
-					e.printStackTrace();
+			try {
+				for (Object obj : list) {
+					long idOne = parsed.getKeyField(Persistence.KEY_ONE).getLong(obj);
+					String key = getKey(clz, idOne);
+					map1.put(key, obj);
 				}
-				
-			} else {
-				try {
-					for (Object obj : list) {
-						long idOne = parsed.getKeyField(Persistence.KEY_ONE).getLong(obj);
-						String key = getKey(clz, idOne);
-						map1.put(key, obj);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 		}
@@ -100,10 +78,10 @@ public class AsyncRepository {
 				return null;
 			return (T) o;
 		}
-		
+
 		protected static <T> T get(Class<T> clz, Object idOne, long idTwo) {
 
-			Map<String, ? extends Object> map1= map.get(clz);
+			Map<String, ? extends Object> map1 = map.get(clz);
 			if (map1 == null)
 				return null;
 			Object obj2 = map1.get(getKey(clz, idOne));

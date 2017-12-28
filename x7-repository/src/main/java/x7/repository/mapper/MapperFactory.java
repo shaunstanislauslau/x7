@@ -42,7 +42,7 @@ public class MapperFactory implements Mapper {
 
 	}
 
-	@SuppressWarnings({  "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public static String tryToCreate(Class clz) {
 
 		Map<String, String> sqlMap = sqlsMap.get(clz);
@@ -66,10 +66,8 @@ public class MapperFactory implements Mapper {
 		return Parser.get(clz).getBeanElementList();
 	}
 
-	@SuppressWarnings({  "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public static void parseBean(Class clz) {
-
-		Parsed parsed = Parser.get(clz);
 
 		String repository = Configs.getString(ConfigKey.REPOSITORY);
 		repository = repository.toLowerCase();
@@ -94,7 +92,7 @@ public class MapperFactory implements Mapper {
 		public String getRefreshSql(Class clz) {
 
 			Parsed parsed = Parser.get(clz);
-			
+
 			List<BeanElement> list = Parser.get(clz).getBeanElementList();
 
 			String space = " ";
@@ -103,7 +101,6 @@ public class MapperFactory implements Mapper {
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName())).append(space);
 			sb.append("SET ");
 
-			boolean flag = parsed.isCombinedKey();
 			String keyOne = parsed.getKey(Persistence.KEY_ONE);
 
 			List<BeanElement> tempList = new ArrayList<BeanElement>();
@@ -112,10 +109,6 @@ public class MapperFactory implements Mapper {
 				if (column.equals(keyOne))
 					continue;
 
-				if (flag) {
-					if (column.equals(parsed.getKey(Persistence.KEY_TWO)))
-						continue;
-				}
 				tempList.add(p);
 			}
 
@@ -173,11 +166,6 @@ public class MapperFactory implements Mapper {
 			sb.append(parsed.getKey(Persistence.KEY_ONE));
 			sb.append(" = ?");
 
-			if (parsed.isCombinedKey()) {
-				sb.append(" AND ");
-				sb.append(parsed.getKey(Persistence.KEY_TWO));
-				sb.append(" = ?");
-			}
 		}
 
 		public String getQuerySql(Class clz) {
@@ -189,9 +177,6 @@ public class MapperFactory implements Mapper {
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName())).append(space);
 			sb.append("WHERE ");
 
-			// parseKey(sb, clz);
-
-
 			sb.append(parsed.getKey(Persistence.KEY_ONE));
 			sb.append(" = ?");
 
@@ -201,18 +186,6 @@ public class MapperFactory implements Mapper {
 			sqlsMap.get(clz).put(QUERY, sql);
 
 			System.out.println(sql);
-
-			if (parsed.isCombinedKey()) {
-				sb.append(" AND ");
-				sb.append(parsed.getKey(Persistence.KEY_TWO));
-				sb.append(" = ?");
-
-				sql = sb.toString();
-
-				sql = BeanUtilX.mapper(sql, parsed);
-
-				sqlsMap.get(clz).put(QUERY_TWO, sql);
-			}
 
 			return sql;
 
@@ -241,24 +214,13 @@ public class MapperFactory implements Mapper {
 
 			Parsed parsed = Parser.get(clz);
 
-			String space = " ";
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT MAX(");
-			if (parsed.isCombinedKey()) {
-				sb.append(parsed.getKey(Persistence.KEY_TWO));
-			} else {
-				sb.append(parsed.getKey(Persistence.KEY_ONE));
-			}
+
+			sb.append(parsed.getKey(Persistence.KEY_ONE));
+
 			sb.append(") maxId FROM ");
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName()));
-
-			if (parsed.isCombinedKey()) {
-				sb.append(space);
-				sb.append("WHERE ");
-
-				sb.append(parsed.getKey(Persistence.KEY_ONE));
-				sb.append(" = ?");
-			}
 
 			String sql = sb.toString();
 
@@ -276,17 +238,9 @@ public class MapperFactory implements Mapper {
 			List<BeanElement> list = Parser.get(clz).getBeanElementList();
 
 			Parsed parsed = Parser.get(clz);
-			boolean flag = parsed.isCombinedKey();
-
-			String key = parsed.getKey(Persistence.KEY_ONE);
 
 			List<BeanElement> tempList = new ArrayList<BeanElement>();
 			for (BeanElement p : list) {
-
-				if (!flag) {
-					if (!parsed.isNotAutoIncreament() && p.property.equals(key))
-						continue;
-				}
 
 				tempList.add(p);
 			}
@@ -330,8 +284,6 @@ public class MapperFactory implements Mapper {
 		public String getTableSql(Class clz) {
 
 			String repository = Configs.getString(ConfigKey.REPOSITORY);
-//			if (!repository.toLowerCase().equals("mysql"))
-//				return "";
 
 			List<BeanElement> temp = Parser.get(clz).getBeanElementList();
 			Map<String, BeanElement> map = new HashMap<String, BeanElement>();
@@ -343,88 +295,54 @@ public class MapperFactory implements Mapper {
 				}
 				map.put(be.property, be);
 			}
-
 			Parsed parsed = Parser.get(clz);
 
-			boolean isSinglePk = !parsed.isCombinedKey();
 			String keyOne = parsed.getKey(Persistence.KEY_ONE);
-			String keyTwo = null;
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("CREATE TABLE IF NOT EXISTS ").append(BeanUtil.getByFirstLower(parsed.getClzName())).append(" (").append("\n");
-			if (isSinglePk) {
-				sb.append("   ").append(keyOne);
+			sb.append("CREATE TABLE IF NOT EXISTS ").append(BeanUtil.getByFirstLower(parsed.getClzName())).append(" (")
+					.append("\n");
 
-				BeanElement be = map.get(keyOne);
-				String sqlType = Mapper.getSqlTypeRegX(be);
-				
-				System.out.println("p = " + be.property + " sqlType = " + sqlType);
-				if (sqlType.equals(Dialect.INT)) {
-					sb.append(Dialect.INT + " NOT NULL");
-				} else if (sqlType.equals(Dialect.LONG)) {
-					sb.append(Dialect.LONG + " NOT NULL");
-				} else if (sqlType.equals(Dialect.STRING)) {
-					sb.append(Dialect.STRING).append("(").append(be.length).append(") NOT NULL");
-				}
+			sb.append("   ").append(keyOne);
 
-				if (!parsed.isNotAutoIncreament()) {
-					sb.append(Dialect.INCREAMENT).append(", ");//FIXME ORACLE
-				} else {
-					sb.append(", ");
-				}
+			BeanElement be = map.get(keyOne);
+			String sqlType = Mapper.getSqlTypeRegX(be);
 
-				sb.append("\n");
-				map.remove(keyOne);
-			} else {// boolean, TINYINT(1) DEFAULT 0 NULL;
-
-				BeanElement be = map.get(keyOne);
-				String sqlType = Mapper.getSqlTypeRegX(be);
-				System.out.println("p = " + be.property + " sqlType = " + sqlType);
-				sb.append("   ").append(keyOne);
-				if (sqlType.equals(Dialect.INT)) {
-					sb.append(Dialect.INT + " NOT NULL,");
-				} else if (sqlType.equals(Dialect.LONG)) {
-					sb.append(Dialect.LONG + " NOT NULL,");
-				} else if (sqlType.equals(Dialect.STRING)) {
-					sb.append(Dialect.STRING).append("(").append(be.length).append(") NOT NULL,");
-				}
-				sb.append("\n");
-
-				keyTwo = parsed.getKey(Persistence.KEY_TWO);
-				BeanElement beTwo = map.get(keyTwo);
-				sqlType = Mapper.getSqlTypeRegX(beTwo);
-				sb.append("   ").append(keyTwo);
-				if (sqlType.equals(Dialect.INT)) {
-					sb.append(Dialect.INT + " NOT NULL,");
-				} else if (sqlType.equals(Dialect.LONG)) {
-					sb.append(Dialect.LONG + " NOT NULL,");
-				}
-				sb.append("\n");
-				map.remove(keyOne);
-				map.remove(keyTwo);
+			System.out.println("p = " + be.property + " sqlType = " + sqlType);
+			if (sqlType.equals(Dialect.INT)) {
+				sb.append(Dialect.INT + " NOT NULL");
+			} else if (sqlType.equals(Dialect.LONG)) {
+				sb.append(Dialect.LONG + " NOT NULL");
+			} else if (sqlType.equals(Dialect.STRING)) {
+				sb.append(Dialect.STRING).append("(").append(be.length).append(") NOT NULL");
 			}
 
-			for (BeanElement be : map.values()) {
-				String sqlType = Mapper.getSqlTypeRegX(be);
-				sb.append("   ").append(be.property).append(" ");
+			sb.append(", ");// FIXME ORACLE
+
+			sb.append("\n");
+			map.remove(keyOne);
+
+			for (BeanElement bet : map.values()) {
+				sqlType = Mapper.getSqlTypeRegX(bet);
+				sb.append("   ").append(bet.property).append(" ");
 
 				sb.append(sqlType);
-				
+
 				if (sqlType.equals(Dialect.BIG)) {
 					sb.append(" DEFAULT 0.00 ");
 				} else if (sqlType.equals(Dialect.DATE)) {
-					if (be.property.equals("createTime")) {
+					if (bet.property.equals("createTime")) {
 						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP");
-					} else if (be.property.equals("refreshTime")) {
+					} else if (bet.property.equals("refreshTime")) {
 						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
 					} else {
 						sb.append(" NULL");
 					}
 				} else if (sqlType.equals(Dialect.STRING)) {
-					sb.append("(").append(be.length).append(") NOT NULL");
-				}else{
-					if (be.clz == Boolean.class || be.clz == boolean.class || be.clz == Integer.class
-							|| be.clz == int.class || be.clz == Long.class || be.clz == long.class) {
+					sb.append("(").append(bet.length).append(") NOT NULL");
+				} else {
+					if (bet.clz == Boolean.class || bet.clz == boolean.class || bet.clz == Integer.class
+							|| bet.clz == int.class || bet.clz == Long.class || bet.clz == long.class) {
 						sb.append(" DEFAULT 0");
 					} else {
 						sb.append(" DEFAULT NULL");
@@ -433,26 +351,20 @@ public class MapperFactory implements Mapper {
 				sb.append(",").append("\n");
 			}
 
-			for (BeanElement be : list) {
-				String sqlType = Mapper.getSqlTypeRegX(be);
-				sb.append("   ").append(be.property).append(" ").append(sqlType).append(",").append("\n");
+			for (BeanElement bet : list) {
+				sqlType = Mapper.getSqlTypeRegX(bet);
+				sb.append("   ").append(bet.property).append(" ").append(sqlType).append(",").append("\n");
 			}
 
-			
-			if (isSinglePk) {
-				sb.append("   PRIMARY KEY (").append(keyOne).append(")");
-			} else {
-				sb.append("   PRIMARY KEY (").append(keyOne).append(",").append(keyTwo).append(")");
-			}
+			sb.append("   PRIMARY KEY (").append(keyOne).append(")");
 
 			sb.append("\n");
 			sb.append(") ").append(Dialect.ENGINE).append(";");
 
 			String sql = sb.toString();
 
-			System.out.println(sql);
 			sql = Dialect.match(sql, repository, CREATE_TABLE);
-			
+
 			sql = BeanUtilX.mapper(sql, parsed);
 			System.out.println(sql);
 
@@ -470,7 +382,7 @@ public class MapperFactory implements Mapper {
 			sb.append("WHERE 1=1 ");
 
 			String sql = sb.toString();
-			
+
 			sql = BeanUtilX.mapper(sql, parsed);
 			sqlsMap.get(clz).put(PAGINATION, sql);
 
@@ -486,11 +398,9 @@ public class MapperFactory implements Mapper {
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT COUNT(");
-			if (parsed.isCombinedKey()) {
-				sb.append(parsed.getKey(Persistence.KEY_TWO));
-			} else {
-				sb.append(parsed.getKey(Persistence.KEY_ONE));
-			}
+			
+			sb.append(parsed.getKey(Persistence.KEY_ONE));
+			
 			sb.append(") count FROM ");
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName()));
 

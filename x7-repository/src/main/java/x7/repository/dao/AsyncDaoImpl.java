@@ -27,7 +27,6 @@ import x7.repository.mapper.MapperFactory;
 import x7.repository.mapper.Mapper;
 
 
-
 /**
  * 
  * 
@@ -322,18 +321,11 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 			pstmt = conn.prepareStatement(sql);
 			
 			Parsed parsed = Parser.get(objList.get(0).getClass());
-			boolean isCombinedKey = parsed.isCombinedKey();
 			
 			for (Object obj : objList) {
 
 				int i = 1;
 				for (BeanElement ele : eles) {
-					
-					if (!isCombinedKey){
-						if (!parsed.isNotAutoIncreament() && ele.property.equals(parsed.getKey(Persistence.KEY_ONE)) ) {
-							continue;
-						}
-					}
 
 					Method method = null;
 					try {
@@ -423,14 +415,13 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 				
 				Parsed parsed = Parser.get(clz);
 				String keyOne = parsed.getKey(Persistence.KEY_ONE);
-				String keyTwo =  parsed.getKey(Persistence.KEY_TWO);
 				
 				ArrayList<Object> objList = tempMap.get(clz);
 				for (Object obj : objList) {
 
 					int i = 1;
 					
-					SqlUtil.adpterSqlKey(pstmt, keyOne, keyTwo, obj, i);
+					SqlUtil.adpterSqlKey(pstmt, keyOne, null, obj, i);
 
 					pstmt.addBatch();
 				}
@@ -540,9 +531,7 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 			pstmt = conn.prepareStatement(sql);
 			
 			Parsed parsed = Parser.get(objList.get(0).getClass());
-			boolean isCombinedKey = parsed.isCombinedKey();
 			String keyOne = parsed.getKey(Persistence.KEY_ONE);
-			String keyTwo = parsed.getKey(Persistence.KEY_TWO);
 			
 			for (Object obj : objList) {
 
@@ -553,11 +542,6 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 						continue;
 					}
 					
-					if (isCombinedKey){
-						if (ele.property.equals(keyTwo) ) {
-							continue;
-						}
-					}
 
 					Method method = null;
 					try {
@@ -573,7 +557,7 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 				/*
 				 * 处理KEY
 				 */
-				SqlUtil.adpterSqlKey(pstmt, keyOne, keyTwo, obj, i);
+				SqlUtil.adpterSqlKey(pstmt, keyOne, null, obj, i);
 
 				pstmt.addBatch();
 			}

@@ -20,29 +20,13 @@ public @interface Persistence {
 	String PAGINATION = "${PAGINATION}";
 	
 	int KEY_ONE = 1;
-	int KEY_TWO = 2;
 	int KEY_SHARDING = 7;
-	int KEY_ONE_SHARDING = 17;
 	
 	/**
 	 * 
 	 * only effect on property
 	 */
 	int key() default 0;
-	/**
-	 * 
-	 * only effect on property<br>
-	 * will not save the property in relation DB, like MySql<br>
-	 * but will save the property int cache, or K-V DB,like mc or redis<br>
-	 * instead of "transient", while transport the stream of object
-	 */
-//	boolean ignored() default false;
-	/**
-	 * 
-	 * only effect on property
-	 */
-	boolean isNotAutoIncrement() default false;
-	
 	/**
 	 * just string(60<=length < 512), datetime, text<br>
 	 * only effect on getter<br>
@@ -98,4 +82,13 @@ public @interface Persistence {
 	}
 	
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.FIELD})
+	@interface id{
+	}
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.FIELD})
+	@interface sharding{
+	}
 }

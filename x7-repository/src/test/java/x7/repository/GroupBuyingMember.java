@@ -17,9 +17,8 @@ public class GroupBuyingMember implements Serializable{
 
 	private static final long serialVersionUID = 1776369120695946858L;
 
-	@Persistence(key = Persistence.KEY_ONE, isNotAutoIncrement = true)
+	@Persistence(key = Persistence.KEY_ONE)
 	private long groupBuyingId; //
-	@Persistence(key = Persistence.KEY_TWO)
 	private long buyerId;
 	private long sharerId;
 

@@ -51,9 +51,6 @@ public class Parsed {
 	}
 
 	public String getId(){
-		if (isCombinedKey()){
-			return keyMap.get(Persistence.KEY_ONE)+"_"+keyMap.get(Persistence.KEY_TWO);
-		}
 		return String.valueOf(keyMap.get(Persistence.KEY_ONE));
 	}
 	
@@ -86,10 +83,6 @@ public class Parsed {
 			return "id";
 		return keyMap.get(index);
 	}
-	
-	public boolean isCombinedKey(){
-		return keyMap.containsKey(Persistence.KEY_ONE) && keyMap.containsKey(Persistence.KEY_TWO);
-	}
 
 	public List<BeanElement> getBeanElementList() {
 		return beanElementList;
@@ -113,14 +106,6 @@ public class Parsed {
 	
 	public void checked(){
 		this.isChecked = true;
-	}
-
-	public boolean isNotAutoIncreament() {
-		return isNotAutoIncreament;
-	}
-
-	public void setNotAutoIncreament(boolean isAutoIncreament) {
-		this.isNotAutoIncreament = isAutoIncreament;
 	}
 	
 	public boolean isSharding(){
@@ -195,15 +180,7 @@ public class Parsed {
 	public Map<String, String> getMapperPropertyMap() {
 		return mapperPropertyMap;
 	}
-
-	@Override
-	public String toString() {
-		return "Parsed [clz=" + clz + ", tableName=" + tableName + ", keyMap=" + keyMap + ", keyFieldMap=" + keyFieldMap
-				+ ", beanElementList=" + beanElementList + ", elementMap=" + elementMap + ", isNotAutoIncreament="
-				+ isNotAutoIncreament + ", isNoCache=" + isNoCache + ", keywordsList=" + keywordsList
-				+ ", isSearchable=" + isSearchable + ", tagMap=" + tagMap +  "]";
-	}
-
+	
 	public boolean isNoSpec() {
 		return isNoSpec;
 	}
@@ -213,5 +190,12 @@ public class Parsed {
 		
 	}
 
-	
+	@Override
+	public String toString() {
+		return "Parsed [clz=" + clz + ", tableName=" + tableName + ", keyMap=" + keyMap + ", keyFieldMap=" + keyFieldMap
+				+ ", beanElementList=" + beanElementList + ", elementMap=" + elementMap + ", isNotAutoIncreament="
+				+ isNotAutoIncreament + ", isNoCache=" + isNoCache + ", keywordsList=" + keywordsList
+				+ ", isSearchable=" + isSearchable + ", tagMap=" + tagMap +  "]";
+	}
+
 }

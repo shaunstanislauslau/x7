@@ -32,11 +32,9 @@ public interface ShardingDao {
 
 	boolean execute(Object obj, String sql);
 
-	<T> T get(Class<T> clz, long idOne, long idTwo);
 	<T> T get(Class<T> clz, long idOne);
 	<T> T getOne(T conditionObj);
 	<T> long getCount(Object obj);
-	<T> long getCount(Class<T> clz, long idOne);
 	
 	<T> Pagination<T> list(Criteria criteria, Pagination<T> pagination);
 	

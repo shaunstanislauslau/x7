@@ -7,7 +7,7 @@ import x7.core.repository.Persistence;
 public class Config implements Serializable{
 
 	private static final long serialVersionUID = 2987956602648283202L;
-	@Persistence(key = Persistence.KEY_ONE, isNotAutoIncrement = true)
+	@Persistence(key = Persistence.KEY_ONE)
 	private String keyX;
 	private String value;
 	public String getKeyX() {

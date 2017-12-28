@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
 import x7.core.bean.Criteria;
@@ -250,16 +249,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#get(long, long)
-	 */
-	@Override
-	public T get(long idOne, long idTwo) {
-		/*
-		 * FIXME 日志
-		 */
-		return Repositories.getInstance().get(clz, idOne, idTwo);
-	}
 
 	/* (non-Javadoc)
 	 * @see x7.repository.X7RepositoryX#list()
@@ -299,14 +288,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return Repositories.getInstance().list(criteria, pagination);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getMaxId(long)
-	 */
-	@Override
-	public long getMaxId(long idOne) {
-
-		return Repositories.getInstance().getMaxId(clz, idOne);
-	}
 
 	/* (non-Javadoc)
 	 * @see x7.repository.X7RepositoryX#getMaxId()
@@ -322,15 +303,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	@Override
 	public long getMaxId(T conditionObj) {
 		return Repositories.getInstance().getMaxId(conditionObj);
-	}
-
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getCount(long)
-	 */
-	@Override
-	public long getCount(long idOne) {
-
-		return Repositories.getInstance().getCount(clz, idOne);
 	}
 
 	/* (non-Javadoc)
@@ -358,14 +330,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 		T t = Repositories.getInstance().getOne(conditionObj);
 		return t;
-	}
-
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#refreshTime(T)
-	 */
-	@Override
-	public void refreshTime(T obj) {
-		Repositories.getInstance().refreshTime(obj);
 	}
 
 	/* (non-Javadoc)
@@ -448,9 +412,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	@Override
 	public Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
 
-		/*
-		 * FIXME 日志
-		 */
 		return Repositories.getInstance().list(criteria, pagination);
 	}
 

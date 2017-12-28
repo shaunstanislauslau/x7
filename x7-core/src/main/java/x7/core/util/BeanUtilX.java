@@ -288,12 +288,11 @@ public class BeanUtilX extends BeanUtil {
 			Persistence a = f.getAnnotation(Persistence.class);
 			if (a == null)
 				continue;
-			if (a.key() == Persistence.KEY_ONE || a.key() == Persistence.KEY_TWO
-					|| a.key() == Persistence.KEY_SHARDING) {
+			if (a.key() == Persistence.KEY_ONE) {
 				map.put(a.key(), f.getName());
 				f.setAccessible(true);
 				keyFieldMap.put(a.key(), f);
-			} else if (a.key() == Persistence.KEY_ONE_SHARDING) {
+			} else if (a.key() == Persistence.KEY_SHARDING) {
 				map.put(Persistence.KEY_ONE, f.getName());
 				map.put(Persistence.KEY_SHARDING, f.getName());
 				f.setAccessible(true);
@@ -301,9 +300,10 @@ public class BeanUtilX extends BeanUtil {
 				keyFieldMap.put(Persistence.KEY_SHARDING, f);
 			}
 
-			if (a.key() == Persistence.KEY_ONE) {
-				parsed.setNotAutoIncreament(a.isNotAutoIncrement());
-			}
+		}
+		
+		if (keyFieldMap.get(Persistence.KEY_SHARDING) == null){
+			keyFieldMap.put(Persistence.KEY_SHARDING, keyFieldMap.get(Persistence.KEY_ONE));
 		}
 
 	}
@@ -481,90 +481,6 @@ public class BeanUtilX extends BeanUtil {
 		return map;
 
 	}
-
-	/**
-	 * 默认值为0的不做查询条件<br>
-	 * 额外条件从另外一个map参数获得<br>
-	 * 优化，使主键在where 的第一位
-	 */
-//	@SuppressWarnings({ "rawtypes", "unchecked" })
-//	public static List<KV> getQueryList(Parsed parsed, Object obj) {
-//
-//		List<KV> list = new LinkedList<KV>();
-//
-//		Class clz = obj.getClass();
-//		try {
-//			for (BeanElement element : parsed.getBeanElementList()) {
-//
-//				Method method = clz.getDeclaredMethod(element.getter);
-//				Object value = method.invoke(obj);
-//				Class type = method.getReturnType();
-//				String property = element.getProperty();
-//				if (type == int.class) {
-//					if ((int) value != 0) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == Integer.class) {
-//					if (value != null) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == long.class) {
-//					if ((long) value != 0) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == Long.class) {
-//					if (value != null) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == double.class) {
-//					if ((double) value != 0) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == Double.class) {
-//					if (value != null) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == boolean.class) {
-//					if ((boolean) value != false) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == Boolean.class) {
-//					if (value != null) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == String.class) {
-//					if (value != null && !((String) value).equals("")) {
-//						list.add(new KV(property, value));
-//					}
-//				} else if (type == Date.class) {
-//					if (value != null) {
-//						list.add(new KV(property, value));
-//					}
-//				}
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//		String keyOne = parsed.getKey(Persistence.KEY_ONE);
-//
-//		KV oneKV = null;
-//
-//		for (KV kv : list) {
-//			if (kv.k.equals(keyOne)) {
-//				list.remove(kv);
-//				oneKV = kv;
-//				break;
-//			}
-//		}
-//
-//		if (oneKV != null) {
-//			list.add(0, oneKV);
-//		}
-//
-//		return list;
-//
-//	}
 
 	public static String getIndexClzName(Class clz) {
 		String name = clz.getName();

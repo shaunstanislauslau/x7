@@ -115,7 +115,6 @@ public class Parser {
 		 * 排序
 		 */
 		BeanElement one = null;
-		BeanElement two = null;
 		Iterator<BeanElement> ite = elementList.iterator();
 		while (ite.hasNext()) {
 			BeanElement be = ite.next();
@@ -124,20 +123,9 @@ public class Parser {
 				ite.remove();
 				continue;
 			}
-			if (parsed.isCombinedKey()) {
-				if (be.getProperty().equals(parsed.getKey(Persistence.KEY_TWO))) {
-					two = be;
-					ite.remove();
-				}
-			}
-
 		}
 
 		elementList.add(0, one);
-
-		if (parsed.isCombinedKey()) {
-			elementList.add(1, two);
-		}
 
 		Iterator<BeanElement> beIte = parsed.getBeanElementList().iterator();
 		while (beIte.hasNext()) {

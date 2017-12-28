@@ -29,17 +29,6 @@ public class SqlUtil {
 		Object value = method.invoke(obj);
 		pstmt.setObject(i++, value);
 
-		if (keyTwo != null && !keyTwo.equals("")){
-			try {
-				method = obj.getClass().getDeclaredMethod(BeanUtil.getGetter(keyTwo));
-			} catch (NoSuchMethodException e) {
-				method = obj.getClass().getSuperclass()
-						.getDeclaredMethod(BeanUtil.getGetter(keyTwo));
-			}
-			
-			value = method.invoke(obj);
-			pstmt.setObject(i++, value);
-		}
 	}
 	
 	protected static void adpterSqlKey(PreparedStatement pstmt, Field keyOneF, Field keyTwoF, Object obj, int i) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
@@ -102,12 +91,6 @@ public class SqlUtil {
 		String mapper = parsed.getMapper(keyOne);
 		sb.append(mapper).append(" = ?");
 		
-		if (parsed.isCombinedKey()){
-			String keyTwo = parsed.getKey(Persistence.KEY_TWO);
-			mapper = parsed.getMapper(keyTwo);
-			sb.append(" AND ").append(mapper).append(" = ?");
-		}
-		
 		return sb.toString();
 	}
 	
@@ -138,11 +121,6 @@ public class SqlUtil {
 		String mapper = parsed.getMapper(keyOne);
 		sb.append(mapper).append(" = ?");
 		
-		if (parsed.isCombinedKey()){
-			String keyTwo = parsed.getKey(Persistence.KEY_TWO);
-			mapper = parsed.getMapper(keyTwo);
-			sb.append(" AND ").append(mapper).append(" = ?");
-		}
 		
 		if (conditionMap != null) {
 			for (String key : conditionMap.keySet()) {

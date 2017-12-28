@@ -6,11 +6,9 @@ import x7.core.repository.Persistence;
 
 
 public class IdGenerator implements Serializable{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -4482390783954339652L;
-	@Persistence(key = Persistence.KEY_ONE, isNotAutoIncrement = true)
+	@Persistence(key = Persistence.KEY_ONE)
 	private String clzName;
 	private long maxId;
 	public String getClzName() {

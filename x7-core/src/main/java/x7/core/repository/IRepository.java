@@ -7,7 +7,6 @@ import x7.core.bean.Criteria;
 import x7.core.web.Pagination;
 
 
-
 /**
  * 
  * 持久化<br>
@@ -51,14 +50,6 @@ public interface IRepository {
 	 */
 	boolean remove(Object obj);
 
-	/**
-	 * 根据主键查询
-	 * 
-	 * @param clz
-	 * @param idOne
-	 * @return
-	 */
-//	<T> List<T> list(Class<T> clz, long idOne);
 	
 	/**
 	 * 根据主键查出单条
@@ -68,25 +59,6 @@ public interface IRepository {
 	 */
 	<T> T get(Class<T> clz, long idOne);
 
-	/**
-	 * 根据联合主键查出单条
-	 * @param clz
-	 * @param idOne
-	 * @param idTwo
-	 * @return
-	 */
-	<T> T get(Class<T> clz, long idOne, long idTwo);
-
-	/**
-	 * 仅仅根据第一主键查询的结果分页<br>
-	 * 通常配合缓存使用<br>
-	 * 
-	 * @param clz
-	 * @param idOne
-	 * @param pagination
-	 * 
-	 */
-//	<T> Pagination<T> list(Class<T> clz, long idOne, Pagination<T> pagination);
 
 	/**
 	 * 根据对象内容查询<br>
@@ -129,7 +101,6 @@ public interface IRepository {
 	<T> List<T> list(Class<T> clz);
 	
 	/**
-	 * 这个仅仅支持keyOne in 查询, 不支持联合主键bean
 	 * @param clz
 	 * @param inList
 	 */
@@ -142,13 +113,7 @@ public interface IRepository {
 	 * @param inList
 	 */
 	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
-	/**
-	 * 联合主键，查第二主键最大值
-	 * @param clz
-	 * @param idOne
-	 * 
-	 */
-	<T> long getMaxId(Class<T> clz, long idOne);
+
 	/**
 	 * 单主键，最大值
 	 * @param clz
@@ -162,14 +127,6 @@ public interface IRepository {
 	 * 
 	 */
 	long getMaxId(Object conditionObj);
-	
-	/**
-	 * 联合主键，查总条数
-	 * @param clz
-	 * @param idOne
-	 * 
-	 */
-	<T> long getCount(Class<T> clz, long idOne);
 	
 	/**
 	 * 查总条数
