@@ -3,7 +3,6 @@ package x7.core.bean;
 import java.lang.reflect.Method;
 
 import x7.core.config.Configs;
-import x7.core.repository.SqlFieldType;
 import x7.core.util.BeanUtil;
 import x7.core.util.StringUtil;
 
@@ -61,13 +60,6 @@ public class BeanElement {
 		return mapper.equals("") ? property : mapper;
 	}
 
-
-	@Override
-	public String toString() {
-		return "BeanElement [property=" + property + ", setter=" + setter + ", getter=" + getter + ", sqlField="
-				+ sqlType + ", clz=" + clz + "]";
-	}
-
 	public boolean isPair() {
 		if (setter == null)
 			return false;
@@ -77,5 +69,12 @@ public class BeanElement {
 			return setter.substring(3).equals(getter.substring(2));
 		}
 		return BeanUtil.getProperty(setter).equals(BeanUtil.getProperty(getter));
+	}
+	
+
+	@Override
+	public String toString() {
+		return "BeanElement [property=" + property + ", setter=" + setter + ", getter=" + getter + ", sqlField="
+				+ sqlType + ", clz=" + clz + "]";
 	}
 }

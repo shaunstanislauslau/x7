@@ -147,24 +147,15 @@ public class BeanUtil {
 
 				try {
 					if (originFnm != null && originFnm.getGetterName() != null) {
-						// System.out.println("originFnm.getGetterName = " +
-						// originFnm.getGetterName() + ", v = " + v);
 						v = oc.getDeclaredMethod(originFnm.getGetterName()).invoke(origin);
-						// System.out.println("originFnm = " + originFnm + ", v
-						// = " + v);
 
 						Method m = fnm.getSetter();
-						// System.out.println("invoke = " + fnm.getSetter());
 						m.invoke(t, v);
 					}
 				} catch (Exception e) {
 
 				}
-				// if (v != null) {
-				// Method m = fnm.getSetter();
-				// System.out.println("invoke = " + fnm.getSetter());
-				// m.invoke(t, v);
-				// }
+
 			}
 
 		} catch (Exception e) {

@@ -38,10 +38,7 @@ public class SqlUtil {
 		Object value = keyOneF.get(obj);
 		pstmt.setObject(i++, value);
 
-		if (keyTwoF != null ){
-			value = keyTwoF.get(obj);
-			pstmt.setObject(i++, value);
-		}
+
 	}
 
 	

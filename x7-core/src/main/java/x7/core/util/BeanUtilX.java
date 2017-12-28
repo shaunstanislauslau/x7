@@ -158,6 +158,10 @@ public class BeanUtilX extends BeanUtil {
 						element.length = 60;
 				} else if (clzName.contains("BigDecimal")){
 					element.sqlType = SqlFieldType.DECIMAL;
+				} else if (element.clz.isEnum()){
+					element.sqlType = SqlFieldType.VARCHAR;
+					if (element.length == 0)
+						element.length = 40;
 				}else {
 					element.isJson = true;
 					if (clzName.contains("List")) {
@@ -370,7 +374,11 @@ public class BeanUtilX extends BeanUtil {
 					if (value != null) {
 						map.put(property, value);
 					}
-				} else if (type == Date.class) {
+				} else if (type.isEnum()){
+					if (value != null) {
+						map.put(property, value.toString());
+					}
+				}else if (type == Date.class) {
 					if (value != null) {
 						map.put(property, value);
 					}
@@ -425,6 +433,10 @@ public class BeanUtilX extends BeanUtil {
 				} else if (type == String.class) {
 					if (value != null && !value.equals("")) {
 						map.put(property, value);
+					}
+				}else if (type.isEnum()){
+					if (value != null) {
+						map.put(property, value.toString());
 					}
 				} else if (type == int.class) {
 					if ((int) value != 0) {

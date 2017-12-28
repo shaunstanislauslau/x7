@@ -1622,7 +1622,7 @@ public class DaoImpl implements Dao {
 	}
 
 	private <T> void initObj(T obj, ResultSet rs, BeanElement tempEle, List<BeanElement> eles)
-			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 
 		ResultSetUtil.initObj(obj, rs, tempEle, eles);
 	}

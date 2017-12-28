@@ -14,12 +14,20 @@ import x7.core.util.JsonX;
 public class ResultSetUtil {
 
 	public static <T> void initObj(T obj, ResultSet rs, BeanElement tempEle, List<BeanElement> eles)
-			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		for (BeanElement ele : eles) {
 			tempEle = ele;
 			Method method = ele.setMethod;
 			String mapper = ele.getMapper();
-			if (ele.isJson) {
+			if (ele.clz.isEnum()) {
+				Object v = rs.getObject(mapper);
+				String str = v.toString();
+
+				Method m = ele.clz.getDeclaredMethod("valueOf", String.class);
+				Object e = m.invoke(null, str);
+				method.invoke(obj, e);
+
+			} else if (ele.isJson) {
 				String str = rs.getString(mapper);
 				if (ele.clz == Map.class) {
 					method.invoke(obj, JsonX.toMap(str));
@@ -33,18 +41,16 @@ public class ResultSetUtil {
 				if (v != null) {
 					method.invoke(obj, Double.valueOf(String.valueOf(v)));
 				}
-			} else if(ele.clz == BigDecimal.class){
+			} else if (ele.clz == BigDecimal.class) {
 
 				Object v = rs.getObject(mapper);
 				if (v != null) {
 					method.invoke(obj, new BigDecimal((String.valueOf(v))));
 				}
-			}else {
+			} else {
 				method.invoke(obj, rs.getObject(mapper));
 			}
 		}
 	}
-	
-	
 
 }
