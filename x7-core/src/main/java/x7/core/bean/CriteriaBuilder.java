@@ -1370,7 +1370,11 @@ public class CriteriaBuilder {
 			}
 
 			Object obj = map.get(key);
-			valueList.add(obj);
+			if (obj.getClass().isEnum()) {
+				valueList.add(obj.toString());
+			}else{
+				valueList.add(obj);
+			}
 		}
 	}
 
