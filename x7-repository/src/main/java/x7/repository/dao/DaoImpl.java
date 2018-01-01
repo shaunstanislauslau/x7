@@ -825,7 +825,6 @@ public class DaoImpl implements Dao {
 		return pagination;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
 
@@ -1640,13 +1639,6 @@ public class DaoImpl implements Dao {
 
 		public List<x7.repository.monitor.mysql.Process> showProcessList(boolean isRead) {
 			String sql = "SHOW PROCESSLIST";
-
-			Connection conn = null;
-			try {
-				conn = getConnection(isRead);
-			} catch (SQLException e) {
-				throw new RuntimeException("NO CONNECTION");
-			}
 
 			List<Map<String, Object>> mapList = DaoImpl.getInstance().list(x7.repository.monitor.mysql.Process.class,
 					sql, null);
