@@ -234,10 +234,7 @@ public class BeanUtilX extends BeanUtil {
 			if (p != null) {
 				ele.sqlType = p.type();
 				ele.length = p.length();
-				if (!p.mapper().equals(""))
-					ele.mapper = p.mapper();
 			}
-
 		}
 
 		if (f != null) {
@@ -245,10 +242,12 @@ public class BeanUtilX extends BeanUtil {
 			if (p != null) {
 				ele.sqlType = p.type();
 				ele.length = p.length();
-				ele.mapper = p.mapper();
-				// System.out.println("parseAnno, property = " + ele.property +
-				// ",ele.sqlField = " + ele.sqlField + ",ele.length = "+
-				// ele.length);
+			}
+			
+			X.Mapping mapping = (X.Mapping) f.getAnnotation(X.Mapping.class);
+			if (mapping != null) {
+				if (StringUtil.isNotNull(mapping.value()))
+					ele.mapper = mapping.value();
 			}
 
 			X.isMobile isMobile = f.getAnnotation(X.isMobile.class);

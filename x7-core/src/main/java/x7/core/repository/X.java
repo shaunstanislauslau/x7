@@ -33,11 +33,12 @@ public @interface X {
 	 */
 	int length() default 60;
 	
-	/**
-	 * 
-	 * only old db suggested
-	 */
-	String mapper() default "";
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.FIELD, ElementType.TYPE}) 
+	@interface Mapping {
+		String value() default "";
+	}
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})

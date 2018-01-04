@@ -78,9 +78,9 @@ public class Parser {
 		/*
 		 * tableName, 
 		 */
-		X p = (X) clz.getAnnotation(X.class);
-		if (p != null) {
-			String tableName = p.mapper();
+		X.Mapping mapping = (X.Mapping) clz.getAnnotation(X.Mapping.class);
+		if (mapping != null) {
+			String tableName = mapping.value();
 			if (!tableName.equals("")) {
 				parsed.setTableName(tableName);
 				parsed.setNoSpec(false);
