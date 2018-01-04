@@ -9,7 +9,6 @@ import java.util.Objects;
 import com.alibaba.fastjson.JSON;
 
 import x7.core.web.Pagination;
-import x7.core.web.PaginationSorted;
 import x7.core.web.PaginationUtil;
 
 /**
@@ -53,14 +52,10 @@ public class JsonX {
 	public static String toJson(Object obj){
 		if (obj == null)
 			return null;
-		if (obj instanceof PaginationSorted){
-			PaginationSorted ps = (PaginationSorted) obj;
+		if (obj instanceof Pagination){
+			Pagination ps = (Pagination) obj;
 			PaginationUtil.toMap(ps);
 			return JSON.toJSONString(ps);
-		}else if (obj instanceof Pagination){
-			Pagination p = (Pagination) obj;
-			PaginationUtil.toMap(p);
-			return JSON.toJSONString(p);
 		}
 		return JSON.toJSONString(obj);
 	}

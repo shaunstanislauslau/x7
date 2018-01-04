@@ -2,17 +2,14 @@ package x7.core.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-
-import x7.core.bean.Para;
 
 /**
  * 
@@ -179,20 +176,13 @@ public class BeanMapUtil {
 				int modifiers = f.getModifiers();
 				String key = f.getName();
 
-
-
-//				if (Modifier.isTransient(modifiers))
-//					continue;
 				
 				if (Modifier.isStatic(modifiers))
 					continue;
 
 				if (Modifier.isFinal(modifiers))
 					continue;
-//
-//
-//				if (modifiers >= 128)
-//					continue;
+
 
 				f.setAccessible(true);
 				Object value = f.get(obj);
@@ -259,14 +249,6 @@ public class BeanMapUtil {
 		return map;
 	}
 	
-	public static void toBeanList(Map<String,Object> map, List<Para> list){
-		
-		for (Para para : list){
-			Class clz = para.getClass();
-			para.setValue(toObject(para.getClass(), map));
-		}
-		
-	}
 	
 	public static Map<String,Object> toJsonableMap(Map<String,Object> stringKeyMap){
 		Map<String,Object> jsonableMap = new HashMap<String,Object>();

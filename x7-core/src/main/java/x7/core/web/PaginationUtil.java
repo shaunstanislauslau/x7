@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class PaginationUtil {
 
-	public static Map<String,Object> toMap(PaginationSorted po){
+	public static Map<String,Object> toMap(Pagination po){
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("page", po.getPage());
 		map.put("rows", po.getRows());
@@ -18,13 +18,5 @@ public class PaginationUtil {
 		return map;
 	}
 	
-	public static Map<String,Object> toMap(Pagination po){
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("page", po.getPage());
-		map.put("rows", po.getRows());
-		map.put("totalPages", po.getTotalPages());
-		map.put("totalRows", po.getTotalRows());
-		map.put("list", po.getList());
-		return map;
-	}
+
 }

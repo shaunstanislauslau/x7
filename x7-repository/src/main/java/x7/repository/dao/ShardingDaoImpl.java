@@ -30,7 +30,6 @@ import x7.core.repository.Persistence;
 import x7.core.util.BeanUtilX;
 import x7.core.util.StringUtil;
 import x7.core.web.Pagination;
-import x7.core.web.PaginationSorted;
 import x7.repository.exception.PersistenceException;
 import x7.repository.exception.RollbackException;
 import x7.repository.exception.ShardingException;
@@ -39,6 +38,7 @@ import x7.repository.sharding.ShardingPolicy;
 /**
  * 
  * Sharding MySQL
+ * 
  * @author Sim
  *
  */
@@ -46,7 +46,7 @@ public class ShardingDaoImpl implements ShardingDao {
 
 	private final static String FALL_LINE = "_";
 	private ExecutorService service = Executors.newCachedThreadPool();
-	
+
 	private static ShardingDaoImpl instance;
 
 	public static ShardingDaoImpl getInstance() {
@@ -134,7 +134,7 @@ public class ShardingDaoImpl implements ShardingDao {
 
 	}
 
-	@SuppressWarnings({ "rawtypes"})
+	@SuppressWarnings({ "rawtypes" })
 	private String getKey(Criteria criteria) {
 		String key = null;
 
@@ -348,7 +348,6 @@ public class ShardingDaoImpl implements ShardingDao {
 		return false;
 	}
 
-
 	private <T> T get(Class<T> clz, long idOne, String key) {
 
 		Connection conn = null;
@@ -393,7 +392,6 @@ public class ShardingDaoImpl implements ShardingDao {
 		return getOne(conditionObj, key);
 	}
 
-
 	private <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination, String key) {
 		Connection conn = null;
 		try {
@@ -428,7 +426,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		final int page = pagination.getPage();
 		final int rows = pagination.getRows();
 
-		Map<String,Future<Pagination<T>>> futureMap = new HashMap<>();
+		Map<String, Future<Pagination<T>>> futureMap = new HashMap<>();
 
 		for (String k : keyArr) {
 
@@ -443,7 +441,7 @@ public class ShardingDaoImpl implements ShardingDao {
 					try {
 						p = list(criteria, p, k);
 					} catch (Exception e) {
-						for (Future<Pagination<T>> f : futureMap.values()){
+						for (Future<Pagination<T>> f : futureMap.values()) {
 							f.cancel(true);
 						}
 						throw new PersistenceException("Exception occured while query from sharding DB: " + k);
@@ -455,58 +453,58 @@ public class ShardingDaoImpl implements ShardingDao {
 			};
 
 			Future<Pagination<T>> future = service.submit(task);
-			futureMap.put(k,future);
+			futureMap.put(k, future);
 
 		}
 
 		/*
 		 * reduce script
 		 */
-		Set<Entry<String,Future<Pagination<T>>>> entrySet = futureMap.entrySet();
-		for (Entry<String,Future<Pagination<T>>> entry : entrySet) {
+		Set<Entry<String, Future<Pagination<T>>>> entrySet = futureMap.entrySet();
+		for (Entry<String, Future<Pagination<T>>> entry : entrySet) {
 			String k = entry.getKey();
 			Future<Pagination<T>> future = entry.getValue();
 			try {
 				Pagination<T> p = future.get(2, TimeUnit.MINUTES);
 				resultMap.put(k, p);
 			} catch (InterruptedException | ExecutionException | TimeoutException e) {
-				for (Future<Pagination<T>> f : futureMap.values()){
+				for (Future<Pagination<T>> f : futureMap.values()) {
 					f.cancel(true);
 				}
 				throw new PersistenceException("DB is busy, while query from sharding DB: " + k);
 			}
 		}
-		
+
 		long totalRows = 0;
 		List<T> resultList = new ArrayList<>();
-		for (Pagination<T> p : resultMap.values()){
+		for (Pagination<T> p : resultMap.values()) {
 			resultList.addAll(p.getList());
 			totalRows += p.getTotalRows();
 		}
-		
-		String orderBy = null;
-		String sc = null;
-		if (pagination instanceof PaginationSorted){
-			orderBy = criteria.getOrderByList().get(0);
-			sc = criteria.getSc();
-		}else{
+
+		String orderBy = criteria.getOrderByList().get(0);
+		String sc = criteria.getSc();
+		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(criteria.getClz());
 			orderBy = parsed.getKey(Persistence.KEY_ONE);
+		}
+		if (StringUtil.isNullOrEmpty(sc)) {
 			sc = "DESC";
 		}
-		
+
 		Class clz = criteria.getClz();
 		BeanUtilX.sort(clz, resultList, orderBy, sc.toUpperCase().equals("ASC"));
-		
-		resultList = resultList.subList(rows * (page-1), rows * page);
-		
+
+		resultList = resultList.subList(rows * (page - 1), rows * page);
+
 		pagination.setTotalRows(totalRows);
 		pagination.setList(resultList);
-		
+
 		return pagination;
 	}
-	
-	private Pagination<Map<String, Object>> list(Fetch criterionJoinable, Pagination<Map<String, Object>> pagination, String key) {
+
+	private Pagination<Map<String, Object>> list(Fetch criterionJoinable, Pagination<Map<String, Object>> pagination,
+			String key) {
 		Connection conn = null;
 		try {
 			conn = getConnection(key, true);// FIXME true, need a policy
@@ -539,8 +537,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		final int rows = pagination.getRows();
 		pagination.setRows(rows * page);
 		pagination.setPage(1);
-		Map<String,Future<Pagination<Map<String, Object>>>> futureMap = new HashMap<>();
-		
+		Map<String, Future<Pagination<Map<String, Object>>>> futureMap = new HashMap<>();
 
 		for (String k : keyArr) {
 
@@ -555,7 +552,7 @@ public class ShardingDaoImpl implements ShardingDao {
 					try {
 						p = list(criteria, p, k);
 					} catch (Exception e) {
-						for (Future<Pagination<Map<String, Object>>> f : futureMap.values()){
+						for (Future<Pagination<Map<String, Object>>> f : futureMap.values()) {
 							f.cancel(true);
 						}
 						throw new PersistenceException("Exception occured while query from sharding DB: " + k);
@@ -568,57 +565,56 @@ public class ShardingDaoImpl implements ShardingDao {
 			};
 
 			Future<Pagination<Map<String, Object>>> future = service.submit(task);
-			futureMap.put(k,future);
+			futureMap.put(k, future);
 
 		}
 
 		/*
 		 * reduce script
 		 */
-		Set<Entry<String,Future<Pagination<Map<String, Object>>>>> entrySet = futureMap.entrySet();
-		for (Entry<String,Future<Pagination<Map<String, Object>>>> entry : entrySet) {
+		Set<Entry<String, Future<Pagination<Map<String, Object>>>>> entrySet = futureMap.entrySet();
+		for (Entry<String, Future<Pagination<Map<String, Object>>>> entry : entrySet) {
 			String k = entry.getKey();
 			Future<Pagination<Map<String, Object>>> future = entry.getValue();
 			try {
 				Pagination<Map<String, Object>> p = future.get(2, TimeUnit.MINUTES);
 				resultMap.put(k, p);
 			} catch (InterruptedException | ExecutionException | TimeoutException e) {
-				for (Future<Pagination<Map<String, Object>>> f : futureMap.values()){
+				for (Future<Pagination<Map<String, Object>>> f : futureMap.values()) {
 					f.cancel(true);
 				}
 				throw new PersistenceException("DB is busy, while query from sharding DB: " + k);
 			}
 		}
-		
+
 		long totalRows = 0;
 		List<Map<String, Object>> resultList = new ArrayList<>();
-		for (Pagination<Map<String, Object>> p : resultMap.values()){
+		for (Pagination<Map<String, Object>> p : resultMap.values()) {
 			resultList.addAll(p.getList());
 			totalRows += p.getTotalRows();
 		}
-		
-		String orderBy = null;
-		String sc = null;
-		if (pagination instanceof PaginationSorted){
-			orderBy = criteria.getOrderByList().get(0);
-			sc = criteria.getSc();
-		}else{
+
+		String orderBy = criteria.getOrderByList().get(0);
+		String sc = criteria.getSc();
+		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(criteria.getClz());
 			orderBy = parsed.getKey(Persistence.KEY_ONE);
+		}
+		if (StringUtil.isNullOrEmpty(sc)) {
 			sc = "DESC";
 		}
 
 		BeanUtilX.sort(resultList, orderBy, sc.toUpperCase().equals("ASC"));
 
-		resultList = resultList.subList(rows * (page-1), rows * page);
-		
+		resultList = resultList.subList(rows * (page - 1), rows * page);
+
 		pagination.setTotalRows(totalRows);
 		pagination.setList(resultList);
-		
+
 		return pagination;
 	}
-	
-	private <T> long getCount(Object obj, String key){
+
+	private <T> long getCount(Object obj, String key) {
 		Connection conn = null;
 		try {
 			conn = getConnection(key, true);// FIXME true, need a policy
@@ -630,7 +626,7 @@ public class ShardingDaoImpl implements ShardingDao {
 
 	@Override
 	public <T> long getCount(Object obj) {
-		
+
 		String key = getKey(obj);
 
 		if (StringUtil.isNotNull(key)) {
@@ -639,11 +635,11 @@ public class ShardingDaoImpl implements ShardingDao {
 
 		String policy = Configs.getString("x7.db.sharding.policy");
 		String[] keyArr = ShardingPolicy.get(policy).getSuffixArr();
-		
+
 		/*
 		 * map script
 		 */
-		Map<String,Future<Long>> futureMap = new HashMap<>();
+		Map<String, Future<Long>> futureMap = new HashMap<>();
 
 		for (String k : keyArr) {
 
@@ -656,7 +652,7 @@ public class ShardingDaoImpl implements ShardingDao {
 					try {
 						count = getCount(obj, k);
 					} catch (Exception e) {
-						for (Future<Long> f : futureMap.values()){
+						for (Future<Long> f : futureMap.values()) {
 							f.cancel(true);
 						}
 						throw new PersistenceException("Exception occured while query from sharding DB: " + k);
@@ -668,7 +664,7 @@ public class ShardingDaoImpl implements ShardingDao {
 			};
 
 			Future<Long> future = service.submit(task);
-			futureMap.put(k,future);
+			futureMap.put(k, future);
 
 		}
 
@@ -676,15 +672,15 @@ public class ShardingDaoImpl implements ShardingDao {
 		 * reduce script
 		 */
 		long totalCount = 0;
-		Set<Entry<String,Future<Long>>> entrySet = futureMap.entrySet();
-		for (Entry<String,Future<Long>> entry : entrySet) {
+		Set<Entry<String, Future<Long>>> entrySet = futureMap.entrySet();
+		for (Entry<String, Future<Long>> entry : entrySet) {
 			String k = entry.getKey();
 			Future<Long> future = entry.getValue();
 			try {
 				Long count = future.get(2, TimeUnit.MINUTES);
 				totalCount += count;
 			} catch (InterruptedException | ExecutionException | TimeoutException e) {
-				for (Future<Long> f : futureMap.values()){
+				for (Future<Long> f : futureMap.values()) {
 					f.cancel(true);
 				}
 				throw new PersistenceException("DB is busy, while query from sharding DB: " + k);
@@ -693,6 +689,5 @@ public class ShardingDaoImpl implements ShardingDao {
 
 		return totalCount;
 	}
-	
 
 }
