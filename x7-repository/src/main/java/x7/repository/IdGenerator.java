@@ -8,7 +8,7 @@ import x7.core.repository.X;
 public class IdGenerator implements Serializable{
 
 	private static final long serialVersionUID = -4482390783954339652L;
-	@X(key = X.KEY_ONE)
+	@X.ID
 	private String clzName;
 	private long maxId;
 	public String getClzName() {

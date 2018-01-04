@@ -23,11 +23,6 @@ public @interface X {
 	int KEY_SHARDING = 7;
 	
 	/**
-	 * 
-	 * only effect on property
-	 */
-	int key() default 0;
-	/**
 	 * just string(60<=length < 512), datetime, text<br>
 	 * only effect on getter<br>
 	 */
@@ -84,11 +79,11 @@ public @interface X {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})
-	@interface id{
+	@interface ID{
 	}
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})
-	@interface sharding{
+	@interface Sharding{
 	}
 }

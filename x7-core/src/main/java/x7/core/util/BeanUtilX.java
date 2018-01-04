@@ -289,14 +289,14 @@ public class BeanUtilX extends BeanUtil {
 		}
 
 		for (Field f : list) {
-			X a = f.getAnnotation(X.class);
-			if (a == null)
-				continue;
-			if (a.key() == X.KEY_ONE) {
-				map.put(a.key(), f.getName());
+			X.ID a = f.getAnnotation(X.ID.class);
+			if (a != null){
+				map.put(X.KEY_ONE, f.getName());
 				f.setAccessible(true);
-				keyFieldMap.put(a.key(), f);
-			} else if (a.key() == X.KEY_SHARDING) {
+				keyFieldMap.put(X.KEY_ONE, f);
+			}
+			X.Sharding s = f.getAnnotation(X.Sharding.class);
+			if (s != null){
 				map.put(X.KEY_ONE, f.getName());
 				map.put(X.KEY_SHARDING, f.getName());
 				f.setAccessible(true);
@@ -307,6 +307,7 @@ public class BeanUtilX extends BeanUtil {
 		}
 		
 		if (keyFieldMap.get(X.KEY_SHARDING) == null){
+			map.put(X.KEY_SHARDING, map.get(X.KEY_SHARDING));
 			keyFieldMap.put(X.KEY_SHARDING, keyFieldMap.get(X.KEY_ONE));
 		}
 

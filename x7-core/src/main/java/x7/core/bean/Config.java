@@ -7,7 +7,7 @@ import x7.core.repository.X;
 public class Config implements Serializable{
 
 	private static final long serialVersionUID = 2987956602648283202L;
-	@X(key = X.KEY_ONE)
+	@X.ID
 	private String keyX;
 	private String value;
 	public String getKeyX() {
