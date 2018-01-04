@@ -21,7 +21,7 @@ import x7.core.async.IHeartBeat;
 import x7.core.bean.BeanElement;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.util.TimeUtil;
 import x7.repository.mapper.MapperFactory;
 import x7.repository.mapper.Mapper;
@@ -414,7 +414,7 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 				pstmt = conn.prepareStatement(sql);
 				
 				Parsed parsed = Parser.get(clz);
-				String keyOne = parsed.getKey(Persistence.KEY_ONE);
+				String keyOne = parsed.getKey(X.KEY_ONE);
 				
 				ArrayList<Object> objList = tempMap.get(clz);
 				for (Object obj : objList) {
@@ -531,7 +531,7 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 			pstmt = conn.prepareStatement(sql);
 			
 			Parsed parsed = Parser.get(objList.get(0).getClass());
-			String keyOne = parsed.getKey(Persistence.KEY_ONE);
+			String keyOne = parsed.getKey(X.KEY_ONE);
 			
 			for (Object obj : objList) {
 

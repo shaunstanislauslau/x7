@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.search.TagParsed;
 
 
@@ -51,7 +51,7 @@ public class Parsed {
 	}
 
 	public String getId(){
-		return String.valueOf(keyMap.get(Persistence.KEY_ONE));
+		return String.valueOf(keyMap.get(X.KEY_ONE));
 	}
 	
 	public BeanElement getElement(String property){
@@ -79,7 +79,7 @@ public class Parsed {
 	}
 
 	public String getKey(int index){
-		if (keyMap.isEmpty() && index == Persistence.KEY_ONE) //DEFAULT
+		if (keyMap.isEmpty() && index == X.KEY_ONE) //DEFAULT
 			return "id";
 		return keyMap.get(index);
 	}
@@ -109,7 +109,7 @@ public class Parsed {
 	}
 	
 	public boolean isSharding(){
-		return keyMap.containsKey(Persistence.KEY_SHARDING);
+		return keyMap.containsKey(X.KEY_SHARDING);
 	}
 
 	public String getTableName() {

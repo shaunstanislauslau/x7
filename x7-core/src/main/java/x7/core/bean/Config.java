@@ -2,12 +2,12 @@ package x7.core.bean;
 
 import java.io.Serializable;
 
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 
 public class Config implements Serializable{
 
 	private static final long serialVersionUID = 2987956602648283202L;
-	@Persistence(key = Persistence.KEY_ONE)
+	@X(key = X.KEY_ONE)
 	private String keyX;
 	private String value;
 	public String getKeyX() {

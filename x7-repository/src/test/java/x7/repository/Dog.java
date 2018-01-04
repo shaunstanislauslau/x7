@@ -2,11 +2,11 @@ package x7.repository;
 
 import java.io.Serializable;
 
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 
 public class Dog implements Serializable{
 
-	@Persistence(key=Persistence.KEY_ONE)
+	@X(key=X.KEY_ONE)
 	private long id;
 	private long petId;
 	private String name;

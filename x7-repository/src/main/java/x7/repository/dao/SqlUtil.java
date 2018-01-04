@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import x7.core.bean.Parsed;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.util.BeanUtil;
 
 
@@ -84,7 +84,7 @@ public class SqlUtil {
 		}
 		
 		sb.append(" WHERE ");
-		String keyOne = parsed.getKey(Persistence.KEY_ONE);
+		String keyOne = parsed.getKey(X.KEY_ONE);
 		String mapper = parsed.getMapper(keyOne);
 		sb.append(mapper).append(" = ?");
 		
@@ -114,7 +114,7 @@ public class SqlUtil {
 		}
 		
 		sb.append(" WHERE ");
-		String keyOne = parsed.getKey(Persistence.KEY_ONE);
+		String keyOne = parsed.getKey(X.KEY_ONE);
 		String mapper = parsed.getMapper(keyOne);
 		sb.append(mapper).append(" = ?");
 		

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import x7.core.config.Configs;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.repository.ReflectionCache;
 import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
@@ -78,7 +78,7 @@ public class Parser {
 		/*
 		 * tableName, 
 		 */
-		Persistence p = (Persistence) clz.getAnnotation(Persistence.class);
+		X p = (X) clz.getAnnotation(X.class);
 		if (p != null) {
 			String tableName = p.mapper();
 			if (!tableName.equals("")) {
@@ -118,7 +118,7 @@ public class Parser {
 		Iterator<BeanElement> ite = elementList.iterator();
 		while (ite.hasNext()) {
 			BeanElement be = ite.next();
-			if (be.getProperty().equals(parsed.getKey(Persistence.KEY_ONE))) {
+			if (be.getProperty().equals(parsed.getKey(X.KEY_ONE))) {
 				one = be;
 				ite.remove();
 				continue;

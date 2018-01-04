@@ -9,7 +9,7 @@ import x7.core.bean.BeanElement;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.config.Configs;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
 import x7.repository.ConfigKey;
@@ -101,7 +101,7 @@ public class MapperFactory implements Mapper {
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName())).append(space);
 			sb.append("SET ");
 
-			String keyOne = parsed.getKey(Persistence.KEY_ONE);
+			String keyOne = parsed.getKey(X.KEY_ONE);
 
 			List<BeanElement> tempList = new ArrayList<BeanElement>();
 			for (BeanElement p : list) {
@@ -163,7 +163,7 @@ public class MapperFactory implements Mapper {
 		public void parseKey(StringBuilder sb, Class clz) {
 			Parsed parsed = Parser.get(clz);
 
-			sb.append(parsed.getKey(Persistence.KEY_ONE));
+			sb.append(parsed.getKey(X.KEY_ONE));
 			sb.append(" = ?");
 
 		}
@@ -177,7 +177,7 @@ public class MapperFactory implements Mapper {
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName())).append(space);
 			sb.append("WHERE ");
 
-			sb.append(parsed.getKey(Persistence.KEY_ONE));
+			sb.append(parsed.getKey(X.KEY_ONE));
 			sb.append(" = ?");
 
 			String sql = sb.toString();
@@ -217,7 +217,7 @@ public class MapperFactory implements Mapper {
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT MAX(");
 
-			sb.append(parsed.getKey(Persistence.KEY_ONE));
+			sb.append(parsed.getKey(X.KEY_ONE));
 
 			sb.append(") maxId FROM ");
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName()));
@@ -297,7 +297,7 @@ public class MapperFactory implements Mapper {
 			}
 			Parsed parsed = Parser.get(clz);
 
-			String keyOne = parsed.getKey(Persistence.KEY_ONE);
+			String keyOne = parsed.getKey(X.KEY_ONE);
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("CREATE TABLE IF NOT EXISTS ").append(BeanUtil.getByFirstLower(parsed.getClzName())).append(" (")
@@ -377,7 +377,7 @@ public class MapperFactory implements Mapper {
 			Parsed parsed = Parser.get(clz);
 			String space = " ";
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT " + Persistence.PAGINATION + " FROM ");
+			sb.append("SELECT " + X.PAGINATION + " FROM ");
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName())).append(space);
 			sb.append("WHERE 1=1 ");
 
@@ -399,7 +399,7 @@ public class MapperFactory implements Mapper {
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT COUNT(");
 			
-			sb.append(parsed.getKey(Persistence.KEY_ONE));
+			sb.append(parsed.getKey(X.KEY_ONE));
 			
 			sb.append(") count FROM ");
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName()));

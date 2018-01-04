@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import x7.core.bean.Criteria.Fetch;
-import x7.core.repository.Persistence;
 import x7.core.util.BeanMapUtil;
 import x7.core.util.BeanUtilX;
 import x7.core.util.NumberUtil;
@@ -1239,7 +1238,7 @@ public class CriteriaBuilder {
 		String column = criteria.resultAllScript();
 
 		String[] sqlArr = new String[3];
-		String str = sql.replace(Persistence.PAGINATION, column);
+		String str = sql.replace(x7.core.repository.X.PAGINATION, column);
 		sqlArr[1] = str;
 		if (isGrouped) {
 			String groupBy = criteria.getGroupBy();
@@ -1249,7 +1248,7 @@ public class CriteriaBuilder {
 			str = str.replace(" count ", " _count ");
 			sqlArr[0] = "select count(tc." + groupBy + ") count from (" + str + ") tc";
 		} else {
-			sqlArr[0] = sql.replace(Persistence.PAGINATION, "COUNT(*) count");
+			sqlArr[0] = sql.replace(x7.core.repository.X.PAGINATION, "COUNT(*) count");
 		}
 		sqlArr[2] = sql;
 
@@ -1320,7 +1319,7 @@ public class CriteriaBuilder {
 	}
 
 	private static void select(StringBuilder sb, Criteria criteria) {
-		sb.append("SELECT").append(space).append(Persistence.PAGINATION);
+		sb.append("SELECT").append(space).append(x7.core.repository.X.PAGINATION);
 	}
 
 	private static void sort(StringBuilder sb, Criteria criteria) {

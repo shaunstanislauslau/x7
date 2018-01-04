@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.repository.dao.AsyncDaoWrapper;
 
 /**
@@ -58,7 +58,7 @@ public class AsyncRepository {
 
 			try {
 				for (Object obj : list) {
-					long idOne = parsed.getKeyField(Persistence.KEY_ONE).getLong(obj);
+					long idOne = parsed.getKeyField(X.KEY_ONE).getLong(obj);
 					String key = getKey(clz, idOne);
 					map1.put(key, obj);
 				}

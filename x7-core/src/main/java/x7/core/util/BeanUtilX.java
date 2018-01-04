@@ -16,7 +16,7 @@ import java.util.Set;
 
 import x7.core.bean.BeanElement;
 import x7.core.bean.Parsed;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.repository.SqlFieldType;
 import x7.core.search.Search;
 import x7.core.search.TagParsed;
@@ -49,7 +49,7 @@ public class BeanUtilX extends BeanUtil {
 			/*
 			 * ignored anno
 			 */
-			Persistence.ignore p = f.getAnnotation(Persistence.ignore.class);
+			X.ignore p = f.getAnnotation(X.ignore.class);
 			if (p != null) {
 				filterMap.put(f.getName(), f);
 			}
@@ -214,7 +214,7 @@ public class BeanUtilX extends BeanUtil {
 	}
 
 	public static void parseCacheableAnno(Class clz, Parsed parsed) {
-		Persistence.noCache p = (Persistence.noCache) clz.getAnnotation(Persistence.noCache.class);
+		X.noCache p = (X.noCache) clz.getAnnotation(X.noCache.class);
 		if (p != null) {
 			parsed.setNoCache(true);
 		}
@@ -230,7 +230,7 @@ public class BeanUtilX extends BeanUtil {
 
 		}
 		if (m != null) {
-			Persistence p = m.getAnnotation(Persistence.class);
+			X p = m.getAnnotation(X.class);
 			if (p != null) {
 				ele.sqlType = p.type();
 				ele.length = p.length();
@@ -241,7 +241,7 @@ public class BeanUtilX extends BeanUtil {
 		}
 
 		if (f != null) {
-			Persistence p = f.getAnnotation(Persistence.class);
+			X p = f.getAnnotation(X.class);
 			if (p != null) {
 				ele.sqlType = p.type();
 				ele.length = p.length();
@@ -251,17 +251,17 @@ public class BeanUtilX extends BeanUtil {
 				// ele.length);
 			}
 
-			Persistence.isMobile isMobile = f.getAnnotation(Persistence.isMobile.class);
+			X.isMobile isMobile = f.getAnnotation(X.isMobile.class);
 			if (isMobile != null) {
 				ele.isMobile = true;
 			}
 
-			Persistence.isEmail isEmail = f.getAnnotation(Persistence.isEmail.class);
+			X.isEmail isEmail = f.getAnnotation(X.isEmail.class);
 			if (isEmail != null) {
 				ele.isEmail = true;
 			}
 
-			Persistence.notNull notNull = f.getAnnotation(Persistence.notNull.class);
+			X.notNull notNull = f.getAnnotation(X.notNull.class);
 			if (notNull != null) {
 				ele.notNull = true;
 			}
@@ -289,25 +289,25 @@ public class BeanUtilX extends BeanUtil {
 		}
 
 		for (Field f : list) {
-			Persistence a = f.getAnnotation(Persistence.class);
+			X a = f.getAnnotation(X.class);
 			if (a == null)
 				continue;
-			if (a.key() == Persistence.KEY_ONE) {
+			if (a.key() == X.KEY_ONE) {
 				map.put(a.key(), f.getName());
 				f.setAccessible(true);
 				keyFieldMap.put(a.key(), f);
-			} else if (a.key() == Persistence.KEY_SHARDING) {
-				map.put(Persistence.KEY_ONE, f.getName());
-				map.put(Persistence.KEY_SHARDING, f.getName());
+			} else if (a.key() == X.KEY_SHARDING) {
+				map.put(X.KEY_ONE, f.getName());
+				map.put(X.KEY_SHARDING, f.getName());
 				f.setAccessible(true);
-				keyFieldMap.put(Persistence.KEY_ONE, f);
-				keyFieldMap.put(Persistence.KEY_SHARDING, f);
+				keyFieldMap.put(X.KEY_ONE, f);
+				keyFieldMap.put(X.KEY_SHARDING, f);
 			}
 
 		}
 		
-		if (keyFieldMap.get(Persistence.KEY_SHARDING) == null){
-			keyFieldMap.put(Persistence.KEY_SHARDING, keyFieldMap.get(Persistence.KEY_ONE));
+		if (keyFieldMap.get(X.KEY_SHARDING) == null){
+			keyFieldMap.put(X.KEY_SHARDING, keyFieldMap.get(X.KEY_ONE));
 		}
 
 	}

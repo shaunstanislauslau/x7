@@ -19,7 +19,7 @@ import x7.core.bean.Parser;
 import x7.core.repository.CacheException;
 import x7.core.repository.ICacheResolver;
 import x7.core.repository.IRepository;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.web.Pagination;
 import x7.repository.dao.Dao;
 import x7.repository.dao.ShardingDao;
@@ -71,7 +71,7 @@ public class Repositories implements IRepository {
 	private String getCacheKey(Object obj, Parsed parsed) {
 		try {
 
-			Field field = obj.getClass().getDeclaredField(parsed.getKey(Persistence.KEY_ONE));
+			Field field = obj.getClass().getDeclaredField(parsed.getKey(X.KEY_ONE));
 			field.setAccessible(true);
 			String keyOne = field.get(obj).toString();
 			return keyOne;
@@ -95,7 +95,7 @@ public class Repositories implements IRepository {
 
 				T obj = null;
 
-				Field f = parsed.getKeyField(Persistence.KEY_ONE);
+				Field f = parsed.getKeyField(X.KEY_ONE);
 				if (f.getType() == String.class) {
 					T condition = null;
 					try {
@@ -145,7 +145,7 @@ public class Repositories implements IRepository {
 
 		try {
 			for (T t : list) {
-				Field keyOneField = parsed.getKeyField(Persistence.KEY_ONE);
+				Field keyOneField = parsed.getKeyField(X.KEY_ONE);
 				Object v = keyOneField.get(t);
 				if (inList.contains(v)) {// 没从缓存里取到的值
 					inList.remove(v);
@@ -164,7 +164,7 @@ public class Repositories implements IRepository {
 			} else {
 				list.add(obj);
 				if (cacheResolver != null && !parsed.isNoCache()) {
-					Field keyOneField = parsed.getKeyField(Persistence.KEY_ONE);
+					Field keyOneField = parsed.getKeyField(X.KEY_ONE);
 					Object keyO = null;
 					try {
 						keyO = keyOneField.get(obj);

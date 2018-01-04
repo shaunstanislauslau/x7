@@ -26,7 +26,7 @@ import x7.core.bean.Criteria.Fetch;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.config.Configs;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.util.BeanUtilX;
 import x7.core.util.StringUtil;
 import x7.core.web.Pagination;
@@ -75,9 +75,9 @@ public class ShardingDaoImpl implements ShardingDao {
 
 		String fieldName = null;
 		try {
-			fieldName = parsed.getKey(Persistence.KEY_SHARDING);
+			fieldName = parsed.getKey(X.KEY_SHARDING);
 			if (fieldName == null) {
-				fieldName = parsed.getKey(Persistence.KEY_ONE);
+				fieldName = parsed.getKey(X.KEY_ONE);
 			}
 
 		} catch (Exception e) {
@@ -94,7 +94,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		String value = "";
 		Field field = null;
 		try {
-			field = parsed.getKeyField(Persistence.KEY_SHARDING);
+			field = parsed.getKeyField(X.KEY_SHARDING);
 			field.setAccessible(true);
 			Object o = field.get(obj);
 			value = String.valueOf(o);
@@ -102,8 +102,8 @@ public class ShardingDaoImpl implements ShardingDao {
 			e.printStackTrace();
 		}
 
-		String idOne = parsed.getKey(Persistence.KEY_ONE);
-		String keySharding = parsed.getKey(Persistence.KEY_SHARDING);
+		String idOne = parsed.getKey(X.KEY_ONE);
+		String keySharding = parsed.getKey(X.KEY_SHARDING);
 		if (idOne.equals(keySharding)) {
 			if (value.equals("0"))
 				throw new ShardingException(
@@ -486,7 +486,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		String sc = criteria.getSc();
 		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(criteria.getClz());
-			orderBy = parsed.getKey(Persistence.KEY_ONE);
+			orderBy = parsed.getKey(X.KEY_ONE);
 		}
 		if (StringUtil.isNullOrEmpty(sc)) {
 			sc = "DESC";
@@ -598,7 +598,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		String sc = criteria.getSc();
 		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(criteria.getClz());
-			orderBy = parsed.getKey(Persistence.KEY_ONE);
+			orderBy = parsed.getKey(X.KEY_ONE);
 		}
 		if (StringUtil.isNullOrEmpty(sc)) {
 			sc = "DESC";

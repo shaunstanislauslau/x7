@@ -4,7 +4,7 @@ package x7.repository;
 import java.io.Serializable;
 import java.util.Date;
 
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 
 
 /**
@@ -17,7 +17,7 @@ public class GroupBuyingMember implements Serializable{
 
 	private static final long serialVersionUID = 1776369120695946858L;
 
-	@Persistence(key = Persistence.KEY_ONE)
+	@X(key = X.KEY_ONE)
 	private long groupBuyingId; //
 	private long buyerId;
 	private long sharerId;

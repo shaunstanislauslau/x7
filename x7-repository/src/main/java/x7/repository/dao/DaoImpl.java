@@ -24,7 +24,7 @@ import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaBuilder;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
-import x7.core.repository.Persistence;
+import x7.core.repository.X;
 import x7.core.util.BeanMapUtil;
 import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
@@ -160,13 +160,13 @@ public class DaoImpl implements Dao {
 		try {
 			Parsed parsed = Parser.get(clz);
 
-			String keyOne = parsed.getKey(Persistence.KEY_ONE);
+			String keyOne = parsed.getKey(X.KEY_ONE);
 
 			Long keyOneValue = 0L;
-			Field keyOneField = parsed.getKeyField(Persistence.KEY_ONE);
+			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
 			Class keyOneType = keyOneField.getType();
 			if (keyOneType != String.class) {
-				keyOneValue = parsed.getKeyField(Persistence.KEY_ONE).getLong(obj);
+				keyOneValue = parsed.getKeyField(X.KEY_ONE).getLong(obj);
 			}
 
 			/*
@@ -273,7 +273,7 @@ public class DaoImpl implements Dao {
 
 			int i = 1;
 
-			SqlUtil.adpterSqlKey(pstmt, parsed.getKeyField(Persistence.KEY_ONE), null, obj, i);
+			SqlUtil.adpterSqlKey(pstmt, parsed.getKeyField(X.KEY_ONE), null, obj, i);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -317,13 +317,13 @@ public class DaoImpl implements Dao {
 		PreparedStatement pstmt = null;
 		try {
 			Parsed parsed = Parser.get(clz);
-			String keyOne = parsed.getKey(Persistence.KEY_ONE);
+			String keyOne = parsed.getKey(X.KEY_ONE);
 
 			Long keyOneValue = 0L;
-			Field keyOneField = parsed.getKeyField(Persistence.KEY_ONE);
+			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
 			Class keyOneType = keyOneField.getType();
 			if (keyOneType != String.class) {
-				keyOneValue = parsed.getKeyField(Persistence.KEY_ONE).getLong(obj);
+				keyOneValue = parsed.getKeyField(X.KEY_ONE).getLong(obj);
 			}
 
 			/*
@@ -443,7 +443,7 @@ public class DaoImpl implements Dao {
 			/*
 			 * 处理KEY
 			 */
-			Field keyOneF = parsed.getKeyField(Persistence.KEY_ONE);
+			Field keyOneF = parsed.getKeyField(X.KEY_ONE);
 			SqlUtil.adpterSqlKey(pstmt, keyOneF, null, obj, i);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
@@ -849,7 +849,7 @@ public class DaoImpl implements Dao {
 		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
 		sql = SqlUtil.concat(parsed, sql, queryMap);
 
-		String countSql = sql.replace(Persistence.PAGINATION, "SUM(*) sum");
+		String countSql = sql.replace(X.PAGINATION, "SUM(*) sum");
 		countSql = countSql.replace("*", sumProperty);
 
 		Object sum = null;
@@ -893,7 +893,7 @@ public class DaoImpl implements Dao {
 
 		String sqlSum = sqlArr[2];
 
-		sqlSum = sqlSum.replace(Persistence.PAGINATION, "SUM(*) sum");
+		sqlSum = sqlSum.replace(X.PAGINATION, "SUM(*) sum");
 		if (StringUtil.isNotNull(sumProperty)) {
 			sumProperty = parsed.getMapper(sumProperty);
 			sqlSum = sqlSum.replace("*", sumProperty);
@@ -979,7 +979,7 @@ public class DaoImpl implements Dao {
 		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
 		sql = SqlUtil.concat(parsed, sql, queryMap);
 
-		String countSql = sql.replace(Persistence.PAGINATION, "COUNT(*) count");
+		String countSql = sql.replace(X.PAGINATION, "COUNT(*) count");
 
 		long count = 0;
 		PreparedStatement pstmt = null;
@@ -1097,7 +1097,7 @@ public class DaoImpl implements Dao {
 		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
 		sql = SqlUtil.concat(parsed, sql, queryMap);
 
-		sql = sql.replace(Persistence.PAGINATION, "max(id) maxId");
+		sql = sql.replace(X.PAGINATION, "max(id) maxId");
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -1211,7 +1211,7 @@ public class DaoImpl implements Dao {
 			/*
 			 * 处理KEY
 			 */
-			Field keyOneF = parsed.getKeyField(Persistence.KEY_ONE);
+			Field keyOneF = parsed.getKeyField(X.KEY_ONE);
 			SqlUtil.adpterRefreshCondition(pstmt, keyOneF, null, obj, i, conditionMap);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
@@ -1269,7 +1269,7 @@ public class DaoImpl implements Dao {
 
 		String sqlCount = sqlArr[2];
 
-		sqlCount = sqlCount.replace(Persistence.PAGINATION, "COUNT(*) count");
+		sqlCount = sqlCount.replace(X.PAGINATION, "COUNT(*) count");
 		if (StringUtil.isNotNull(countProperty)) {
 			countProperty = parsed.getMapper(countProperty);
 			sqlCount = sqlCount.replace("*", countProperty);
@@ -1313,9 +1313,9 @@ public class DaoImpl implements Dao {
 		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
 		List<BeanElement> eles = MapperFactory.getElementList(clz);
 
-		String keyOne = parsed.getKey(Persistence.KEY_ONE);
+		String keyOne = parsed.getKey(X.KEY_ONE);
 
-		Field keyField = parsed.getKeyField(Persistence.KEY_ONE);
+		Field keyField = parsed.getKeyField(X.KEY_ONE);
 		Class<?> keyType = keyField.getType();
 		boolean isNumber = (keyType == long.class || keyType == int.class || keyType == Long.class
 				|| keyType == Integer.class);

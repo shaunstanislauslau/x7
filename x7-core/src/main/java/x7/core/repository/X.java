@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE}) 
-public @interface Persistence {
+public @interface X {
 	
 	String SUFFIX = "${SUFFIX}";
 	String PAGINATION = "${PAGINATION}";
@@ -61,7 +61,7 @@ public @interface Persistence {
 	
 	/**
 	 * 
-	 * 类名上标记不可使用缓存，仅限二级缓存
+	 * not cached two
 	 *
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
