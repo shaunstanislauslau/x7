@@ -133,30 +133,30 @@ public class BeanUtilX extends BeanUtil {
 
 			parseAnno(clz, element, allMap.get(element.getProperty()));
 
-			String clzName = element.clz.getName();
+			Class ec = element.clz;
 			if (element.sqlType == null) {
-				if (clzName.contains(SqlFieldType.INT) || clzName.contains("Integer")) {
+				if (ec == int.class || ec == Integer.class) {
 					element.sqlType = SqlFieldType.INT;
 					element.length = 11;
-				} else if (clzName.contains("long") || clzName.contains("Long")) {
+				} else if (ec == long.class || ec == Long.class) {
 					element.sqlType = SqlFieldType.LONG;
 					element.length = 13;
-				} else if (clzName.contains("double") || clzName.contains("Double")) {
+				} else if (ec == double.class || ec == Double.class) {
 					element.sqlType = SqlFieldType.DOUBLE;
 					element.length = 13;
-				} else if (clzName.contains("float") || clzName.contains("Float")) {
+				} else if (ec == float.class || ec == Float.class) {
 					element.sqlType = SqlFieldType.FLOAT;
 					element.length = 13;
-				} else if (clzName.contains("boolean") || clzName.contains("Boolean")) {
+				} else if (ec == boolean.class || ec == Boolean.class) {
 					element.sqlType = SqlFieldType.BYTE;
 					element.length = 1;
-				} else if (clzName.contains("Date")) {
+				} else if (ec == Date.class) {
 					element.sqlType = SqlFieldType.DATE;
-				} else if (clzName.contains("String")) {
+				} else if (ec == String.class) {
 					element.sqlType = SqlFieldType.VARCHAR;
 					if (element.length == 0)
 						element.length = 60;
-				} else if (clzName.contains("BigDecimal")){
+				} else if (ec == BigDecimal.class){
 					element.sqlType = SqlFieldType.DECIMAL;
 				} else if (element.clz.isEnum()){
 					element.sqlType = SqlFieldType.VARCHAR;
@@ -164,12 +164,11 @@ public class BeanUtilX extends BeanUtil {
 						element.length = 40;
 				}else {
 					element.isJson = true;
-					if (clzName.contains("List")) {
+					if (clz == List.class) {
 						Field field = null;
 						try {
 							field = clz.getDeclaredField(element.getProperty());
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						ParameterizedType pt = (ParameterizedType) field.getGenericType();
@@ -189,10 +188,6 @@ public class BeanUtilX extends BeanUtil {
 			list.add(element);
 		}
 
-		// for (BeanElement e : list) {
-		// System.out.println(e.property + " : " + e.sqlField + " : " +
-		// e.length);
-		// }
 		try {
 			for (BeanElement be : list) {
 				try {
