@@ -4,10 +4,7 @@ import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
 /**
- * 需要用到数量增加的方法都需调用getValue(i)
  * 
- * @author linweiyong
- * @date 2015年10月24日
  */
 public class NumberUtil {
 	
@@ -154,13 +151,6 @@ public class NumberUtil {
 		BigDecimal b = new BigDecimal(Double.toString(v));
 		BigDecimal one = new BigDecimal("1");
 		return b.divide(one, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
-	}
-	
-	public static void main(String[] args) {
-		System.out.println("0:"+isNumeric("0"));
-		System.out.println("1:"+isNumeric("1"));
-		System.out.println("1.1:"+isNumeric("1.1"));
-		System.out.println("-1.1:"+isNumeric("-1.1"));
 	}
 	
 	public static boolean isNumeric(String str) {    

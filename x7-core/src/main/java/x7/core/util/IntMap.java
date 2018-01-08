@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 因为是int型,无法作null判断, 设计上用"-1"作为保留数字,key 和 value都不能为-1;<br>
  * 如果返回-1,表示没查到<br>
  * 当元数过多时, 请不要使用, 最好不要超过300个
- * @author wyan
+ * @author Sim
  *
  */
 public class IntMap implements Serializable{

@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * 固定长度队列
- * @author Sim Wang
+ * @author Sim
  *
  */
 public class LimitQueue<E> implements Queue<E>{
