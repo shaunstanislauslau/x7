@@ -686,13 +686,13 @@ public class Repositories implements IRepository {
 
 	// 20160122 add by cl
 	@Override
-	public Object getCount(String sumProperty, Criteria criteria) {
+	public Object getCount(String countProperty, Criteria criteria) {
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
 			throw new ShardingException("Sharding not supported: getCount(String sumProperty, Criteria criteria)");
 		} else {
-			return syncDao.getCount(sumProperty, criteria);
+			return syncDao.getCount(countProperty, criteria);
 		}
 	}
 

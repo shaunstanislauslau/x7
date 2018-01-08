@@ -23,8 +23,11 @@ import x7.repository.redis.JedisConnector_Persistence;
 
 /**
  * 
- * 其他模块的Repository建议继承此类
+ * Biz Repository extends BaseRepository
+ * 
+ * @author Sim
  *
+ * @param <T>
  */
 public abstract class BaseRepository<T> implements X7Repository<T> {
 
@@ -86,50 +89,31 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return list;
 	}
 
-
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#set(byte[], byte[])
-	 */
 	@Override
 	public void set(byte[] key, byte[] value) {
 		JedisConnector_Persistence.getInstance().set(key, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#get(byte[])
-	 */
 	@Override
 	public byte[] get(byte[] key) {
 		return JedisConnector_Persistence.getInstance().get(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#set(java.lang.String, java.lang.String, int)
-	 */
 	@Override
 	public void set(String key, String value, int seconds) {
 		JedisConnector_Persistence.getInstance().set(key, value, seconds);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#set(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void set(String key, String value) {
 		JedisConnector_Persistence.getInstance().set(key, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#get(java.lang.String)
-	 */
 	@Override
 	public String get(String key) {
 		return JedisConnector_Persistence.getInstance().get(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#createId(java.lang.Object)
-	 */
 	@Override
 	public long createId(Object obj) {
 		
@@ -161,9 +145,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return id;
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#reduce(x7.core.bean.IQuantity, int)
-	 */
 	@Override
 	public int reduce(IQuantity obj, int reduced) {
 		if (reduced < 0) {
@@ -180,21 +161,15 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#createBatch(java.util.List)
-	 */
 	@Override
 	public boolean createBatch(List<T> objList){
 		return Repositories.getInstance().createBatch(objList);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#create(T)
-	 */
 	@Override
 	public long create(T obj) {
 		/*
-		 * FIXME 日志
+		 * FIXME
 		 */
 		System.out.println("BaesRepository.create: " + obj);
 
@@ -204,64 +179,40 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#refresh(T)
-	 */
+
 	@Override
 	public boolean refresh(T obj) {
 		return Repositories.getInstance().refresh(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#refresh(T, java.util.Map)
-	 */
 	@Override
 	public boolean refresh(T obj, Map<String, Object> conditionMap) {
 		return Repositories.getInstance().refresh(obj, conditionMap);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#refreshAsync(T)
-	 */
 	@Override
 	public void refreshAsync(T obj) {
 		Repositories.getInstance().refreshAsync(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#remove(T)
-	 */
 	@Override
 	public void remove(T obj) {
 		Repositories.getInstance().remove(obj);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#get(long)
-	 */
 	@Override
 	public T get(long idOne) {
-		/*
-		 * FIXME 日志
-		 */
-		return Repositories.getInstance().get(clz, idOne);
 
+		return Repositories.getInstance().get(clz, idOne);
 	}
 
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#list()
-	 */
 	@Override
 	public List<T> list() {
 
 		return Repositories.getInstance().list(clz);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#list(T)
-	 */
 	@Override
 	public List<T> list(T conditionObj) {
 
@@ -269,62 +220,38 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 			throw new RuntimeException(
 					"Exception supported, no pagination not to invoke Repositories.getInstance().list(criteriaJoinalbe);");
 		}
-		/*
-		 * FIXME 日志
-		 */
+
 		return Repositories.getInstance().list(conditionObj);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#list(x7.core.bean.Criteria.Fetch, x7.core.web.Pagination)
-	 */
 	@Override
 	public Pagination<Map<String, Object>> list(Criteria.Fetch criteria, Pagination<Map<String, Object>> pagination) {
 
-		/*
-		 * FIXME 日志
-		 */
 		return Repositories.getInstance().list(criteria, pagination);
 	}
 
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getMaxId()
-	 */
 	@Override
 	public long getMaxId() {
 		return Repositories.getInstance().getMaxId(clz);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getMaxId(T)
-	 */
 	@Override
 	public long getMaxId(T conditionObj) {
 		return Repositories.getInstance().getMaxId(conditionObj);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getCount(T)
-	 */
 	@Override
 	public long getCount(T conditonObj) {
 		return Repositories.getInstance().getCount(conditonObj);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getOne(T, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public T getOne(T conditionObj, String orderBy, String sc) {
 
 		return Repositories.getInstance().getOne(conditionObj, orderBy, sc);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getOne(T)
-	 */
 	@Override
 	public T getOne(T conditionObj) {
 
@@ -332,42 +259,26 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return t;
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#refreshCache()
-	 */
 	@Override
 	public void refreshCache() {
 		Repositories.getInstance().refreshCache(clz);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getSum(T, java.lang.String)
-	 */
 	@Override
 	public Object getSum(T conditionObj, String sumProperty) {
 		return Repositories.getInstance().getSum(conditionObj, sumProperty);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getSum(T, java.lang.String, x7.core.bean.Criteria)
-	 */
 	@Override
 	public Object getSum(T conditionObj, String sumProperty, Criteria criteria) {
 		return Repositories.getInstance().getSum(sumProperty, criteria);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#getCount(java.lang.String, x7.core.bean.Criteria)
-	 */
 	@Override
-	public Object getCount(String sumProperty, Criteria criteria) {
-		return Repositories.getInstance().getCount(sumProperty, criteria);
+	public Object getCount(String countProperty, Criteria criteria) {
+		return Repositories.getInstance().getCount(countProperty, criteria);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#in(java.util.List)
-	 */
 	@Override
 	public List<T> in(List<? extends Object> inList) {
 		if (inList.isEmpty())
@@ -385,9 +296,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return Repositories.getInstance().in(clz, list);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#in(java.lang.String, java.util.List)
-	 */
 	@Override
 	public List<T> in(String inProperty, List<? extends Object> inList) {
 		if (inList.isEmpty())
@@ -406,9 +314,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return Repositories.getInstance().in(clz, inProperty, list);
 	}
 
-	/* (non-Javadoc)
-	 * @see x7.repository.X7RepositoryX#list(x7.core.bean.Criteria, x7.core.web.Pagination)
-	 */
 	@Override
 	public Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
 
