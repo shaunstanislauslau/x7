@@ -21,9 +21,9 @@ import x7.core.web.Fetched;
 import x7.core.web.RequestMapped;
 
 /**
- * 简单的SQL拼接标准化, 仅仅支持简单的业务系统, 不支持报表和数据分析
+ * Standard Query Builder
  * 
- * @author sim
+ * @author Sim
  *
  */
 public class CriteriaBuilder {
@@ -245,8 +245,6 @@ public class CriteriaBuilder {
 		@Override
 		public CriteriaBuilder not(String property, Object value) {
 
-			// check(property);
-
 			if (value == null)
 				return instance;
 
@@ -285,8 +283,6 @@ public class CriteriaBuilder {
 
 		@Override
 		public CriteriaBuilder between(String property, Object min, Object max) {
-
-			// check(property);
 
 			if (min == null || max == null)
 				return instance;
@@ -871,8 +867,6 @@ public class CriteriaBuilder {
 
 	public O orderBy(String property) {
 
-		// check(property);
-
 		property = getAliasPoint(property);
 		criteria.getOrderByList().add(property);
 
@@ -885,7 +879,6 @@ public class CriteriaBuilder {
 
 			@Override
 			public O orderBy(String property) {
-				// check(property);
 				property = getAliasPoint(property);
 				if (!criteria.getOrderByList().contains(property)) {
 					criteria.getOrderByList().add(property);
@@ -915,8 +908,6 @@ public class CriteriaBuilder {
 			@Override
 			public CriteriaBuilder eq(String property, Object value) {
 
-				// check(property);
-
 				if (value == null)
 					return instance;
 
@@ -938,8 +929,6 @@ public class CriteriaBuilder {
 			@Override
 			public CriteriaBuilder lt(String property, Object value) {
 
-				// check(property);
-
 				if (value == null)
 					return instance;
 
@@ -959,8 +948,6 @@ public class CriteriaBuilder {
 
 			@Override
 			public CriteriaBuilder lte(String property, Object value) {
-
-				// check(property);
 
 				if (value == null)
 					return instance;
@@ -983,8 +970,6 @@ public class CriteriaBuilder {
 			@Override
 			public CriteriaBuilder gt(String property, Object value) {
 
-				// check(property);
-
 				if (value == null)
 					return instance;
 
@@ -1003,8 +988,6 @@ public class CriteriaBuilder {
 
 			@Override
 			public CriteriaBuilder gte(String property, Object value) {
-
-				// check(property);
 
 				if (value == null)
 					return instance;
@@ -1027,8 +1010,6 @@ public class CriteriaBuilder {
 			@Override
 			public CriteriaBuilder not(String property, Object value) {
 
-				// check(property);
-
 				if (value == null)
 					return instance;
 
@@ -1049,8 +1030,6 @@ public class CriteriaBuilder {
 
 			@Override
 			public CriteriaBuilder like(String property, Object value) {
-
-				// check(property);
 
 				if (value == null)
 					return instance;
@@ -1166,11 +1145,6 @@ public class CriteriaBuilder {
 		 * from table
 		 */
 		boolean hasSourceScript = criteria.sourceScript(sb);
-
-		/*
-		 * join on
-		 */
-		// criteria.fetchScript(sb);
 
 		/*
 		 * in query

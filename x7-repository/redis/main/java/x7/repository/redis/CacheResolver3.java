@@ -2,6 +2,7 @@ package x7.repository.redis;
 
 import x7.core.config.Configs;
 import x7.core.util.VerifyUtil;
+import x7.repository.exception.PersistenceException;
 
 /**
  * 缓存解决，三级缓存
@@ -47,7 +48,11 @@ public class CacheResolver3 {
 		String key = getKey(clz, condition);
 		System.out.println("save key: " + key);
 		int validSecond = Configs.getIntValue("x7.cache.second") / 2;
-		JedisConnector_Cache3.getInstance().set(key.getBytes(), ObjectUtil.toBytes(obj), validSecond);
+		try {
+			JedisConnector_Cache3.getInstance().set(key.getBytes(), ObjectUtil.toBytes(obj), validSecond);
+		} catch (Exception e) {
+			throw new PersistenceException(e.getMessage());
+		}
 	}
 	
 	/**
@@ -66,7 +71,7 @@ public class CacheResolver3 {
 		if (bytes == null)
 			return null;
 		
-		return ObjectUtil.toObject(bytes);
+		return ObjectUtil.toObject(bytes, clz);
 
 	}
 	
@@ -133,7 +138,11 @@ public class CacheResolver3 {
 		String key = getKey(clz, idOne, condition);
 		System.out.println("save key: " + key);
 		int validSecond = Configs.getIntValue("x7.cache.second");
-		JedisConnector_Cache3.getInstance().set(key.getBytes(), ObjectUtil.toBytes(obj), validSecond);
+		try {
+			JedisConnector_Cache3.getInstance().set(key.getBytes(), ObjectUtil.toBytes(obj), validSecond);
+		} catch (Exception e) {
+			throw new PersistenceException(e.getMessage());
+		}
 	}
 	
 	/**
@@ -152,7 +161,7 @@ public class CacheResolver3 {
 		if (bytes == null)
 			return null;
 		
-		return ObjectUtil.toObject(bytes);
+		return ObjectUtil.toObject(bytes, clz);
 
 	}
 	

@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
@@ -612,51 +610,6 @@ public class Repositories implements IRepository {
 		}
 	}
 
-	////////////////////////// async
-	////////////////////////// api////////////////////////////////////////////////////////////
-	private final static Executor asyncService = Executors.newSingleThreadExecutor();
-
-	public void createAsync(final Object obj) {
-		asyncService.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					create(obj);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public void refreshAsync(final Object obj) {
-		asyncService.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					refresh(obj);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public void removeAsync(final Object obj) {
-		asyncService.execute(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					remove(obj);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	protected <T> boolean execute(Object obj, String sql) {
 
@@ -680,13 +633,12 @@ public class Repositories implements IRepository {
 		return b;
 	}
 
-	// 20160122 add by cl
 	@Override
 	public Object getCount(String countProperty, Criteria criteria) {
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
-			throw new ShardingException("Sharding not supported: getCount(String sumProperty, Criteria criteria)");
+			throw new ShardingException("Sharding not supported: getCount(String countProperty, Criteria criteria)");
 		} else {
 			return syncDao.getCount(countProperty, criteria);
 		}

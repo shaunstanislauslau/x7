@@ -191,11 +191,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public void refreshAsync(T obj) {
-		Repositories.getInstance().refreshAsync(obj);
-	}
-
-	@Override
 	public void remove(T obj) {
 		Repositories.getInstance().remove(obj);
 	}

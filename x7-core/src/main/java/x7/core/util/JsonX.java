@@ -1,15 +1,14 @@
 package x7.core.util;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import com.alibaba.fastjson.JSON;
-
-import x7.core.web.Pagination;
-import x7.core.web.PaginationUtil;
 
 /**
  * 
@@ -52,11 +51,6 @@ public class JsonX {
 	public static String toJson(Object obj){
 		if (obj == null)
 			return null;
-		if (obj instanceof Pagination){
-			Pagination ps = (Pagination) obj;
-			PaginationUtil.toMap(ps);
-			return JSON.toJSONString(ps);
-		}
 		return JSON.toJSONString(obj);
 	}
 	
@@ -77,4 +71,18 @@ public class JsonX {
 		return (Map<String,Object>) JSON.toJSON(obj);
 	}
 	
+	public static boolean isJsonable(Class clz) {
+		if ( clz == String.class
+						|| clz == long.class || clz == Long.class 
+						|| clz == int.class || clz == Integer.class
+						|| clz == boolean.class || clz == Boolean.class
+						|| clz == double.class || clz == Double.class
+						|| clz == float.class || clz == Float.class
+						|| clz == short.class || clz == Short.class
+						|| clz == byte.class || clz == Byte.class
+						|| clz == BigDecimal.class || clz == Date.class
+						)
+			return false;
+		return true;
+	}
 }

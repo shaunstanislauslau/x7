@@ -1,14 +1,13 @@
 package x7.repository.redis;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.List;
+import java.util.Map;
 
 import x7.core.bean.BeanSerial;
 import x7.core.repository.ISerialWR;
+import x7.repository.exception.PersistenceException;
 
 
 public class PersistenceUtil {
@@ -28,26 +27,12 @@ public class PersistenceUtil {
 				e.printStackTrace();
 			}
 		}
-		/*
-		 * BAOS
-		 */
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ObjectOutputStream oos = null;
+		
 		try {
-			oos = new ObjectOutputStream(baos);
-			oos.writeObject(obj);
-			return baos.toByteArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}finally{
-			try {
-				oos.close();
-				baos.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			return ObjectUtil.toBytes(obj);
+		} catch (UnsupportedEncodingException e) {
+			throw new PersistenceException(e.getMessage());
 		}
-		return null;
 	}
 	
 	public static <T> T toObject(Class<T> clz, byte[] bytes){
@@ -66,30 +51,15 @@ public class PersistenceUtil {
 				return null;
 			}
 		}
-		/*
-		 * BAOS
-		 */
-		ByteArrayInputStream bais = null;
-		ObjectInputStream ois = null;
-		try{
-			bais = new ByteArrayInputStream(bytes);
-			ois = new ObjectInputStream(bais);
-			Object obj = ois.readObject();
-			return (T) obj;
-		}catch (Exception e){
-			System.out.println("toObject(Class<T> clz, byte[] bytes) 2-------------> " +  clz.getName());
-			e.printStackTrace();
-		}finally{
-			try {
-				ois.close();
-				bais.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 		
-		return null;
+		return ObjectUtil.toObject(bytes, clz);
 	}
 	
-
+	public static List<Map<String,Object>> toMapList(byte[] bytes){
+		if (bytes == null)
+			return null;
+		
+		return ObjectUtil.toMapList(bytes);
+	}
+	
 }

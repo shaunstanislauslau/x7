@@ -9,10 +9,10 @@ import x7.core.web.Pagination;
 
 /**
  * 
- * 分库分表 DAO<BR>
- * 没提供所以库，所有表的遍历，和复杂条件查询<br>
+ * Sharding <BR>
  * 
- * @author sim
+ * 
+ * @author Sim
  *
  * @param <T>
  */

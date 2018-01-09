@@ -50,8 +50,6 @@ public interface X7Repository<T> {
 	 */
 	boolean refresh(T obj, Map<String, Object> conditionMap);
 
-	void refreshAsync(T obj);
-
 	/**
 	 * @param obj
 	 */

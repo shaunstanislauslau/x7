@@ -9,12 +9,13 @@ import x7.core.repository.CacheException;
 import x7.core.repository.ICacheResolver;
 import x7.core.util.VerifyUtil;
 import x7.core.web.Pagination;
+import x7.repository.exception.PersistenceException;
 
 
 
 /**
- * 缓存解决, 二级缓存<br>
- * FIXME mget 相关的要重新设计， 单个对象缓存缺少{hash tag}
+ * 
+ * Level two Cache
  * @author sim
  *
  */
@@ -146,7 +147,11 @@ public class CacheResolver implements ICacheResolver{
 	public void setResultKeyList(Class clz, String condition, List<String> keyList) {
 		String key = getKey(clz, condition);
 		int validSecond = Configs.getIntValue("x7.cache.second");
-		JedisConnector_Cache.getInstance().set(key.getBytes(), ObjectUtil.toBytes(keyList), validSecond);
+		try{
+			JedisConnector_Cache.getInstance().set(key.getBytes(), ObjectUtil.toBytes(keyList), validSecond);
+		}catch (Exception e) {
+			throw new PersistenceException(e.getMessage());
+		}
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -161,7 +166,11 @@ public class CacheResolver implements ICacheResolver{
 	public <T> void setResultKeyListPaginated(Class<T> clz, String condition, Pagination<T> pagination, int second) {
 		
 		String key = getKey(clz, condition);
-		JedisConnector_Cache.getInstance().set(key.getBytes(), ObjectUtil.toBytes(pagination), second);
+		try{
+			JedisConnector_Cache.getInstance().set(key.getBytes(), ObjectUtil.toBytes(pagination), second);
+		}catch (Exception e) {
+			throw new PersistenceException(e.getMessage());
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -176,7 +185,7 @@ public class CacheResolver implements ICacheResolver{
 		if (bytes == null)
 			return new ArrayList<String>();
 		
-		return (List<String>) ObjectUtil.toObject(bytes);
+		return ObjectUtil.toList(bytes, String.class);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -189,7 +198,7 @@ public class CacheResolver implements ICacheResolver{
 		if (bytes == null)
 			return null;
 		
-		return (Pagination<String>) ObjectUtil.toObject(bytes);
+		return ObjectUtil.toPagination(bytes, String.class);
 	}
 
 	@Override
@@ -242,10 +251,8 @@ public class CacheResolver implements ICacheResolver{
 		byte[] bytes = JedisConnector_Cache.getInstance().get(key.getBytes());
 		if (bytes == null)
 			return null;
-		List<Map<String, Object>> mapList = PersistenceUtil.toObject(List.class, bytes);
+		List<Map<String, Object>> mapList = PersistenceUtil.toMapList(bytes);
 		return mapList;
 	}
-
-
 
 }
