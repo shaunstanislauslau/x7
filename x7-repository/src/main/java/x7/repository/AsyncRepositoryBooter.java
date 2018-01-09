@@ -6,7 +6,12 @@ import x7.repository.dao.AsyncDaoImpl;
 import x7.repository.dao.DaoInitializer;
 import x7.repository.pool.HikariPool;
 
-
+/**
+ * 
+ * for Game develop
+ * @author Sim
+ *
+ */
 public class AsyncRepositoryBooter {
 	
 	private final static String MYSQL = "mysql";
