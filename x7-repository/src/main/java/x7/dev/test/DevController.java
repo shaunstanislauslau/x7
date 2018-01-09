@@ -15,7 +15,7 @@ import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaBuilder;
 import x7.core.config.Configs;
 import x7.core.util.StringUtil;
-import x7.core.web.ModelView;
+import x7.core.web.ViewEntity;
 
 
 
@@ -28,19 +28,19 @@ public class DevController {
 	private IDevService service;
 
 	@RequestMapping("test")
-	public Map<String, Object> test(HttpServletRequest req) {
+	public ViewEntity test(HttpServletRequest req) {
 		
 		boolean isDev = Configs.isTrue("IS_DEVELOPING");
 		
 		if (!isDev) {
-			return ModelView.toast("NOT DEV OR NOT TEST");
+			return ViewEntity.toast("NOT DEV OR NOT TEST");
 		}
 		
 		Map<String,String> map = ServletModelCreator.createMap(req);
 		
 		String simpleName = map.get(CriteriaBuilder.CLASS_NAME);
 		if (StringUtil.isNullOrEmpty(simpleName)){
-			return ModelView.toast("lose express: class.name=");
+			return ViewEntity.toast("lose express: class.name=");
 		}
 		
 		String fullName = this.service.getClassFullName(simpleName);
@@ -54,6 +54,6 @@ public class DevController {
 
 		List<Map<String,Object>> list = this.service.test(criteriaJoinable);
 
-		return ModelView.view(list);
+		return ViewEntity.ok(list);
 	}
 }

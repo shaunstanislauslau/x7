@@ -1,5 +1,7 @@
 package x7.core.web;
 
+import java.io.Serializable;
+
 /**
  * 
  * Simple Rest Response PROTOCAL
@@ -7,8 +9,10 @@ package x7.core.web;
  * @author Sim
  *
  */
-public class ViewEntity<T> {
-
+public class ViewEntity<T> implements Serializable{
+	
+	private static final long serialVersionUID = -3468398912725330041L;
+	
 	public final static String OK = "OK";
 	public final static String FAIL = "FAIL";
 
