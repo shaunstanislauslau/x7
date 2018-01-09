@@ -1,7 +1,5 @@
 package x7.core.web;
 
-import java.io.Serializable;
-
 /**
  * 
  * Simple Rest Response PROTOCAL
@@ -9,15 +7,13 @@ import java.io.Serializable;
  * @author Sim
  *
  */
-public class ViewEntity<T> implements Serializable{
-	
-	private static final long serialVersionUID = -3468398912725330041L;
-	
+public class ViewEntity {
+
 	public final static String OK = "OK";
 	public final static String FAIL = "FAIL";
 
 	private String status;
-	private T body;
+	private Object body;
 
 	public String getStatus() {
 		return status;
@@ -27,16 +23,16 @@ public class ViewEntity<T> implements Serializable{
 		return body;
 	}
 
-	public static ViewEntity<String> toast(String str) {
-		ViewEntity<String> message = new ViewEntity<String>();
+	public static ViewEntity toast(String str) {
+		ViewEntity message = new ViewEntity();
 		message.status = FAIL;
 		message.body = str;
 		return message;
 	}
 
-	public static <T> ViewEntity<T> ok(T obj) {
+	public static ViewEntity ok(Object obj) {
 
-		ViewEntity<T> message = new ViewEntity<T>();
+		ViewEntity message = new ViewEntity();
 		message.status = OK;
 		message.body = obj;
 
@@ -45,14 +41,12 @@ public class ViewEntity<T> implements Serializable{
 	}
 
 	public static ViewEntity ok() {
-
 		return ok(null);
-
 	}
 
 	@Override
 	public String toString() {
-		return "ViewEntity [status=" + status + ", body=" + body + "]";
+		return "RestView [status=" + status + ", body=" + body + "]";
 	}
 
 }
