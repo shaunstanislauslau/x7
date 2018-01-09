@@ -93,7 +93,6 @@ public interface X7Repository<T> {
 
 
 	/**
-	 * 获取�?大ID
 	 * 
 	 * @param clz
 	 * 

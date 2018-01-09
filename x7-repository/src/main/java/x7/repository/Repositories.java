@@ -26,10 +26,6 @@ import x7.repository.dao.ShardingDao;
 import x7.repository.exception.ShardingException;
 
 /**
- * <br>
- * 持久化<br>
- * 各种操作的封装<br>
- * <br>
  * 
  * @author Sim
  *
