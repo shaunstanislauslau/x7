@@ -5,17 +5,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaBuilder;
 import x7.core.config.Configs;
 import x7.core.util.StringUtil;
 import x7.core.web.ViewEntity;
+import x7.repository.Repositories;
 
 
 
@@ -23,14 +21,12 @@ import x7.core.web.ViewEntity;
 @RestController
 @RequestMapping("/dev")
 public class DevController {
-	
-	@Autowired
-	private IDevService service;
+
 
 	@RequestMapping("test")
 	public ViewEntity test(HttpServletRequest req) {
 		
-		boolean isDev = Configs.isTrue("IS_DEVELOPING");
+		boolean isDev = Configs.isTrue("x7.developing");
 		
 		if (!isDev) {
 			return ViewEntity.toast("NOT DEV OR NOT TEST");
@@ -43,16 +39,12 @@ public class DevController {
 			return ViewEntity.toast("lose express: class.name=");
 		}
 		
-		String fullName = this.service.getClassFullName(simpleName);
-		if (! StringUtil.isNullOrEmpty(fullName)){
-			map.put(CriteriaBuilder.CLASS_NAME, fullName);
-		}
 		
 		CriteriaBuilder.Fetchable criteriaBuilder = CriteriaBuilder.buildFetchable(isDev, map);
 		
 		Criteria.Fetch criteriaJoinable = (Criteria.Fetch) criteriaBuilder.get();
 
-		List<Map<String,Object>> list = this.service.test(criteriaJoinable);
+		List<Map<String,Object>> list = Repositories.getInstance().list(criteriaJoinable);
 
 		return ViewEntity.ok(list);
 	}
