@@ -14,6 +14,7 @@ import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
 import x7.core.bean.Criteria;
 import x7.core.bean.IQuantity;
+import x7.core.bean.Parsed;
 import x7.core.util.StringUtil;
 import x7.core.web.Pagination;
 import x7.repository.exception.PersistenceException;
@@ -64,13 +65,27 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		String sql = map.get(methodName);
 		if (StringUtil.isNullOrEmpty(sql)) {
 
-			methodName = methodName.replace("list", "").replace("get", "").replace("find", "").replace("By", " where ");
+			methodName = methodName.replace("list", "").replace("get", "").replace("find", "")
+					.replace("from", " ")
+					.replace("By", " where ");
 			methodName = methodName.replace("And", " = ? and ").replace("Or", " = ? or ");
 
+			Parsed parsed = x7.core.bean.Parser.get(clz);
+			String clzName = parsed.getClzName();
+			String tableName = parsed.getTableName();
+			
 			methodName = methodName.toLowerCase();
-
+			
 			StringBuilder sb = new StringBuilder();
-			sb.append("select * from ").append(methodName).append(" = ?");
+			sb.append("select * from ");
+			
+			if (methodName.contains(clzName)){
+				methodName.replace(clzName, tableName);
+			}else{
+				sb.append(parsed.getTableName()).append(" ");
+			}
+			
+			sb.append(methodName).append(" = ?");
 
 			sql = sb.toString();
 
