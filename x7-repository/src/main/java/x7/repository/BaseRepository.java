@@ -58,7 +58,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		HealthChecker.repositoryList.add(this);
 	}
 
-	protected Object preMapping(String methodName, Object... s) {
+	protected Object find(String methodName, Object... s) {
 
 		boolean isOne = methodName.startsWith("get");
 
