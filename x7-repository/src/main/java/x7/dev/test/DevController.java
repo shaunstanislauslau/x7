@@ -16,8 +16,6 @@ import x7.core.web.ViewEntity;
 import x7.repository.Repositories;
 
 
-
-
 @RestController
 @RequestMapping("/dev")
 public class DevController {
