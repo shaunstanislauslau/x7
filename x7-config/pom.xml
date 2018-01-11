@@ -12,7 +12,6 @@
 	<packaging>jar</packaging>
 
 	<name>x7-config</name>
-	<url>http://maven.apache.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -49,14 +48,5 @@
 		</dependency>
 
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>local</id>
-			<properties>
-
-			</properties>
-		</profile>
-	</profiles>
 
 </project>
