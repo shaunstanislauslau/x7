@@ -52,7 +52,6 @@
 
 	<profiles>
 		<profile>
-			<!-- 本地环境 -->
 			<id>local</id>
 			<properties>
 
