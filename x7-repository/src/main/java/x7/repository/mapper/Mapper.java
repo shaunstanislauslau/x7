@@ -16,6 +16,8 @@
  */
 package x7.repository.mapper;
 
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,22 +59,28 @@ public interface Mapper {
 	
 	public static String getSqlTypeRegX(BeanElement be){
 	
-			String name = be.clz.getName();
-			if (name.contains("Date")) {
+			Class clz = be.clz;
+			if (clz == Date.class) {
 				return Dialect.DATE;
-			} else if (name.contains("String")) {
+			} else if (clz == String.class) {
 				return Dialect.STRING;
-			} else if (name.contains("int") || name.contains("Integer")) {
+			} else if (clz.isEnum()) {
+				return Dialect.STRING;
+			} else if (clz == int.class || clz == Integer.class) {
 				return Dialect.INT;
-			} else if (name.contains("long") || name.contains("Long")) {
+			} else if (clz == long.class || clz == Long.class) {
 				return Dialect.LONG;
-			} else if (name.contains("double") || name.contains("Double")) {
+			} else if (clz == double.class || clz == Double.class) {
 				return Dialect.BIG;
-			} else if (name.contains("float") || name.contains("Float")) {
+			} else if (clz == float.class || clz == Float.class) {
 				return Dialect.BIG;
-			} else if (name.contains("BigDecimal") ) {
+			} else if (clz == BigDecimal.class) {
 				return Dialect.BIG;
-			} else if (name.contains("boolean") || name.contains("Boolean")) {
+			} else if (clz == boolean.class || clz == Boolean.class) {
+				return Dialect.BYTE;
+			} else if (clz == short.class || clz == Short.class) {
+				return Dialect.INT;
+			} else if (clz == byte.class || clz == Byte.class) {
 				return Dialect.BYTE;
 			} 
 			return Dialect.TEXT;
