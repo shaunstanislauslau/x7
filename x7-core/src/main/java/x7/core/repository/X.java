@@ -42,17 +42,17 @@ public @interface X {
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})
-	@interface isMobile{
+	@interface IsMobile{
 	}
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})
-	@interface isEmail{
+	@interface IsEmail{
 	}
 	
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})
-	@interface notNull{
+	@interface NotNull{
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public @interface X {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.TYPE})
-	@interface noCache{
+	@interface NoCache{
 	}
 	
 	/**
@@ -74,13 +74,13 @@ public @interface X {
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})
-	@interface ignore{
+	@interface Ignore{
 	}
 	
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.FIELD})
-	@interface ID{
+	@interface Key{
 	}
 	
 	@Retention(RetentionPolicy.RUNTIME)

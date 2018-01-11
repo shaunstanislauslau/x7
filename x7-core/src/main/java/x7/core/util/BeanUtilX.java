@@ -49,7 +49,7 @@ public class BeanUtilX extends BeanUtil {
 			/*
 			 * ignored anno
 			 */
-			X.ignore p = f.getAnnotation(X.ignore.class);
+			X.Ignore p = f.getAnnotation(X.Ignore.class);
 			if (p != null) {
 				filterMap.put(f.getName(), f);
 			}
@@ -158,7 +158,7 @@ public class BeanUtilX extends BeanUtil {
 						element.length = 60;
 				} else if (ec == BigDecimal.class){
 					element.sqlType = SqlFieldType.DECIMAL;
-				} else if (element.clz.isEnum()){
+				} else if (ec.isEnum()){
 					element.sqlType = SqlFieldType.VARCHAR;
 					if (element.length == 0)
 						element.length = 40;
@@ -209,7 +209,7 @@ public class BeanUtilX extends BeanUtil {
 	}
 
 	public static void parseCacheableAnno(Class clz, Parsed parsed) {
-		X.noCache p = (X.noCache) clz.getAnnotation(X.noCache.class);
+		X.NoCache p = (X.NoCache) clz.getAnnotation(X.NoCache.class);
 		if (p != null) {
 			parsed.setNoCache(true);
 		}
@@ -245,17 +245,17 @@ public class BeanUtilX extends BeanUtil {
 					ele.mapper = mapping.value();
 			}
 
-			X.isMobile isMobile = f.getAnnotation(X.isMobile.class);
+			X.IsMobile isMobile = f.getAnnotation(X.IsMobile.class);
 			if (isMobile != null) {
 				ele.isMobile = true;
 			}
 
-			X.isEmail isEmail = f.getAnnotation(X.isEmail.class);
+			X.IsEmail isEmail = f.getAnnotation(X.IsEmail.class);
 			if (isEmail != null) {
 				ele.isEmail = true;
 			}
 
-			X.notNull notNull = f.getAnnotation(X.notNull.class);
+			X.NotNull notNull = f.getAnnotation(X.NotNull.class);
 			if (notNull != null) {
 				ele.notNull = true;
 			}
@@ -283,7 +283,7 @@ public class BeanUtilX extends BeanUtil {
 		}
 
 		for (Field f : list) {
-			X.ID a = f.getAnnotation(X.ID.class);
+			X.Key a = f.getAnnotation(X.Key.class);
 			if (a != null){
 				map.put(X.KEY_ONE, f.getName());
 				f.setAccessible(true);

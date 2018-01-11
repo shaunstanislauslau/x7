@@ -26,18 +26,11 @@
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
-			<version>2.5.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>1.1.34</version>
 		</dependency>
 
 		<dependency>
@@ -48,13 +41,11 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-pool2</artifactId>
-			<version>2.4.2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
 		</dependency>
 
 		<dependency>
@@ -77,7 +68,6 @@
 			<version>1.7</version>
 		</dependency>
 
-
 	</dependencies>
 
 	<profiles>
@@ -95,11 +85,10 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
-						<phase>generate-sources</phase>
+						<phase>add-sources</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
@@ -107,6 +96,7 @@
 							<sources>
 								<source>src/main/java</source>
 								<source>redis/main/java</source>
+								<source>beankey</source>
 							</sources>
 						</configuration>
 					</execution>
