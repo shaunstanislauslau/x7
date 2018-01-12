@@ -76,7 +76,6 @@
 				<executions>
 					<execution>
 						<id>add-source</id>
-						<phase>add-sources</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
