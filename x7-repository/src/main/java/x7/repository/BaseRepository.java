@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import x7.core.async.CasualWorker;
@@ -309,14 +310,15 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	public List<T> in(List<? extends Object> inList) {
 		if (inList.isEmpty())
 			return new ArrayList<T>();
-		Set<Object> set = new HashSet<Object>();
-		for (Object obj : inList){
-			set.add(obj);
-		}
-		
+
 		List<Object> list = new ArrayList<Object>();
-		for (Object obj : set){
-			list.add(obj);
+		
+		for (Object obj : inList){
+			if (Objects.isNull(obj)) 
+				continue;
+			if (!list.contains(obj)){
+				list.add(obj);
+			}
 		}
 		
 		return Repositories.getInstance().in(clz, list);

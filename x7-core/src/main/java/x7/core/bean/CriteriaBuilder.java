@@ -326,16 +326,21 @@ public class CriteriaBuilder {
 			if (list == null || list.isEmpty())
 				return instance;
 			property = getAliasPoint(property);
-			Iterator<Object> ite = list.iterator();
-			while (ite.hasNext()) {
-				Object obj = ite.next();
-				if (Objects.isNull(obj)) {
-					ite.remove();
+	
+			
+			List<Object> tempList = new ArrayList<Object>();
+			for (Object obj : list){
+				if (Objects.isNull(obj)) 
+					continue;
+				if (!tempList.contains(obj)){
+					tempList.add(obj);
 				}
 			}
+			
 			if (list.isEmpty())
 				return instance;
-			getTempInMap().put(property, list);
+			
+			getTempInMap().put(property, tempList);
 
 			return instance;
 		}

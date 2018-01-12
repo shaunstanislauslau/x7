@@ -84,74 +84,7 @@ public interface RequestMapped {
 						key = prefix + "." + key;
 					}
 					build(key, builder, innerMap);
-					// boolean isNotFirst = false;
-					// X x = builder.and().x();
-					// for (Entry<String,Object> en : innerMap.entrySet()){
-					//
-					// String k = en.getKey();
-					// Object v = en.getValue();
-					// if (v instanceof String) {
-					// v = TimeUtil.parseDateForJson(v);
-					// }
-					// String kx = prefix + "." + k;
-					// switch (k) {
-					// case CriteriaGrammar.EQ:
-					// if (isNotFirst){
-					// x.and().eq(kx, v);
-					// }else{
-					// x.eq(kx, v);
-					// }
-					// break;
-					// case CriteriaGrammar.GT:
-					// if (isNotFirst){
-					// x.and().gt(kx, v);
-					// }else{
-					// x.gt(kx, v);
-					// }
-					// break;
-					// case CriteriaGrammar.LT:
-					// if (isNotFirst){
-					// x.and().lt(kx, v);
-					// }else{
-					// x.lt(kx, v);
-					// }
-					// break;
-					// case CriteriaGrammar.GTE:
-					// if (isNotFirst){
-					// x.and().gte(kx, v);
-					// }else{
-					// x.gte(kx, v);
-					// }
-					// break;
-					// case CriteriaGrammar.LTE:
-					// if (isNotFirst){
-					// x.and().lte(kx, v);
-					// }else{
-					// x.lte(kx, v);
-					// }
-					// break;
-					// case CriteriaGrammar.NE:
-					// if (isNotFirst){
-					// x.and().not(kx, v);
-					// }else{
-					// x.not(kx, v);
-					// }
-					// break;
-					// case CriteriaGrammar.LIKE:
-					// if (isNotFirst){
-					// x.and().like(kx, v);
-					// }else{
-					// x.like(kx, v);
-					// }
-					// break;
-					// case CriteriaGrammar.OR:
-					// // FIXME
-					// break;
-					// }
-					// isNotFirst = true;
-					// }
-					//
-					// x.y();
+					
 
 				} else if (value instanceof List) {
 					List<Object> list = (List<Object>) value;
