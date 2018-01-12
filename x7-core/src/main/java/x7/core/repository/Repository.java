@@ -31,7 +31,7 @@ import x7.core.web.Pagination;
  * @author Sim
  *
  */
-public interface IRepository {
+public interface Repository {
 	
 	/**
 	 * 更新缓存

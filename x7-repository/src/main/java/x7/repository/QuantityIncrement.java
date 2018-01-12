@@ -23,21 +23,20 @@ import x7.repository.redis.JedisConnector_Persistence;
 
 /**
  * 
- * 分布式系统的异步数据操作<br>
  * 
  * @author Sim
  *
  */
-public class RepositoryX {
+public class QuantityIncrement {
 
-	private static RepositoryX instance;
-	public static RepositoryX getInstance() {
+	private static QuantityIncrement instance;
+	public static QuantityIncrement getInstance() {
 		if (instance == null){
-			instance = new RepositoryX();
+			instance = new QuantityIncrement();
 		}
 		return instance;
 	}
-	private RepositoryX (){
+	private QuantityIncrement (){
 		
 	}
 	

@@ -32,7 +32,7 @@ import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.repository.CacheException;
 import x7.core.repository.ICacheResolver;
-import x7.core.repository.IRepository;
+import x7.core.repository.Repository;
 import x7.core.repository.X;
 import x7.core.web.Pagination;
 import x7.repository.dao.Dao;
@@ -44,7 +44,7 @@ import x7.repository.exception.ShardingException;
  * @author Sim
  *
  */
-public class Repositories implements IRepository {
+public class Repositories implements Repository {
 
 	private final static Logger logger = Logger.getLogger(Repositories.class);
 	private static Repositories instance;
