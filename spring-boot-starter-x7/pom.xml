@@ -10,14 +10,8 @@
 	<parent>
 		<groupId>x7</groupId>
 		<artifactId>x7</artifactId>
-		<version>1.0.0.M</version>
+		<version>${x7.version}</version>
 	</parent>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-	</properties>
 
 	<dependencies>
 		<dependency>
@@ -27,17 +21,17 @@
 		<dependency>
 			<groupId>x7</groupId>
 			<artifactId>x7-core</artifactId>
-			<version>1.0.0.M</version>
+			<version>${x7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>x7</groupId>
 			<artifactId>x7-config</artifactId>
-			<version>1.0.0.M</version>
+			<version>${x7.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>x7</groupId>
 			<artifactId>x7-repository</artifactId>
-			<version>1.0.0.M</version>
+			<version>${x7.version}</version>
 		</dependency>
 	</dependencies>
 
