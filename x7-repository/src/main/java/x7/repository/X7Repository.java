@@ -41,7 +41,7 @@ public interface X7Repository<T> {
 
 	String get(String key);
 
-	long createId(Object obj);
+	long createId();
 
 	/**
 	 * @param obj

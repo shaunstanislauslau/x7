@@ -147,9 +147,9 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public long createId(Object obj) {
+	public long createId() {
 		
-		final String name = obj.getClass().getName();
+		final String name = clz.getName();
 		final long id = JedisConnector_Persistence.getInstance().hincrBy(ID_MAP_KEY, name, 1);
 
 		if (id == 0) {
@@ -162,14 +162,14 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 			public void execute() throws Exception {
 				IdGenerator generator = new IdGenerator();
 				generator.setClzName(name);
-				List<IdGenerator> list = Repositories.getInstance().list(generator);
-				if (list.isEmpty()){
-					generator.setMaxId(id);
-					Repositories.getInstance().create(generator);
-				}else{
-					generator.setMaxId(id);
-					Repositories.getInstance().refresh(generator);
-				}
+//				List<IdGenerator> list = Repositories.getInstance().list(generator);
+//				if (list.isEmpty()){
+//					generator.setMaxId(id);
+//					Repositories.getInstance().create(generator);
+//				}else{
+				generator.setMaxId(id);
+				Repositories.getInstance().refresh(generator);
+//				}
 			}
 			
 		});
@@ -368,6 +368,15 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 					}
 					
 					Repositories.getInstance().execute(clz.newInstance(), sql);
+
+					final String name = clz.getName();
+					IdGenerator generator = new IdGenerator();
+					generator.setClzName(name);
+					List<IdGenerator> list = Repositories.getInstance().list(generator);
+					if (list.isEmpty()){
+						generator.setMaxId(0);
+						Repositories.getInstance().create(generator);
+					}
 					
 				}catch (Exception e) {
 					

@@ -74,29 +74,32 @@ public class HikariPool implements DataSourcePool{
 		String shardingPolicy = Configs.getString("x7.db.sharding.policy");
 		if (StringUtil.isNullOrEmpty(shardingPolicy))
 			shardingPolicy = "NONE";
+
+		try {
+
+			String[] addressArr = Configs.getString("x7.db.address.w").split(",");
+			String address = addressArr[0];
+
+			String url = Configs.getString("x7.db.url");
+			url = url.replace("${address}", address)
+					.replace("${name}", Configs.getString("x7.db.name"));
+
+			System.err.println("x7.db.url: " + url);
+			dsW.setReadOnly(false);
+			dsW.setJdbcUrl(url);
+			dsW.setUsername(Configs.getString("x7.db.username"));
+			dsW.setPassword(Configs.getString("x7.db.password"));
+			dsW.setConnectionTimeout(300000);
+			dsW.setIdleTimeout(600000);
+			dsW.setMaxLifetime(1800000);
+			dsW.setMaximumPoolSize(Configs.getIntValue("x7.db.max"));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-		if (shardingPolicy.equals("NONE")) {
+		if (!shardingPolicy.equals("NONE")) {
 
-			try {
-
-				String url = Configs.getString("x7.db.url");
-				url = url.replace("${address}", Configs.getString("x7.db.address.w"))
-						.replace("${name}", Configs.getString("x7.db.name"));
-
-				System.err.println("x7.db.url: " + url);
-				dsW.setReadOnly(false);
-				dsW.setJdbcUrl(url);
-				dsW.setUsername(Configs.getString("x7.db.username"));
-				dsW.setPassword(Configs.getString("x7.db.password"));
-				dsW.setConnectionTimeout(300000);
-				dsW.setIdleTimeout(600000);
-				dsW.setMaxLifetime(1800000);
-				dsW.setMaximumPoolSize(Configs.getIntValue("x7.db.max"));
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else {
 			int length = Configs.getIntValue("x7.db.sharding.num");
 			String[] addressArr = Configs.getString("x7.db.address.w").split(",");
 			if (addressArr.length == 1){
@@ -109,6 +112,10 @@ public class HikariPool implements DataSourcePool{
 				throw new PersistenceException("SHARDING CONFIG UNEXPECTED, sharding w length = " + length + ", while address size not 1, or not " + length + ", but " + addressArr.length);
 			}
 			String[] shardingArr = ShardingPolicy.get(shardingPolicy).getSuffixArr();
+
+
+
+
 			for (int i=0; i<length; i++){
 
 				try {
@@ -156,27 +163,31 @@ public class HikariPool implements DataSourcePool{
 		String shardingPolicy = Configs.getString("x7.db.sharding.policy");
 		if (StringUtil.isNullOrEmpty(shardingPolicy))
 			shardingPolicy = "NONE";
-		if (shardingPolicy.equals("NONE")) {
 
-			try {
-				String url = Configs.getString("x7.db.url");
-				url = url.replace("${address}", Configs.getString("x7.db.address.r"))
-						.replace("${name}", Configs.getString("x7.db.name"));
+		try {
 
-				System.err.println("x7.db.url: " + url);
-				dsR.setReadOnly(false);
-				dsR.setJdbcUrl(url);
-				dsR.setUsername(Configs.getString("x7.db.user"));
-				dsR.setPassword(Configs.getString("x7.db.password"));
-				dsR.setConnectionTimeout(300000);
-				dsR.setIdleTimeout(600000);
-				dsR.setMaxLifetime(1800000);
-				dsR.setMaximumPoolSize(Configs.getIntValue("x7.db.max"));
+			String[] addressArr = Configs.getString("x7.db.address.r").split(",");
+			String address = addressArr[0];
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else {
+			String url = Configs.getString("x7.db.url");
+			url = url.replace("${address}", address)
+					.replace("${name}", Configs.getString("x7.db.name"));
+
+			System.err.println("x7.db.url: " + url);
+			dsR.setReadOnly(false);
+			dsR.setJdbcUrl(url);
+			dsR.setUsername(Configs.getString("x7.db.user"));
+			dsR.setPassword(Configs.getString("x7.db.password"));
+			dsR.setConnectionTimeout(300000);
+			dsR.setIdleTimeout(600000);
+			dsR.setMaxLifetime(1800000);
+			dsR.setMaximumPoolSize(Configs.getIntValue("x7.db.max"));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (!shardingPolicy.equals("NONE")) {
 
 			int length = Configs.getIntValue("x7.db.sharding.num");
 			String[] addressArr = Configs.getString("x7.db.address.r").split(",");
