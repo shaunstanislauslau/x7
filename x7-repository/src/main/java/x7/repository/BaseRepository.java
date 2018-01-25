@@ -359,6 +359,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 			Repositories.getInstance().execute(IdGenerator.class, idGeneratorSql);
 
 			System.out.println("-------------------------------------------------");
+			System.out.println("-------------------------------------------------");
 
 			for (BaseRepository repository : repositoryList) {
 
