@@ -54,23 +54,23 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	public Map<String, String> map = new HashMap<String, String>();
 
 	private Class<T> clz;
-	
-	protected Class<T> getClz(){
+
+	protected Class<T> getClz() {
 		return clz;
 	}
 
 	public BaseRepository() {
 		parse();
 	}
-	
-	private void parse(){
-		
+
+	private void parse() {
+
 		Type genType = getClass().getGenericSuperclass();
 
 		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-		
-		this.clz = (Class)params[0];
-		
+
+		this.clz = (Class) params[0];
+
 		System.out.println("______BaseRepository, " + this.clz.getName());
 		HealthChecker.repositoryList.add(this);
 	}
@@ -82,26 +82,25 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		String sql = map.get(methodName);
 		if (StringUtil.isNullOrEmpty(sql)) {
 
-			methodName = methodName.replace("list", "").replace("get", "").replace("find", "")
-					.replace("from", " ")
+			methodName = methodName.replace("list", "").replace("get", "").replace("find", "").replace("from", " ")
 					.replace("By", " where ");
 			methodName = methodName.replace("And", " = ? and ").replace("Or", " = ? or ");
 
 			Parsed parsed = x7.core.bean.Parser.get(clz);
 			String clzName = parsed.getClzName();
 			String tableName = parsed.getTableName();
-			
+
 			methodName = methodName.toLowerCase();
-			
+
 			StringBuilder sb = new StringBuilder();
 			sb.append("select * from ");
-			
-			if (methodName.contains(clzName)){
+
+			if (methodName.contains(clzName)) {
 				methodName.replace(clzName, tableName);
-			}else{
+			} else {
 				sb.append(parsed.getTableName()).append(" ");
 			}
-			
+
 			sb.append(methodName).append(" = ?");
 
 			sql = sb.toString();
@@ -148,7 +147,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 	@Override
 	public long createId() {
-		
+
 		final String name = clz.getName();
 		final long id = JedisConnector_Persistence.getInstance().hincrBy(ID_MAP_KEY, name, 1);
 
@@ -156,22 +155,23 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 			throw new PersistenceException("UNEXPECTED EXCEPTION WHILE CREATING ID");
 		}
 
-		CasualWorker.accept(new IAsyncTask(){
+		CasualWorker.accept(new IAsyncTask() {
 
 			@Override
 			public void execute() throws Exception {
 				IdGenerator generator = new IdGenerator();
 				generator.setClzName(name);
-//				List<IdGenerator> list = Repositories.getInstance().list(generator);
-//				if (list.isEmpty()){
-//					generator.setMaxId(id);
-//					Repositories.getInstance().create(generator);
-//				}else{
+				// List<IdGenerator> list =
+				// Repositories.getInstance().list(generator);
+				// if (list.isEmpty()){
+				// generator.setMaxId(id);
+				// Repositories.getInstance().create(generator);
+				// }else{
 				generator.setMaxId(id);
 				Repositories.getInstance().refresh(generator);
-//				}
+				// }
 			}
-			
+
 		});
 
 		return id;
@@ -191,10 +191,9 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 		return quantity;
 	}
-	
-	
+
 	@Override
-	public boolean createBatch(List<T> objList){
+	public boolean createBatch(List<T> objList) {
 		return Repositories.getInstance().createBatch(objList);
 	}
 
@@ -210,7 +209,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return id;
 
 	}
-
 
 	@Override
 	public boolean refresh(T obj) {
@@ -232,7 +230,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 		return Repositories.getInstance().get(clz, idOne);
 	}
-
 
 	@Override
 	public List<T> list() {
@@ -256,7 +253,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 		return Repositories.getInstance().list(criteria, pagination);
 	}
-
 
 	@Override
 	public long getMaxId() {
@@ -312,15 +308,15 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 			return new ArrayList<T>();
 
 		List<Object> list = new ArrayList<Object>();
-		
-		for (Object obj : inList){
-			if (Objects.isNull(obj)) 
+
+		for (Object obj : inList) {
+			if (Objects.isNull(obj))
 				continue;
-			if (!list.contains(obj)){
+			if (!list.contains(obj)) {
 				list.add(obj);
 			}
 		}
-		
+
 		return Repositories.getInstance().in(clz, list);
 	}
 
@@ -328,17 +324,17 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	public List<T> in(String inProperty, List<? extends Object> inList) {
 		if (inList.isEmpty())
 			return new ArrayList<T>();
-		
+
 		Set<Object> set = new HashSet<Object>();
-		for (Object obj : inList){
+		for (Object obj : inList) {
 			set.add(obj);
 		}
-		
+
 		List<Object> list = new ArrayList<Object>();
-		for (Object obj : set){
+		for (Object obj : set) {
 			list.add(obj);
 		}
-		
+
 		return Repositories.getInstance().in(clz, inProperty, list);
 	}
 
@@ -348,38 +344,44 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return Repositories.getInstance().list(criteria, pagination);
 	}
 
-	
-	public static class  HealthChecker {
-		
-		
+	public static class HealthChecker {
+
 		private static List<BaseRepository> repositoryList = new ArrayList<BaseRepository>();
-		
-		protected static void onStarted (){
+
+		protected static void onStarted() {
+
+			String idGeneratorSql = "CREATE TABLE IF NOT EXISTS `idGenerator` ( " 
+			+ "`clzName` varchar(120) NOT NULL, "
+					+ "`maxId` bigint(13) DEFAULT NULL, " 
+			+ "PRIMARY KEY (`clzName`) "
+					+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8 ";
 			
+			Repositories.getInstance().execute(IdGenerator.class, idGeneratorSql);
+
 			for (BaseRepository repository : repositoryList) {
 
-				try{
+				try {
 					Class clz = repository.getClz();
 					String sql = MapperFactory.tryToCreate(clz);
 					String test = MapperFactory.getSql(clz, Mapper.CREATE);
-					if (StringUtil.isNullOrEmpty(test)){
+					if (StringUtil.isNullOrEmpty(test)) {
 						System.out.println("FAILED TO START X7-REPOSITORY, check Bean: " + clz);
 						System.exit(1);
 					}
-					
+
 					Repositories.getInstance().execute(clz.newInstance(), sql);
 
 					final String name = clz.getName();
 					IdGenerator generator = new IdGenerator();
 					generator.setClzName(name);
 					List<IdGenerator> list = Repositories.getInstance().list(generator);
-					if (list.isEmpty()){
+					if (list.isEmpty()) {
 						generator.setMaxId(0);
 						Repositories.getInstance().create(generator);
 					}
-					
-				}catch (Exception e) {
-					
+
+				} catch (Exception e) {
+
 				}
 			}
 		}
