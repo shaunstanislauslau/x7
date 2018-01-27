@@ -20,5 +20,5 @@ public interface Tokened {
 
 	long getPassportId();
 	String getToken();
-	String getDevice();
+	String getPassportType();
 }

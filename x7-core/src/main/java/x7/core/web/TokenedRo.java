@@ -22,7 +22,7 @@ public class TokenedRo implements Tokened{
 
 	private String passportId;//groupId
 	private String token;//
-	private String device;// WX | ANDROID | IOS | PC
+	private String passportType;// USER | STAFF
 	public long getPassportId() {
 		if (StringUtil.isNullOrEmpty(passportId))
 			return 0;
@@ -40,14 +40,14 @@ public class TokenedRo implements Tokened{
 	public void setToken(String token) {
 		this.token = token;
 	}
-	public String getDevice() {
-		return device;
+	public String getPassportType() {
+		return passportType;
 	}
-	public void setDevice(String device) {
-		this.device = device;
+	public void setPassportType(String passportType) {
+		this.passportType = passportType;
 	}
 	@Override
 	public String toString() {
-		return "BaseRo [passportId=" + passportId + ", token=" + token + ", device=" + device + "]";
+		return "BaseRo [passportId=" + passportId + ", token=" + token + ", passportType=" + passportType + "]";
 	}
 }

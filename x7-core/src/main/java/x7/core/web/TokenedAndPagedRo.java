@@ -20,7 +20,7 @@ public class TokenedAndPagedRo implements Paged, Tokened{
 
 	private long passportId;
 	private String token;
-	private String device;
+	private String passportType;
 	private boolean isScroll;
 	private int page;
 	private int rows;
@@ -38,11 +38,11 @@ public class TokenedAndPagedRo implements Paged, Tokened{
 	public void setToken(String token) {
 		this.token = token;
 	}
-	public String getDevice() {
-		return device;
+	public String getPassportType() {
+		return passportType;
 	}
-	public void setDevice(String device) {
-		this.device = device;
+	public void setPassportType(String passportType) {
+		this.passportType = passportType;
 	}
 	public int getPage() {
 		return page;
@@ -76,7 +76,7 @@ public class TokenedAndPagedRo implements Paged, Tokened{
 	}
 	@Override
 	public String toString() {
-		return "BaseRo [passportId=" + passportId + ", token=" + token + ", device=" + device + ", page=" + page
+		return "BaseRo [passportId=" + passportId + ", token=" + token + ", passportType=" + passportType + ", page=" + page
 				+ ", rows=" + rows + ", isScroll=" + isScroll +", orderBy=" + orderBy + ", sc=" + sc + "]";
 	}
 }
