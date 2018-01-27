@@ -25,7 +25,7 @@ import x7.core.web.Pagination;
 
 /**
  * 
- * 持久化<br>
+ * X7 Persistence Interface<br>
  * @author Sim
  *
  */
