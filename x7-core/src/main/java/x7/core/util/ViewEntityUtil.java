@@ -11,23 +11,29 @@ import java.util.Map;
  */
 public class ViewEntityUtil {
 
-    public static <T> T parseObject(String responseStr, Class<T> clz) {
-        ViewEntity bean = JsonX.toObject(responseStr,ViewEntity.class);
+
+    public static <T> T parseObject(ViewEntity bean, Class<T> clz) {
         T t = JSON.toJavaObject((JSON)bean.getBody(),clz);
         return t;
     }
 
-    public static <T> List<T> parseList(String responseStr, Class<T> clz) {
-        ViewEntity bean = JsonX.toObject(responseStr,ViewEntity.class);
+    public static <T> List<T> parseList(ViewEntity bean, Class<T> clz) {
         JSON jsonObject = (JSON)bean.getBody();
         String text = jsonObject.toJSONString();
         List<T> list = JSON.parseArray(text, clz);
         return list;
     }
 
-    public static Map<String,Object> parseMap(String responseStr) {
-        ViewEntity bean = JsonX.toObject(responseStr,ViewEntity.class);
+    public static Map<String,Object> parseMap(ViewEntity bean) {
         JSON jsonObject = (JSON)bean.getBody();
         return (Map)jsonObject;
+    }
+
+    public static boolean parseBoolean(ViewEntity bean) {
+        return Boolean.valueOf(bean.getBody().toString());
+    }
+
+    public static long parseLong(ViewEntity bean) {
+        return Long.valueOf(bean.getBody().toString());
     }
 }
