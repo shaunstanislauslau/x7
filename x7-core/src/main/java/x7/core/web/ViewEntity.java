@@ -25,13 +25,10 @@ package x7.core.web;
  */
 public class ViewEntity {
 
-	public final static String OK = "OK";
-	public final static String FAIL = "FAIL";
-
-	private String status;
+	private ViewStatus status;
 	private Object body;
 
-	public void setStatus(String status) {
+	public void setStatus(ViewStatus status) {
 		this.status = status;
 	}
 
@@ -39,7 +36,7 @@ public class ViewEntity {
 		this.body = body;
 	}
 
-	public String getStatus() {
+	public ViewStatus getStatus() {
 		return status;
 	}
 
@@ -49,7 +46,7 @@ public class ViewEntity {
 
 	public static ViewEntity toast(String str) {
 		ViewEntity message = new ViewEntity();
-		message.status = FAIL;
+		message.status = ViewStatus.FAIL;
 		message.body = str;
 		return message;
 	}
@@ -57,7 +54,7 @@ public class ViewEntity {
 	public static ViewEntity ok(Object obj) {
 
 		ViewEntity message = new ViewEntity();
-		message.status = OK;
+		message.status = ViewStatus.OK;
 		message.body = obj;
 
 		return message;
