@@ -24,6 +24,8 @@ import java.util.Map;
 
 import x7.core.bean.CriteriaBuilder.FetchMapper;
 import x7.core.util.BeanUtil;
+import x7.core.web.Direction;
+import x7.core.web.Sorted;
 
 /**
  * 简单的SQL拼接标准化
@@ -31,14 +33,15 @@ import x7.core.util.BeanUtil;
  * @author sim
  *
  */
-public class Criteria implements Serializable {
+public class Criteria implements Sorted, Serializable {
 
 	private static final long serialVersionUID = 7088698915888081349L;
 
 	private transient Parsed parsed;
 	private transient boolean isNotFirstCondition = false;
 	private transient boolean isXing = false;
-	private String sc = "DESC";
+	private String orderBy;
+	private Direction direction = Direction.DESC;
 	private String groupBy;
 	private Class<?> clz;
 	private Map<String, MinMax> betweenMap = new HashMap<String, MinMax>();
@@ -169,12 +172,12 @@ public class Criteria implements Serializable {
 		this.havingMap = havingMap;
 	}
 
-	public String getSc() {
-		return sc;
+	public Direction getDirection() {
+		return direction;
 	}
 
-	public void setSc(String sc) {
-		this.sc = sc;
+	public void setDirection(Direction sc) {
+		this.direction = sc;
 	}
 
 	public String getGroupBy() {
@@ -227,13 +230,27 @@ public class Criteria implements Serializable {
 		this.fetchMapper = fetchMapper;
 	}
 
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
+	
+	public void setSorted(Sorted sorted) {
+		this.orderByList.add(sorted.getOrderBy());
+		this.orderBy = sorted.getOrderBy();
+		this.direction = sorted.getDirection();
+	}
+
 	@Override
 	public String toString() {
 		return "Criteria [isXing=" + isXing + ", betweenMap=" + betweenMap + ", inMap=" + inMap + ", notInMap="
 				+ notInMap + ", betweenMap_Or=" + betweenMap_Or + ", inMap_Or=" + inMap_Or + ", notInMap_Or="
 				+ notInMap_Or + ", andMap=" + andMap + ", orMap=" + orMap + ", andList=" + andList + ", orList="
 				+ orList + ", valueList=" + valueList  + ", orderByList=" + orderByList
-				+ ", havingMap=" + havingMap + ", sc=" + sc + ", groupBy=" + groupBy + ", clz=" + clz + "]";
+				+ ", havingMap=" + havingMap + ", sc=" + direction + ", groupBy=" + groupBy + ", clz=" + clz + "]";
 	}
 
 	/**
@@ -352,7 +369,7 @@ public class Criteria implements Serializable {
 					+ getAndMap() + ", getOrMap()=" + getOrMap() + ", getAndList()=" + getAndList() + ", getOrList()="
 					+ getOrList() + ", getValueList()=" + getValueList() 
 					+ ", getOrderByList()=" + getOrderByList() + ", getHavingMap()=" + getHavingMap() + ", getSc()="
-					+ getSc() + ", getGroupBy()=" + getGroupBy() + ", getClz()=" + getClz() + ", toString()="
+					+ getDirection() + ", getGroupBy()=" + getGroupBy() + ", getClz()=" + getClz() + ", toString()="
 					+ super.toString() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
 		}
 

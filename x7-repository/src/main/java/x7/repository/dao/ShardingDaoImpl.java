@@ -45,6 +45,7 @@ import x7.core.config.Configs;
 import x7.core.repository.X;
 import x7.core.util.BeanUtilX;
 import x7.core.util.StringUtil;
+import x7.core.web.Direction;
 import x7.core.web.Pagination;
 import x7.repository.exception.PersistenceException;
 import x7.repository.exception.RollbackException;
@@ -60,7 +61,6 @@ import x7.repository.sharding.ShardingPolicy;
  */
 public class ShardingDaoImpl implements ShardingDao {
 
-	private final static String FALL_LINE = "_";
 	private ExecutorService service = Executors.newCachedThreadPool();
 
 	private static ShardingDaoImpl instance;
@@ -499,17 +499,17 @@ public class ShardingDaoImpl implements ShardingDao {
 		}
 
 		String orderBy = criteria.getOrderByList().get(0);
-		String sc = criteria.getSc();
+		Direction direction = criteria.getDirection();
 		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(criteria.getClz());
 			orderBy = parsed.getKey(X.KEY_ONE);
 		}
-		if (StringUtil.isNullOrEmpty(sc)) {
-			sc = "DESC";
+		if (Objects.isNull(direction)) {
+			direction = Direction.DESC;
 		}
 
 		Class clz = criteria.getClz();
-		BeanUtilX.sort(clz, resultList, orderBy, sc.toUpperCase().equals("ASC"));
+		BeanUtilX.sort(clz, resultList, orderBy, direction.equals(Direction.ASC));
 
 		resultList = resultList.subList(rows * (page - 1), rows * page);
 
@@ -611,16 +611,16 @@ public class ShardingDaoImpl implements ShardingDao {
 		}
 
 		String orderBy = criteria.getOrderByList().get(0);
-		String sc = criteria.getSc();
+		Direction direction = criteria.getDirection();
 		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(criteria.getClz());
 			orderBy = parsed.getKey(X.KEY_ONE);
 		}
-		if (StringUtil.isNullOrEmpty(sc)) {
-			sc = "DESC";
+		if (Objects.isNull(direction)) {
+			direction = Direction.DESC;
 		}
 
-		BeanUtilX.sort(resultList, orderBy, sc.toUpperCase().equals("ASC"));
+		BeanUtilX.sort(resultList, orderBy, direction.equals(Direction.ASC));
 
 		resultList = resultList.subList(rows * (page - 1), rows * page);
 

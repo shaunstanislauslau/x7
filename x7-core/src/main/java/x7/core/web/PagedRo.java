@@ -22,7 +22,7 @@ public class PagedRo implements Paged{
 	private int page;
 	private int rows;
 	private String orderBy;
-	private String sc;
+	private Direction direction;
 	public boolean isScroll() {
 		return isScroll;
 	}
@@ -47,15 +47,15 @@ public class PagedRo implements Paged{
 	public void setOrderBy(String orderBy) {
 		this.orderBy = orderBy;
 	}
-	public String getSc() {
-		return sc;
+	public Direction getDirection() {
+		return direction;
 	}
-	public void setSc(String sc) {
-		this.sc = sc;
+	public void setDirection(Direction sc) {
+		this.direction = sc;
 	}
 	@Override
 	public String toString() {
-		return "PagedRo [isScroll=" + isScroll + ", page=" + page + ", rows=" + rows + ", orderBy=" + orderBy + ", sc="
-				+ sc + "]";
+		return "PagedRo [isScroll=" + isScroll + ", page=" + page + ", rows=" + rows + ", orderBy=" + orderBy + ", direction="
+				+ direction + "]";
 	}
 }

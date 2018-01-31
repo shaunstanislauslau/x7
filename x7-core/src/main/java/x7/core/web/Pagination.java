@@ -30,7 +30,7 @@ import x7.core.search.Tag;
  *
  * @param <T>
  */
-public class Pagination<T> implements Serializable{
+public class Pagination<T> implements Sorted, Serializable{
 	
 	private static final long serialVersionUID = -3917421382413274341L;
 	
@@ -44,7 +44,7 @@ public class Pagination<T> implements Serializable{
 	private List<String> keyList = new ArrayList<String>();
 	private boolean isScroll;
 	private String orderBy;
-	private String sc = DESC;
+	private Direction direction = Direction.DESC;
 	
 	private Tag tag;
 	
@@ -57,11 +57,11 @@ public class Pagination<T> implements Serializable{
 		this.orderBy = orderBy;
 	}
 	
-	public Pagination(int page, int rows, String orderBy, String sc){
+	public Pagination(int page, int rows, String orderBy, Direction direction){
 		setPage(page);
 		setRows(rows);
 		this.orderBy = orderBy;
-		this.sc = sc;
+		this.direction = direction;
 	}
 	
 	public Pagination(Paged paged){
@@ -73,8 +73,8 @@ public class Pagination<T> implements Serializable{
 		if (paged.getOrderBy() != null){
 			this.orderBy = paged.getOrderBy();
 		}
-		if (paged.getSc() != null){
-			this.sc = paged.getSc();
+		if (paged.getDirection() != null){
+			this.direction = paged.getDirection();
 		}
 	}
 
@@ -86,12 +86,12 @@ public class Pagination<T> implements Serializable{
 		this.orderBy = orderBy;
 	}
 
-	public String getSc() {
-		return sc;
+	public Direction getDirection() {
+		return direction;
 	}
 
-	public void setSc(String sc) {
-		this.sc = sc;
+	public void setDirection(Direction sc) {
+		this.direction = sc;
 	}
 
 	public int getRows() {
@@ -174,7 +174,7 @@ public class Pagination<T> implements Serializable{
 	@Override
 	public String toString() {
 		return "Pagination [rows=" + rows + ", page=" + page + ", totalRows=" + totalRows + ", list=" + list
-				+ ", keyList=" + keyList + ", isScroll=" + isScroll + ", orderBy=" + orderBy + ", sc=" + sc + ", tag="
+				+ ", keyList=" + keyList + ", isScroll=" + isScroll + ", orderBy=" + orderBy + ", sc=" + direction + ", tag="
 				+ tag + "]";
 	}
 

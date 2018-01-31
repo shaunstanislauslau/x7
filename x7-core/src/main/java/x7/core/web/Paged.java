@@ -22,5 +22,5 @@ public interface Paged {
 	int getPage();
 	int getRows();
 	String getOrderBy();
-	String getSc();
+	Direction getDirection();
 }

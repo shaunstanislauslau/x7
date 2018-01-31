@@ -29,6 +29,7 @@ import java.util.Set;
 
 import x7.core.bean.Criteria.Fetch;
 import x7.core.util.*;
+import x7.core.web.Direction;
 import x7.core.web.Fetched;
 import x7.core.web.RequestMapped;
 
@@ -44,7 +45,6 @@ public class CriteriaBuilder {
 
 	public final static String ASC = "asc";
 	public final static String DESC = "desc";
-	public final static String ALIAS = "${ALIAS}";
 	public final static String space = " ";
 	public final static String comma = ",";
 	public final static String WHERE = " where ";
@@ -60,7 +60,7 @@ public class CriteriaBuilder {
 	public final static String NOT = "not";
 	public final static String LIKE = "like";
 	public final static String ORDER_BY = "orderBy";
-	public final static String SC = "sc";
+	public final static String DIRECTION = "direction";
 	public final static String GROUP_BY = "groupBy";
 	public final static String BETWEEN = "between";
 	public final static String IN = "in";
@@ -736,8 +736,8 @@ public class CriteriaBuilder {
 			if (!key.contains(".")) {
 				if (key.equals(ORDER_BY))
 					orderBy(value);
-				else if (key.equals(SC))
-					criteria.setSc(value);
+				else if (key.equals(DIRECTION))
+					criteria.setDirection(Direction.valueOf(value));
 				else if (key.equals(GROUP_BY))
 					criteria.setGroupBy(value);
 				continue;
@@ -890,8 +890,8 @@ public class CriteriaBuilder {
 		O o = new O() {
 
 			@Override
-			public void sc(String ascOrDesc) {
-				criteria.setSc(ascOrDesc);
+			public void on(Direction ascOrDesc) {
+				criteria.setDirection(ascOrDesc);
 			}
 
 			@Override
@@ -1123,19 +1123,19 @@ public class CriteriaBuilder {
 		return this.criteria.getClz();
 	}
 
-	public List<Object> getValueList() {
-		return this.criteria.getValueList();
-	}
+//	public List<Object> getValueList() {
+//		return this.criteria.getValueList();
+//	}
 
-	public List<String> listAllColumn() {
-		List<String> list = new ArrayList<String>();
-		Parsed parsed = Parser.get(this.criteria.getClz());
-
-		for (BeanElement be : parsed.getBeanElementList()) {
-			list.add(be.getMapper());
-		}
-		return list;
-	}
+//	public List<String> listAllColumn() {
+//		List<String> list = new ArrayList<String>();
+//		Parsed parsed = Parser.get(this.criteria.getClz());
+//
+//		for (BeanElement be : parsed.getBeanElementList()) {
+//			list.add(be.getMapper());
+//		}
+//		return list;
+//	}
 
 	private static void appendWhere(StringBuilder sb, Criteria criteria, boolean isAnd) {
 		if (criteria.isNotFirstCondition()) {
@@ -1305,7 +1305,6 @@ public class CriteriaBuilder {
 			}
 		}
 
-		System.out.println(sqlArr[0]);
 		System.out.println(sqlArr[1]);
 
 		return sqlArr;
@@ -1329,7 +1328,7 @@ public class CriteriaBuilder {
 				}
 
 			}
-			sb.append(space).append(criteria.getSc());
+			sb.append(space).append(criteria.getDirection());
 		}
 	}
 
@@ -1381,8 +1380,6 @@ public class CriteriaBuilder {
 	private static void between(StringBuilder sb, Criteria criteria, Map<String, MinMax> map, boolean isAnd) {
 		for (String key : map.keySet()) {
 			MinMax minMax = map.get(key);
-
-			Object v = minMax.getMin();
 
 			appendWhere(sb, criteria, isAnd);
 			sb.append(key).append(space).append(" between ");
@@ -1522,14 +1519,6 @@ public class CriteriaBuilder {
 		BeanElement be = getBeanElement(property);
 
 		if (be == null) {
-//			if (v instanceof Long 
-//					|| v instanceof Integer
-//					|| v instanceof BigDecimal
-//					|| v instanceof Double 
-//					|| v instanceof Float
-//					|| v instanceof Short
-//					|| v instanceof Byte )
-//				return false;
 			
 			String s = v.toString();
 			boolean isNumeric = NumberUtil.isNumeric(s);
@@ -1700,7 +1689,7 @@ public class CriteriaBuilder {
 	}
 
 	public interface O {
-		void sc(String sc);
+		void on(Direction direction);
 
 		O orderBy(String orderBy);
 	}

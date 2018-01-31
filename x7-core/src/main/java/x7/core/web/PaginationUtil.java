@@ -28,7 +28,7 @@ public class PaginationUtil {
 		map.put("totalPages", po.getTotalPages());
 		map.put("totalRows", po.getTotalRows());
 		map.put("orderBy", po.getOrderBy());
-		map.put("sc", po.getSc());
+		map.put("sc", po.getDirection());
 		map.put("list", po.getList());
 		map.put("tag", po.getTag());
 		return map;

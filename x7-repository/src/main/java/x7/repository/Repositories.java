@@ -452,6 +452,8 @@ public class Repositories implements Repository {
 
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
+		
+		criteria.setSorted(pagination);
 
 		if (cacheResolver == null) {
 			if (parsed.isSharding()) {
@@ -743,29 +745,31 @@ public class Repositories implements Repository {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> list(Criteria.Fetch criteriaJoin,
+	public Pagination<Map<String, Object>> list(Criteria.Fetch fetch,
 			Pagination<Map<String, Object>> pagination) {
-		Class clz = criteriaJoin.getClz();
+		Class clz = fetch.getClz();
 		Parsed parsed = Parser.get(clz);
 
+		fetch.setSorted(pagination);
+		
 		if (parsed.isSharding()) {
-			return shardingDao.list(criteriaJoin, pagination);
+			return shardingDao.list(fetch, pagination);
 		} else {
-			return syncDao.list(criteriaJoin, pagination);
+			return syncDao.list(fetch, pagination);
 		}
 	}
 
 	@Override
-	public List<Map<String, Object>> list(Criteria.Fetch criteriaJoin) {
+	public List<Map<String, Object>> list(Criteria.Fetch fetch) {
 
-		Class clz = criteriaJoin.getClz();
+		Class clz = fetch.getClz();
 		Parsed parsed = Parser.get(clz);
 
 		if (parsed.isSharding()) {
 			throw new ShardingException(
-					"Sharding not supported: List<Map<String, Object>> list(Criteria.Join criteriaJoin)");
+					"Sharding not supported: List<Map<String, Object>> list(Criteria.Fetch fetch)");
 		} else {
-			return syncDao.list(criteriaJoin);
+			return syncDao.list(fetch);
 		}
 	}
 
