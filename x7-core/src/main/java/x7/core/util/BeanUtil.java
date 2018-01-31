@@ -81,6 +81,13 @@ public class BeanUtil {
 		return result;
 	}
 
+	public static String getByFirstUpper(String clzName) {
+		String a = clzName.substring(0, 1);
+		String rest = clzName.substring(1);
+		String result = a.toUpperCase() + rest;
+		return result;
+	}
+
 	public static String getProperty(String methodName) {
 		if (methodName.startsWith("is"))
 			return methodName;

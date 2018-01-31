@@ -28,11 +28,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import x7.core.bean.Criteria.Fetch;
-import x7.core.util.BeanMapUtil;
-import x7.core.util.BeanUtilX;
-import x7.core.util.NumberUtil;
-import x7.core.util.StringUtil;
-import x7.core.util.TimeUtil;
+import x7.core.util.*;
 import x7.core.web.Fetched;
 import x7.core.web.RequestMapped;
 
@@ -682,7 +678,7 @@ public class CriteriaBuilder {
 	 * <br>
 	 * 
 	 * @param clz
-	 * @param map
+	 * @param expressMap
 	 */
 	public CriteriaBuilder build(Class<?> clz, Map<String, String> expressMap) {
 
@@ -1275,6 +1271,8 @@ public class CriteriaBuilder {
 					String key = entry.getKey();
 					List<String> list = entry.getValue();
 					Parsed parsed = Parser.get(key);
+					if (Objects.isNull(parsed))
+						throw new RuntimeException("Entity Bean Not Exist: " + BeanUtil.getByFirstUpper(key));
 					String tableName = parsed.getTableName();
 					clzTableMapper.put(key, tableName);//clzName, tableName
 					for (String property : list){
