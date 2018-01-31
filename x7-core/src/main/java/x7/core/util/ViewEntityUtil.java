@@ -11,7 +11,6 @@ import java.util.Map;
  */
 public class ViewEntityUtil {
 
-
     public static <T> T parseObject(ViewEntity bean, Class<T> clz) {
         T t = JSON.toJavaObject((JSON)bean.getBody(),clz);
         return t;
