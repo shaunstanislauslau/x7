@@ -16,8 +16,10 @@
  */
 package x7.core.web;
 
+/**
+ * @author Sim Wang
+ */
 public interface Paged {
-
 	boolean isScroll();
 	int getPage();
 	int getRows();
