@@ -31,6 +31,7 @@ import x7.core.bean.Criteria.Fetch;
 import x7.core.util.*;
 import x7.core.web.Direction;
 import x7.core.web.Fetched;
+import x7.core.web.Paged;
 import x7.core.web.RequestMapped;
 
 /**
@@ -146,7 +147,7 @@ public class CriteriaBuilder {
 	}
 
 	private List<String> getTempList() {
-		return this.tempList;
+		return this.tempList; 
 	}
 
 	private I c = new I() {
@@ -735,7 +736,7 @@ public class CriteriaBuilder {
 
 			if (!key.contains(".")) {
 				if (key.equals(ORDER_BY))
-					orderBy(value);
+					criteria.setOrderBy(value);
 				else if (key.equals(DIRECTION))
 					criteria.setDirection(Direction.valueOf(value));
 				else if (key.equals(GROUP_BY))
@@ -882,30 +883,10 @@ public class CriteriaBuilder {
 		return c;
 	}
 
-	public O orderBy(String property) {
+	public void paged(Paged paged) {
 
-		property = getAliasPoint(property);
-		criteria.getOrderByList().add(property);
+		criteria.paged(paged);
 
-		O o = new O() {
-
-			@Override
-			public void on(Direction ascOrDesc) {
-				criteria.setDirection(ascOrDesc);
-			}
-
-			@Override
-			public O orderBy(String property) {
-				property = getAliasPoint(property);
-				if (!criteria.getOrderByList().contains(property)) {
-					criteria.getOrderByList().add(property);
-				}
-				return this;
-			}
-
-		};
-
-		return o;
 	}
 
 	public CriteriaBuilder groupBy(String property) {
@@ -1688,10 +1669,14 @@ public class CriteriaBuilder {
 		CriteriaBuilder y();
 	}
 
-	public interface O {
+	public interface Page {
 		void on(Direction direction);
 
-		O orderBy(String orderBy);
+		Page orderBy(String orderBy);
+		
+		void rows(int rows);
+		
+		void page(int page);
 	}
 
 	/**

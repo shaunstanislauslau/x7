@@ -30,12 +30,9 @@ import x7.core.search.Tag;
  *
  * @param <T>
  */
-public class Pagination<T> implements Sorted, Serializable{
+public class Pagination<T> implements Paged, Serializable{
 	
 	private static final long serialVersionUID = -3917421382413274341L;
-	
-	public final static String DESC = "DESC";
-	public final static String ASC = "ASC";
 
 	private int rows = 20;
 	private int page = 1;

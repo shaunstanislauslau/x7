@@ -453,7 +453,7 @@ public class Repositories implements Repository {
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 		
-		criteria.setSorted(pagination);
+		criteria.paged(pagination);
 
 		if (cacheResolver == null) {
 			if (parsed.isSharding()) {
@@ -750,7 +750,7 @@ public class Repositories implements Repository {
 		Class clz = fetch.getClz();
 		Parsed parsed = Parser.get(clz);
 
-		fetch.setSorted(pagination);
+		fetch.paged(pagination);
 		
 		if (parsed.isSharding()) {
 			return shardingDao.list(fetch, pagination);

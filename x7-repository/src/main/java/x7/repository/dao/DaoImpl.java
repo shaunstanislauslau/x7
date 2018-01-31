@@ -794,14 +794,14 @@ public class DaoImpl implements Dao {
 		String sql = sqlArr[1];
 
 		long count = 0;
-		if (!pagination.isScroll()) {
+		if (!criteria.isScroll()) {
 			count = getCount(sqlCount, valueList);
 		}
 
 		pagination.setTotalRows(count);
 
-		int page = pagination.getPage();
-		int rows = pagination.getRows();
+		int page = criteria.getPage();
+		int rows = criteria.getRows();
 		int start = (page - 1) * rows;
 
 		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
@@ -1514,13 +1514,13 @@ public class DaoImpl implements Dao {
 		String sql = sqlArr[1];
 
 		long count = 0;
-		if (!pagination.isScroll()) {
+		if (!criteriaFetch.isScroll()) {
 			count = getCount(sqlCount, valueList);
 		}
 		pagination.setTotalRows(count);
 
-		int page = pagination.getPage();
-		int rows = pagination.getRows();
+		int page = criteriaFetch.getPage();
+		int rows = criteriaFetch.getRows();
 		int start = (page - 1) * rows;
 
 		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
@@ -1589,6 +1589,12 @@ public class DaoImpl implements Dao {
 		String sql = sqlArr[1];
 
 		sql = sql.replace("*", fetch.getResultScript());
+		
+		int page = fetch.getPage();
+		int rows = fetch.getRows();
+		int start = (page - 1) * rows;
+
+		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
 
 		System.out.println(sql);
 

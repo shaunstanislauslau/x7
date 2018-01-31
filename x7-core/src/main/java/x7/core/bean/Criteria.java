@@ -25,7 +25,7 @@ import java.util.Map;
 import x7.core.bean.CriteriaBuilder.FetchMapper;
 import x7.core.util.BeanUtil;
 import x7.core.web.Direction;
-import x7.core.web.Sorted;
+import x7.core.web.Paged;
 
 /**
  * 简单的SQL拼接标准化
@@ -33,13 +33,16 @@ import x7.core.web.Sorted;
  * @author sim
  *
  */
-public class Criteria implements Sorted, Serializable {
+public class Criteria implements Paged, Serializable {
 
 	private static final long serialVersionUID = 7088698915888081349L;
 
 	private transient Parsed parsed;
 	private transient boolean isNotFirstCondition = false;
 	private transient boolean isXing = false;
+	private boolean isScroll;
+	private int page;
+	private int rows;
 	private String orderBy;
 	private Direction direction = Direction.DESC;
 	private String groupBy;
@@ -238,10 +241,37 @@ public class Criteria implements Sorted, Serializable {
 		this.orderBy = orderBy;
 	}
 	
-	public void setSorted(Sorted sorted) {
-		this.orderByList.add(sorted.getOrderBy());
-		this.orderBy = sorted.getOrderBy();
-		this.direction = sorted.getDirection();
+	public boolean isScroll() {
+		return isScroll;
+	}
+
+	public void setScroll(boolean isScroll) {
+		this.isScroll = isScroll;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getRows() {
+		return rows;
+	}
+
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+
+	public void paged(Paged paged) {
+		this.orderByList.add(paged.getOrderBy());
+		this.orderBy = paged.getOrderBy();
+		this.direction = paged.getDirection();
+		this.isScroll = paged.isScroll();
+		this.page = paged.getPage();
+		this.rows = paged.getRows();
 	}
 
 	@Override
