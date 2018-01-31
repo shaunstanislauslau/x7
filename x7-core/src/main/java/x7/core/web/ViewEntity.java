@@ -31,6 +31,14 @@ public class ViewEntity {
 	private String status;
 	private Object body;
 
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setBody(Object body) {
+		this.body = body;
+	}
+
 	public String getStatus() {
 		return status;
 	}
