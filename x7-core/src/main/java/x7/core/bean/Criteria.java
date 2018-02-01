@@ -276,11 +276,32 @@ public class Criteria implements Paged, Serializable {
 
 	@Override
 	public String toString() {
-		return "Criteria [isXing=" + isXing + ", betweenMap=" + betweenMap + ", inMap=" + inMap + ", notInMap="
-				+ notInMap + ", betweenMap_Or=" + betweenMap_Or + ", inMap_Or=" + inMap_Or + ", notInMap_Or="
-				+ notInMap_Or + ", andMap=" + andMap + ", orMap=" + orMap + ", andList=" + andList + ", orList="
-				+ orList + ", valueList=" + valueList  + ", orderByList=" + orderByList
-				+ ", havingMap=" + havingMap + ", sc=" + direction + ", groupBy=" + groupBy + ", clz=" + clz + "]";
+		return "Criteria{" +
+				"parsed=" + parsed +
+				", isNotFirstCondition=" + isNotFirstCondition +
+				", isXing=" + isXing +
+				", isScroll=" + isScroll +
+				", page=" + page +
+				", rows=" + rows +
+				", orderBy='" + orderBy + '\'' +
+				", direction=" + direction +
+				", groupBy='" + groupBy + '\'' +
+				", clz=" + clz +
+				", betweenMap=" + betweenMap +
+				", inMap=" + inMap +
+				", notInMap=" + notInMap +
+				", betweenMap_Or=" + betweenMap_Or +
+				", inMap_Or=" + inMap_Or +
+				", notInMap_Or=" + notInMap_Or +
+				", andMap=" + andMap +
+				", orMap=" + orMap +
+				", andList=" + andList +
+				", orList=" + orList +
+				", valueList=" + valueList +
+				", orderByList=" + orderByList +
+				", havingMap=" + havingMap +
+				", fetchMapper=" + fetchMapper +
+				'}';
 	}
 
 	/**
@@ -392,15 +413,11 @@ public class Criteria implements Paged, Serializable {
 
 		@Override
 		public String toString() {
-			return "Fetch [columnList=" + resultList +   ", isXing()="
-					+ isXing() + ", getBetweenMap()=" + getBetweenMap() + ", getInMap()=" + getInMap()
-					+ ", getNotInMap()=" + getNotInMap() + ", getBetweenMap_Or()=" + getBetweenMap_Or()
-					+ ", getInMap_Or()=" + getInMap_Or() + ", getNotInMap_Or()=" + getNotInMap_Or() + ", getAndMap()="
-					+ getAndMap() + ", getOrMap()=" + getOrMap() + ", getAndList()=" + getAndList() + ", getOrList()="
-					+ getOrList() + ", getValueList()=" + getValueList() 
-					+ ", getOrderByList()=" + getOrderByList() + ", getHavingMap()=" + getHavingMap() + ", getSc()="
-					+ getDirection() + ", getGroupBy()=" + getGroupBy() + ", getClz()=" + getClz() + ", toString()="
-					+ super.toString() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + "]";
+			return "Fetch{" +
+					"resultList=" + resultList +
+					", sourceScript='" + sourceScript + '\'' +
+					", criteria='" + super.toString() + '\'' +
+					'}';
 		}
 
 	}
