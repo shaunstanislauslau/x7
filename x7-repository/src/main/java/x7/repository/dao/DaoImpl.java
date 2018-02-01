@@ -804,6 +804,8 @@ public class DaoImpl implements Dao {
 		Pagination<T> pagination = new Pagination<T>();
 		pagination.setRows(rows);
 		pagination.setPage(page);
+		pagination.setOrderBy(criteria.getOrderBy());
+		pagination.setDirection(criteria.getDirection());
 
 		pagination.setTotalRows(count);
 
@@ -1523,6 +1525,8 @@ public class DaoImpl implements Dao {
 		Pagination<Map<String, Object>> pagination = new Pagination<Map<String, Object>>();
 		pagination.setPage(page);
 		pagination.setRows(rows);
+		pagination.setOrderBy(criteriaFetch.getOrderBy());
+		pagination.setDirection(criteriaFetch.getDirection());
 		
 		long count = 0;
 		if (!criteriaFetch.isScroll()) {

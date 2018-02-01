@@ -444,8 +444,8 @@ public class ShardingDaoImpl implements ShardingDao {
 		int rows = criteria.getRows();
 		
 		Pagination<T> pagination = new Pagination<T>();
-		pagination.setRows(rows);
-		pagination.setPage(page);
+		pagination.setOrderBy(criteria.getOrderBy());
+		pagination.setDirection(criteria.getDirection());
 
 
 		Map<String, Future<Pagination<T>>> futureMap = new HashMap<>();
@@ -457,10 +457,10 @@ public class ShardingDaoImpl implements ShardingDao {
 				@Override
 				public Pagination<T> call() throws Exception {
 
-					Pagination<T> p = new Pagination<T>();
-					p.setPage(1);
-					p.setRows(page * rows);
+					Pagination<T> p = null;
 					try {
+						criteria.setRows(rows * page);
+						criteria.setPage(1);
 						p = find(criteria,  k);
 					} catch (Exception e) {
 						for (Future<Pagination<T>> f : futureMap.values()) {
@@ -521,6 +521,8 @@ public class ShardingDaoImpl implements ShardingDao {
 
 		pagination.setTotalRows(totalRows);
 		pagination.setList(resultList);
+		pagination.setRows(rows);
+		pagination.setPage(page);
 
 		return pagination;
 	}
@@ -558,8 +560,8 @@ public class ShardingDaoImpl implements ShardingDao {
 		final int page = fetch.getPage();
 		final int rows = fetch.getRows();
 		Pagination<Map<String, Object>> pagination = new Pagination<>();
-		pagination.setRows(rows * page);
-		pagination.setPage(1);
+		pagination.setOrderBy(fetch.getOrderBy());
+		pagination.setDirection(fetch.getDirection());
 		Map<String, Future<Pagination<Map<String, Object>>>> futureMap = new HashMap<>();
 
 		for (String k : keyArr) {
@@ -569,10 +571,10 @@ public class ShardingDaoImpl implements ShardingDao {
 				@Override
 				public Pagination<Map<String, Object>> call() throws Exception {
 
-					Pagination<Map<String, Object>> p = new Pagination<Map<String, Object>>();
-					p.setPage(1);
-					p.setRows(page * rows);
+					Pagination<Map<String, Object>> p = null;
 					try {
+						fetch.setRows(rows * page);
+						fetch.setPage(1);
 						p = find(fetch, k);
 					} catch (Exception e) {
 						for (Future<Pagination<Map<String, Object>>> f : futureMap.values()) {
@@ -633,6 +635,8 @@ public class ShardingDaoImpl implements ShardingDao {
 
 		pagination.setTotalRows(totalRows);
 		pagination.setList(resultList);
+		pagination.setPage(page);
+		pagination.setRows(rows);
 
 		return pagination;
 	}

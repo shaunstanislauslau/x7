@@ -44,8 +44,6 @@ public class CriteriaBuilder {
 
 	public final static String xReg = "$$";
 
-	public final static String ASC = "asc";
-	public final static String DESC = "desc";
 	public final static String space = " ";
 	public final static String comma = ",";
 	public final static String WHERE = " where ";
