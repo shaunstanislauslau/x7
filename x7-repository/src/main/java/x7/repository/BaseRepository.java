@@ -249,9 +249,9 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> list(Criteria.Fetch criteria, Pagination<Map<String, Object>> pagination) {
+	public Pagination<Map<String, Object>> find(Criteria.Fetch criteria) {
 
-		return Repositories.getInstance().list(criteria, pagination);
+		return Repositories.getInstance().find(criteria);
 	}
 
 	@Override
@@ -339,9 +339,9 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
+	public Pagination<T> find(Criteria criteria) {
 
-		return Repositories.getInstance().list(criteria, pagination);
+		return Repositories.getInstance().find(criteria);
 	}
 
 	public static class HealthChecker {

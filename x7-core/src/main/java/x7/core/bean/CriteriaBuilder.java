@@ -662,6 +662,23 @@ public class CriteriaBuilder {
 
 		return builder;
 	}
+	
+	public static CriteriaBuilder build(Class<?> clz, Paged paged) {
+		Criteria criteria = new Criteria();
+		criteria.setClz(clz);
+		CriteriaBuilder builder = new CriteriaBuilder(criteria);
+
+		if (criteria.getParsed() == null) {
+			Parsed parsed = Parser.get(clz);
+			criteria.setParsed(parsed);
+		}
+		
+		if (paged != null) {
+			builder.paged(paged);
+		}
+
+		return builder;
+	}
 
 	public static CriteriaBuilder build(Class<?> clz, RequestMapped ro) {
 		CriteriaBuilder builder = build(clz);
@@ -696,6 +713,10 @@ public class CriteriaBuilder {
 			if (ro instanceof RequestMapped) {
 				RequestMapped requestMapped = (RequestMapped) ro;
 				requestMapped.build("", builder, requestMapped.getRequestMap());
+			}
+			
+			if (ro instanceof Paged) {
+				builder.paged((Paged)ro);
 			}
 		}
 

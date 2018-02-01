@@ -51,8 +51,6 @@ public interface Dao {
 	
 	<T> List<T> list(Object conditionObj);
 	
-	<T> Pagination<T> list(Criteria criteria, Pagination<T> pagination);
-	
 	List<Map<String,Object>>  list(Class clz, String sql,
 			List<Object> conditionList);
 
@@ -79,7 +77,9 @@ public interface Dao {
 	
 	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
 	
-	Pagination<Map<String,Object>> list(Criteria.Fetch criterionJoinable, Pagination<Map<String,Object>> pagination);
+	Pagination<Map<String,Object>> find(Criteria.Fetch fetch);
 	
-	List<Map<String,Object>> list(Criteria.Fetch criteriaJoinable);
+	List<Map<String,Object>> list(Criteria.Fetch fetch);
+	
+	<T> Pagination<T> find(Criteria criteria);
 }

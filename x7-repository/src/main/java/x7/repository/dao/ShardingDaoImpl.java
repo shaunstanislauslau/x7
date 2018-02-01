@@ -408,7 +408,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		return getOne(conditionObj, key);
 	}
 
-	private <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination, String key) {
+	private <T> Pagination<T> find(Criteria criteria, String key) {
 		Connection conn = null;
 		try {
 			conn = getConnection(key, true);// FIXME true, need a policy
@@ -416,19 +416,19 @@ public class ShardingDaoImpl implements ShardingDao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 
-		Pagination<T> p = DaoImpl.getInstance().list(criteria, pagination, conn);
+		Pagination<T> p = DaoImpl.getInstance().find(criteria,  conn);
 		return p;
 	}
 
 	@Override
-	public <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
+	public <T> Pagination<T> find(Criteria criteria) {
 
 		tryToParse(criteria.getClz());
 
 		String key = getKey(criteria);
 
 		if (StringUtil.isNotNull(key)) {
-			return list(criteria, pagination, key);
+			return find(criteria, key);
 		}
 
 		String policy = Configs.getString("x7.db.sharding.policy");
@@ -439,8 +439,14 @@ public class ShardingDaoImpl implements ShardingDao {
 		/*
 		 * map script
 		 */
-		final int page = pagination.getPage();
-		final int rows = pagination.getRows();
+		
+		int page = criteria.getPage();
+		int rows = criteria.getRows();
+		
+		Pagination<T> pagination = new Pagination<T>();
+		pagination.setRows(rows);
+		pagination.setPage(page);
+
 
 		Map<String, Future<Pagination<T>>> futureMap = new HashMap<>();
 
@@ -455,7 +461,7 @@ public class ShardingDaoImpl implements ShardingDao {
 					p.setPage(1);
 					p.setRows(page * rows);
 					try {
-						p = list(criteria, p, k);
+						p = find(criteria,  k);
 					} catch (Exception e) {
 						for (Future<Pagination<T>> f : futureMap.values()) {
 							f.cancel(true);
@@ -519,7 +525,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		return pagination;
 	}
 
-	private Pagination<Map<String, Object>> list(Fetch criterionJoinable, Pagination<Map<String, Object>> pagination,
+	private Pagination<Map<String, Object>> find(Fetch criterionJoinable, 
 			String key) {
 		Connection conn = null;
 		try {
@@ -528,17 +534,17 @@ public class ShardingDaoImpl implements ShardingDao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 
-		Pagination<Map<String, Object>> p = DaoImpl.getInstance().list(criterionJoinable, pagination, conn);
+		Pagination<Map<String, Object>> p = DaoImpl.getInstance().find(criterionJoinable, conn);
 		return p;
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> list(Fetch criteria, Pagination<Map<String, Object>> pagination) {
+	public Pagination<Map<String, Object>> find(Fetch fetch) {
 
-		String key = getKey(criteria);
+		String key = getKey(fetch);
 
 		if (StringUtil.isNotNull(key)) {
-			return list(criteria, pagination, key);
+			return find(fetch, key);
 		}
 
 		String policy = Configs.getString("x7.db.sharding.policy");
@@ -549,8 +555,9 @@ public class ShardingDaoImpl implements ShardingDao {
 		/*
 		 * map script
 		 */
-		final int page = pagination.getPage();
-		final int rows = pagination.getRows();
+		final int page = fetch.getPage();
+		final int rows = fetch.getRows();
+		Pagination<Map<String, Object>> pagination = new Pagination<>();
 		pagination.setRows(rows * page);
 		pagination.setPage(1);
 		Map<String, Future<Pagination<Map<String, Object>>>> futureMap = new HashMap<>();
@@ -566,7 +573,7 @@ public class ShardingDaoImpl implements ShardingDao {
 					p.setPage(1);
 					p.setRows(page * rows);
 					try {
-						p = list(criteria, p, k);
+						p = find(fetch, k);
 					} catch (Exception e) {
 						for (Future<Pagination<Map<String, Object>>> f : futureMap.values()) {
 							f.cancel(true);
@@ -610,10 +617,10 @@ public class ShardingDaoImpl implements ShardingDao {
 			totalRows += p.getTotalRows();
 		}
 
-		String orderBy = criteria.getOrderByList().get(0);
-		Direction direction = criteria.getDirection();
+		String orderBy = fetch.getOrderByList().get(0);
+		Direction direction = fetch.getDirection();
 		if (StringUtil.isNullOrEmpty(orderBy)) {
-			Parsed parsed = Parser.get(criteria.getClz());
+			Parsed parsed = Parser.get(fetch.getClz());
 			orderBy = parsed.getKey(X.KEY_ONE);
 		}
 		if (Objects.isNull(direction)) {

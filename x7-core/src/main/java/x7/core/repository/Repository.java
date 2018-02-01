@@ -105,7 +105,7 @@ public interface Repository {
 	 *            可以拼接的条件
 	 * 
 	 */
-	<T> Pagination<T> list(Criteria criteria, Pagination<T> pagination);
+	<T> Pagination<T> find(Criteria criteria);
 
 	/**
 	 * loadAll
@@ -182,7 +182,7 @@ public interface Repository {
 	 * @param pagination
 	 * 
 	 */
-	Pagination<Map<String,Object>> list(Criteria.Fetch criterionJoinable, Pagination<Map<String,Object>> pagination);
+	Pagination<Map<String,Object>> find(Criteria.Fetch criterionJoinable);
 	
 	/**
 	 * 

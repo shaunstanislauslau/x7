@@ -97,16 +97,6 @@ public interface X7Repository<T> {
 	List<T> list(T conditionObj);
 
 	/**
-	 * Standard query pageable API, FETCH supported
-	 * 
-	 * @param criteria
-	 * @param pagination
-	 * 
-	 */
-	Pagination<Map<String, Object>> list(Criteria.Fetch criteria, Pagination<Map<String, Object>> pagination);
-
-
-	/**
 	 * 
 	 * @param clz
 	 * 
@@ -152,6 +142,14 @@ public interface X7Repository<T> {
 	 * @param pagination
 	 * 
 	 */
-	Pagination<T> list(Criteria criteria, Pagination<T> pagination);
+	Pagination<T> find(Criteria criteria);
 
+	/**
+	 * Standard query pageable API, FETCH supported
+	 * 
+	 * @param criteria
+	 * @param pagination
+	 * 
+	 */
+	Pagination<Map<String, Object>> find(Criteria.Fetch criteria);
 }

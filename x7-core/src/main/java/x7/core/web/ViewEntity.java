@@ -67,7 +67,7 @@ public class ViewEntity {
 
 	@Override
 	public String toString() {
-		return "RestView [status=" + status + ", body=" + body + "]";
+		return "ViewEntity [status=" + status + ", body=" + body + "]";
 	}
 
 }

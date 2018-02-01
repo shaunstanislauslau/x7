@@ -783,7 +783,7 @@ public class DaoImpl implements Dao {
 		return list(conditionObj, conn);
 	}
 
-	protected <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination, Connection conn) {
+	protected <T> Pagination<T> find(Criteria criteria, Connection conn) {
 		Class clz = criteria.getClz();
 
 		List<Object> valueList = criteria.getValueList();
@@ -797,11 +797,16 @@ public class DaoImpl implements Dao {
 		if (!criteria.isScroll()) {
 			count = getCount(sqlCount, valueList);
 		}
+		
+		int page = criteria.getPage();
+		int rows = criteria.getRows();
+		
+		Pagination<T> pagination = new Pagination<T>();
+		pagination.setRows(rows);
+		pagination.setPage(page);
 
 		pagination.setTotalRows(count);
 
-		int page = criteria.getPage();
-		int rows = criteria.getRows();
 		int start = (page - 1) * rows;
 
 		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
@@ -845,7 +850,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
+	public <T> Pagination<T> find(Criteria criteria) {
 
 		Connection conn = null;
 		try {
@@ -853,7 +858,7 @@ public class DaoImpl implements Dao {
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return list(criteria, pagination, conn);
+		return find(criteria, conn);
 	}
 
 	@Override
@@ -1488,8 +1493,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> list(Criteria.Fetch criteriaJoinable,
-			Pagination<Map<String, Object>> pagination) {
+	public Pagination<Map<String, Object>> find(Criteria.Fetch criteriaJoinable) {
 
 		Connection conn = null;
 		try {
@@ -1498,11 +1502,10 @@ public class DaoImpl implements Dao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 
-		return this.list(criteriaJoinable, pagination, conn);
+		return this.find(criteriaJoinable, conn);
 	}
 
-	protected Pagination<Map<String, Object>> list(Criteria.Fetch criteriaFetch,
-			Pagination<Map<String, Object>> pagination, Connection conn) {
+	protected Pagination<Map<String, Object>> find(Criteria.Fetch criteriaFetch, Connection conn) {
 
 		Class clz = criteriaFetch.getClz();
 
@@ -1513,14 +1516,20 @@ public class DaoImpl implements Dao {
 		String sqlCount = sqlArr[0];
 		String sql = sqlArr[1];
 
+		
+		int page = criteriaFetch.getPage();
+		int rows = criteriaFetch.getRows();
+		
+		Pagination<Map<String, Object>> pagination = new Pagination<Map<String, Object>>();
+		pagination.setPage(page);
+		pagination.setRows(rows);
+		
 		long count = 0;
 		if (!criteriaFetch.isScroll()) {
 			count = getCount(sqlCount, valueList);
 		}
 		pagination.setTotalRows(count);
-
-		int page = criteriaFetch.getPage();
-		int rows = criteriaFetch.getRows();
+		
 		int start = (page - 1) * rows;
 
 		sql = Mapper.Dialect.Pagination.match(sql, start, rows);

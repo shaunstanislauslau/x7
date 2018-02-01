@@ -448,37 +448,36 @@ public class Repositories implements Repository {
 	}
 
 	@Override
-	public <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
+	public <T> Pagination<T> find(Criteria criteria) {
 
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 		
-		criteria.paged(pagination);
 
 		if (cacheResolver == null) {
 			if (parsed.isSharding()) {
-				return shardingDao.list(criteria, pagination);
+				return shardingDao.find(criteria);
 			} else {
-				return syncDao.list(criteria, pagination);
+				return syncDao.find(criteria);
 			}
 		}
 
 		List<T> list = null;
 
-		String condition = criteria.toString() + pagination.toString();
+		String condition = criteria.toString();
 
 		Pagination<T> p = cacheResolver.getResultKeyListPaginated(clz, condition);// FIXME
 
 		if (p == null) {
 			if (parsed.isSharding()) {
-				shardingDao.list(criteria, pagination);
+				p = shardingDao.find(criteria);
 			} else {
-				syncDao.list(criteria, pagination);
+				p = syncDao.find(criteria);
 			}
 
-			list = pagination.getList(); // 结果
+			list = p.getList(); // 结果
 
-			List<String> keyList = pagination.getKeyList();
+			List<String> keyList = p.getKeyList();
 
 			for (T t : list) {
 
@@ -486,40 +485,36 @@ public class Repositories implements Repository {
 				keyList.add(key);
 			}
 
-			pagination.setList(null);
+			p.setList(null);
 
-			cacheResolver.setResultKeyListPaginated(clz, condition, pagination, 10);
+			cacheResolver.setResultKeyListPaginated(clz, condition, p, 10);
 
-			pagination.setKeyList(null);
-			pagination.setList(list);
+			p.setKeyList(null);
+			p.setList(list);
 
-			return pagination;
+			return p;
 		}
-
-		pagination.setPage(p.getPage());
-		pagination.setRows(p.getRows());
-		pagination.setTotalRows(p.getTotalRows());
 
 		List<String> keyList = p.getKeyList();
 
 		if (keyList == null || keyList.isEmpty()) {
-			return pagination;
+			return p;
 		}
 
 		list = cacheResolver.list(clz, keyList);
 
 		if (keyList.size() == list.size()) {
-			pagination.setList(list);
-			return pagination;
+			p.setList(list);
+			return p;
 		}
 
 		replenishAndRefreshCache(keyList, list, clz, parsed);
 
 		List<T> sortedList = sort(keyList, list, parsed);
 
-		pagination.setList(sortedList);
+		p.setList(sortedList);
 
-		return pagination;
+		return p;
 	}
 
 	@Override
@@ -745,17 +740,14 @@ public class Repositories implements Repository {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> list(Criteria.Fetch fetch,
-			Pagination<Map<String, Object>> pagination) {
+	public Pagination<Map<String, Object>> find(Criteria.Fetch fetch) {
 		Class clz = fetch.getClz();
 		Parsed parsed = Parser.get(clz);
-
-		fetch.paged(pagination);
 		
 		if (parsed.isSharding()) {
-			return shardingDao.list(fetch, pagination);
+			return shardingDao.find(fetch);
 		} else {
-			return syncDao.list(fetch, pagination);
+			return syncDao.find(fetch);
 		}
 	}
 

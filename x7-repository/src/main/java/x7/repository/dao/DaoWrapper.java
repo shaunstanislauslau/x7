@@ -77,9 +77,9 @@ public class DaoWrapper implements Dao{
 	}
 
 	@Override
-	public <T> Pagination<T> list(Criteria criteria, Pagination<T> pagination) {
+	public <T> Pagination<T> find(Criteria criteria) {
 
-		return this.dao.list(criteria, pagination);
+		return this.dao.find(criteria);
 	}
 
 	@Override
@@ -154,9 +154,8 @@ public class DaoWrapper implements Dao{
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> list(Criteria.Fetch criteriaJoinable,
-			Pagination<Map<String, Object>> pagination) {
-		return this.dao.list(criteriaJoinable, pagination);
+	public Pagination<Map<String, Object>> find(Criteria.Fetch fetch) {
+		return this.dao.find(fetch);
 	}
 
 	@Override

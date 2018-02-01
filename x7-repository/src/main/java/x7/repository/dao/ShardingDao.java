@@ -52,8 +52,8 @@ public interface ShardingDao {
 	<T> T getOne(T conditionObj);
 	<T> long getCount(Object obj);
 	
-	<T> Pagination<T> list(Criteria criteria, Pagination<T> pagination);
+	<T> Pagination<T> find(Criteria criteria);
 	
-	Pagination<Map<String,Object>> list(Criteria.Fetch criterionJoinable, Pagination<Map<String,Object>> pagination);
+	Pagination<Map<String,Object>> find(Criteria.Fetch fetch);
 
 }

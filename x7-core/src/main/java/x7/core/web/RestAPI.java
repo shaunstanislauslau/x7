@@ -27,8 +27,6 @@ import x7.core.util.JsonX;
  */
 public interface RestAPI {
 	
-	String OK = "OK";
-	String FAIL = "FAIL";
 	String TOAST_SIGN_EXCEPTION = "SIGN UNAVAILABLE";
 	
 	interface Signed {
@@ -98,7 +96,7 @@ public interface RestAPI {
 		public static Message parse (String responseStr, Signed signed){
 			
 			Message result = JsonX.toObject(responseStr, Message.class);
-			if (result.getStatus().equals(FAIL))
+			if (result.getStatus().equals(ViewStatus.FAIL))
 				return result;
 			
 			if (! result.getSign().equals(signed.sign()))
@@ -112,7 +110,7 @@ public interface RestAPI {
 	public static class SendMessage {
 		public static Message toast(String str) {
 			Message message = new Message();
-			message.setStatus(FAIL);
+			message.setStatus(ViewStatus.FAIL);
 			message.setBody(str);
 			return message;
 		}
@@ -120,7 +118,7 @@ public interface RestAPI {
 		public static Message ok(Object obj, Signed signed) {
 
 			Message message = new Message();
-			message.setStatus(OK);
+			message.setStatus(ViewStatus.OK);
 			message.setBody(obj);
 			message.setId(signed.getId());
 			message.setTime(signed.getTime());
@@ -132,18 +130,18 @@ public interface RestAPI {
 
 	public static class Message<T> {
 
-		private String status;
+		private ViewStatus status;
 		private T body;
 		private String id;
 		private long time;
 		private String sign;
 
 
-		public String getStatus() {
+		public ViewStatus getStatus() {
 			return status;
 		}
 
-		public void setStatus(String status) {
+		public void setStatus(ViewStatus status) {
 			this.status = status;
 		}
 
