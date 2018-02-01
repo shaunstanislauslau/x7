@@ -48,6 +48,7 @@ import x7.core.util.JsonX;
 import x7.core.util.StringUtil;
 import x7.core.web.Pagination;
 import x7.repository.ResultSetUtil;
+import x7.repository.exception.PersistenceException;
 import x7.repository.exception.RollbackException;
 import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
@@ -84,7 +85,7 @@ public class DaoImpl implements Dao {
 
 	private Connection getConnection(boolean isRead) throws SQLException {
 		if (dataSource == null) {
-			System.err.println("No DataSource");
+			throw new PersistenceException("NO DataSource");
 		}
 		if (dataSource_R == null) {
 
