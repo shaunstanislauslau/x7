@@ -40,6 +40,7 @@ import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaBuilder;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
+import x7.core.repository.Mapped;
 import x7.core.repository.X;
 import x7.core.util.BeanMapUtil;
 import x7.core.util.BeanUtil;
@@ -871,7 +872,7 @@ public class DaoImpl implements Dao {
 		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
 		sql = SqlUtil.concat(parsed, sql, queryMap);
 
-		String countSql = sql.replace(X.PAGINATION, "SUM(*) sum");
+		String countSql = sql.replace(Mapped.TAG, "SUM(*) sum");
 		countSql = countSql.replace("*", sumProperty);
 
 		Object sum = null;
@@ -915,7 +916,7 @@ public class DaoImpl implements Dao {
 
 		String sqlSum = sqlArr[2];
 
-		sqlSum = sqlSum.replace(X.PAGINATION, "SUM(*) sum");
+		sqlSum = sqlSum.replace(Mapped.TAG, "SUM(*) sum");
 		if (StringUtil.isNotNull(sumProperty)) {
 			sumProperty = parsed.getMapper(sumProperty);
 			sqlSum = sqlSum.replace("*", sumProperty);
@@ -1001,7 +1002,7 @@ public class DaoImpl implements Dao {
 		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
 		sql = SqlUtil.concat(parsed, sql, queryMap);
 
-		String countSql = sql.replace(X.PAGINATION, "COUNT(*) count");
+		String countSql = sql.replace(Mapped.TAG, "COUNT(*) count");
 
 		long count = 0;
 		PreparedStatement pstmt = null;
@@ -1119,7 +1120,7 @@ public class DaoImpl implements Dao {
 		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
 		sql = SqlUtil.concat(parsed, sql, queryMap);
 
-		sql = sql.replace(X.PAGINATION, "max(id) maxId");
+		sql = sql.replace(Mapped.TAG, "max(id) maxId");
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -1291,7 +1292,7 @@ public class DaoImpl implements Dao {
 
 		String sqlCount = sqlArr[2];
 
-		sqlCount = sqlCount.replace(X.PAGINATION, "COUNT(*) count");
+		sqlCount = sqlCount.replace(Mapped.TAG, "COUNT(*) count");
 		if (StringUtil.isNotNull(countProperty)) {
 			countProperty = parsed.getMapper(countProperty);
 			sqlCount = sqlCount.replace("*", countProperty);

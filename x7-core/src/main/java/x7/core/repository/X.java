@@ -32,9 +32,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE}) 
 public @interface X {
 	
-	String SUFFIX = "${SUFFIX}";
-	String PAGINATION = "${PAGINATION}";
-	
 	int KEY_ONE = 1;
 	int KEY_SHARDING = 7;
 	

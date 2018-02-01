@@ -25,6 +25,7 @@ import x7.core.bean.BeanElement;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.config.Configs;
+import x7.core.repository.Mapped;
 import x7.core.repository.X;
 import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
@@ -395,7 +396,7 @@ public class MapperFactory implements Mapper {
 			Parsed parsed = Parser.get(clz);
 			String space = " ";
 			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT " + X.PAGINATION + " FROM ");
+			sb.append("SELECT " + Mapped.TAG + " FROM ");
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName())).append(space);
 			sb.append("WHERE 1=1 ");
 

@@ -37,8 +37,10 @@ public interface Mapper {
 	String PAGINATION = "PAGINATION";
 	String CREATE_TABLE = "CREATE_TABLE";
 	String INDEX = "INDEX";
+	
 
 	interface Interpreter {
+		
 		String getTableSql(Class clz);
 
 		String getRefreshSql(Class clz);

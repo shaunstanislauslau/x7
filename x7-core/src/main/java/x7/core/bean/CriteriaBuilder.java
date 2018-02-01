@@ -28,7 +28,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import x7.core.bean.Criteria.Fetch;
-import x7.core.util.*;
+import x7.core.repository.Mapped;
+import x7.core.util.BeanMapUtil;
+import x7.core.util.BeanUtil;
+import x7.core.util.BeanUtilX;
+import x7.core.util.NumberUtil;
+import x7.core.util.StringUtil;
+import x7.core.util.TimeUtil;
 import x7.core.web.Direction;
 import x7.core.web.Fetched;
 import x7.core.web.Paged;
@@ -1229,7 +1235,7 @@ public class CriteriaBuilder {
 		String column = criteria.resultAllScript();
 
 		String[] sqlArr = new String[3];
-		String str = sql.replace(x7.core.repository.X.PAGINATION, column);
+		String str = sql.replace(Mapped.TAG, column);
 		sqlArr[1] = str;
 		if (isGrouped) {
 			String groupBy = criteria.getGroupBy();
@@ -1239,7 +1245,7 @@ public class CriteriaBuilder {
 			str = str.replace(" count ", " _count ");
 			sqlArr[0] = "select count(tc." + groupBy + ") count from (" + str + ") tc";
 		} else {
-			sqlArr[0] = sql.replace(x7.core.repository.X.PAGINATION, "COUNT(*) count");
+			sqlArr[0] = sql.replace(Mapped.TAG, "COUNT(*) count");
 		}
 		sqlArr[2] = sql;
 
@@ -1311,7 +1317,7 @@ public class CriteriaBuilder {
 	}
 
 	private static void select(StringBuilder sb, Criteria criteria) {
-		sb.append("SELECT").append(space).append(x7.core.repository.X.PAGINATION);
+		sb.append("SELECT").append(space).append(Mapped.TAG);
 	}
 
 	private static void sort(StringBuilder sb, Criteria criteria) {
