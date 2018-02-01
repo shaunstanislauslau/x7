@@ -137,6 +137,9 @@ public class TextParser{
 	public void readConfigs(String path, String space){
 		
 		File file = new File(path);
+		if (!file.isDirectory() || file.list().length == 0){
+			throw new RuntimeException("CONFIG KEY EXCEPTION: x7.config.localAddress, if relative path unavailable, try absolute path");
+		}
 		if (file.isDirectory()){
 			for (String childStr : file.list()){
 				if (childStr.endsWith(".txt") || childStr.endsWith(".properties") || childStr.endsWith(".cfg") || childStr.endsWith(".init")

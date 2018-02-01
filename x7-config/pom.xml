@@ -4,7 +4,7 @@
 
 	<parent>
 		<groupId>x7</groupId>
-		<artifactId>x7</artifactId>
+		<artifactId>x7-parent</artifactId>
 		<version>1.0.0.RELEASE</version>
 	</parent>
 
