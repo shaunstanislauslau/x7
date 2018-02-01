@@ -267,7 +267,7 @@ public class Repositories implements Repository {
 	/**
 	 * 配合refreshTime使用，后台按更新时间查询列表之前调用
 	 * 
-	 * @param obj
+	 * @param clz
 	 */
 	public <T> void refreshCache(Class<T> clz) {
 		Parsed parsed = Parser.get(clz);
