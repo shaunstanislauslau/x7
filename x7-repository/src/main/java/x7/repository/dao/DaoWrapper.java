@@ -159,9 +159,9 @@ public class DaoWrapper implements Dao{
 	}
 
 	@Override
-	public List<Map<String, Object>> list(Criteria.Fetch criteriaJoinable) {
+	public List<Map<String, Object>> list(Criteria.Fetch criteriaFetch) {
 		
-		return this.dao.list(criteriaJoinable);
+		return this.dao.list(criteriaFetch);
 	}
 
 	@Override

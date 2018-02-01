@@ -77,7 +77,7 @@ public interface Dao {
 	
 	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
 	
-	Pagination<Map<String,Object>> find(Criteria.Fetch fetch);
+	Pagination<Map<String, Object>> find(Criteria.Fetch fetch);
 	
 	List<Map<String,Object>> list(Criteria.Fetch fetch);
 	

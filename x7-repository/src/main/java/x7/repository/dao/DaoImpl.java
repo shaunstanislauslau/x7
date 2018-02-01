@@ -303,7 +303,6 @@ public class DaoImpl implements Dao {
 			if (isNoBizTx) {
 				try {
 					conn.rollback();
-					System.out.println("line 334 " + e.getMessage());
 					e.printStackTrace();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
@@ -334,8 +333,6 @@ public class DaoImpl implements Dao {
 		PreparedStatement pstmt = null;
 		try {
 			Parsed parsed = Parser.get(clz);
-			String keyOne = parsed.getKey(X.KEY_ONE);
-
 			Long keyOneValue = 0L;
 			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
 			Class keyOneType = keyOneField.getType();
@@ -532,8 +529,6 @@ public class DaoImpl implements Dao {
 	}
 
 	protected <T> T get(Class<T> clz, long idOne, Connection conn) {
-
-		Parsed parsed = Parser.get(clz);
 
 		List<T> list = new ArrayList<T>();
 
@@ -1496,7 +1491,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> find(Criteria.Fetch criteriaJoinable) {
+	public Pagination<Map<String, Object>> find(Criteria.Fetch criteriaFetch) {
 
 		Connection conn = null;
 		try {
@@ -1505,7 +1500,7 @@ public class DaoImpl implements Dao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 
-		return this.find(criteriaJoinable, conn);
+		return this.find(criteriaFetch, conn);
 	}
 
 	protected Pagination<Map<String, Object>> find(Criteria.Fetch criteriaFetch, Connection conn) {
