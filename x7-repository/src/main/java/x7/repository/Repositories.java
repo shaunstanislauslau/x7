@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -37,6 +38,7 @@ import x7.core.repository.X;
 import x7.core.web.Pagination;
 import x7.repository.dao.Dao;
 import x7.repository.dao.ShardingDao;
+import x7.repository.exception.PersistenceException;
 import x7.repository.exception.ShardingException;
 
 /**
@@ -206,6 +208,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public long create(Object obj) {
+		testAvailable();
 		Class clz = obj.getClass();
 		Parsed parsed = Parser.get(clz);
 		long id = 0;
@@ -221,6 +224,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public boolean refresh(Object obj) {
+		testAvailable();
 		boolean flag = false;
 		Class clz = obj.getClass();
 		Parsed parsed = Parser.get(clz);
@@ -242,6 +246,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public boolean refresh(Object obj, Map<String, Object> conditionMap) {
+		testAvailable();
 		boolean flag = false;
 		Class clz = obj.getClass();
 		Parsed parsed = Parser.get(clz);
@@ -274,6 +279,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public boolean remove(Object obj) {
+		testAvailable();
 		boolean flag = false;
 		Class clz = obj.getClass();
 		Parsed parsed = Parser.get(clz);
@@ -293,6 +299,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> T get(Class<T> clz, long idOne) {
+		testAvailable();
 		Parsed parsed = Parser.get(clz);
 
 		if (cacheResolver == null || parsed.isNoCache()) {
@@ -320,9 +327,9 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> List<T> list(Object conditionObj) {
-
+		testAvailable();
 		if (conditionObj instanceof CriteriaBuilder || conditionObj instanceof Criteria)
-			throw new RuntimeException("Notes: parameter criteriaJoin = criteriaBuilder.get()");
+			throw new RuntimeException("Notes: parameter is not Criteria");
 
 		Class clz = conditionObj.getClass();
 		Parsed parsed = Parser.get(clz);
@@ -374,6 +381,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> T getOne(T conditionObj) {
+		testAvailable();
 		Class<T> clz = (Class<T>) conditionObj.getClass();
 		Parsed parsed = Parser.get(clz);
 
@@ -415,6 +423,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> T getOne(T conditionObj, String orderBy, String sc) {
+		testAvailable();
 		Class<T> clz = (Class<T>) conditionObj.getClass();
 		Parsed parsed = Parser.get(clz);
 
@@ -449,7 +458,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> Pagination<T> find(Criteria criteria) {
-
+		testAvailable();
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 		
@@ -519,7 +528,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> List<T> list(Class<T> clz) {
-
+		testAvailable();
 		Parsed parsed = Parser.get(clz);
 
 		if (cacheResolver == null || parsed.isNoCache()) {
@@ -571,6 +580,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> long getMaxId(Class<T> clz) {
+		testAvailable();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
 			throw new ShardingException("Sharding not supported: getMaxId(Class<T> clz)");
@@ -581,6 +591,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public long getCount(Object conditonObj) {
+		testAvailable();
 		Parsed parsed = Parser.get(conditonObj.getClass());
 		if (parsed.isSharding()) {
 			return shardingDao.getCount(conditonObj);
@@ -591,6 +602,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public Object getSum(Object conditionObj, String sumProperty) {
+		testAvailable();
 		Class clz = conditionObj.getClass();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
@@ -602,6 +614,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public Object getSum(String sumProperty, Criteria criteria) {
+		testAvailable();
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
@@ -614,6 +627,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public long getMaxId(Object conditionObj) {
+		testAvailable();
 		Class clz = conditionObj.getClass();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
@@ -625,7 +639,7 @@ public class Repositories implements Repository {
 
 
 	protected <T> boolean execute(Object obj, String sql) {
-
+		testAvailable();
 		boolean b;
 		Parsed parsed = Parser.get(obj.getClass());
 		if (parsed.isSharding()) {
@@ -648,6 +662,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public Object getCount(String countProperty, Criteria criteria) {
+		testAvailable();
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
@@ -659,6 +674,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> List<T> in(Class<T> clz, List<? extends Object> inList) {
+		testAvailable();
 		Parsed parsed = Parser.get(clz);
 
 		if (parsed.isSharding()) {
@@ -690,6 +706,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList) {
+		testAvailable();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
 			throw new ShardingException(
@@ -741,6 +758,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public Pagination<Map<String, Object>> find(Criteria.Fetch fetch) {
+		testAvailable();
 		Class clz = fetch.getClz();
 		Parsed parsed = Parser.get(clz);
 		
@@ -753,7 +771,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public List<Map<String, Object>> list(Criteria.Fetch fetch) {
-
+		testAvailable();
 		Class clz = fetch.getClz();
 		Parsed parsed = Parser.get(clz);
 
@@ -767,6 +785,7 @@ public class Repositories implements Repository {
 
 	@Override
 	public boolean createBatch(List<? extends Object> objList) {
+		testAvailable();
 		Class clz = objList.get(0).getClass();
 		Parsed parsed = Parser.get(clz);
 		List<Object> list = new ArrayList<Object>();
@@ -777,7 +796,7 @@ public class Repositories implements Repository {
 	}
 
 	protected List<Map<String, Object>> list(Class clz, String sql, List<Object> conditionList) {
-
+		
 		Parsed parsed = Parser.get(clz);
 
 		if (cacheResolver == null || parsed.isNoCache()) {
@@ -803,5 +822,10 @@ public class Repositories implements Repository {
 
 		return mapList;
 
+	}
+	
+	private void testAvailable(){
+		if (Objects.isNull(this.syncDao))
+			throw new PersistenceException("X7-Repository does not started");
 	}
 }
