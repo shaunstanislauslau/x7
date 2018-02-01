@@ -828,4 +828,5 @@ public class Repositories implements Repository {
 		if (Objects.isNull(this.syncDao))
 			throw new PersistenceException("X7-Repository does not started");
 	}
+
 }
