@@ -26,6 +26,7 @@ import java.util.Map;
 
 import x7.core.bean.BeanElement;
 import x7.core.util.JsonX;
+import x7.repository.exception.PersistenceException;
 
 public class ResultSetUtil {
 
@@ -37,6 +38,8 @@ public class ResultSetUtil {
 			String mapper = ele.getMapper();
 			if (ele.clz.isEnum()) {
 				Object v = rs.getObject(mapper);
+				if (v==null)
+					continue;
 				String str = v.toString();
 
 				Method m = ele.clz.getDeclaredMethod("valueOf", String.class);
