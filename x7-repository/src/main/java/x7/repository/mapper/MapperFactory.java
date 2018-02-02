@@ -98,7 +98,7 @@ public class MapperFactory implements Mapper {
 			sql.getLoadSql(clz);
 			sql.getMaxIdSql(clz);
 			sql.getCreateSql(clz);
-			sql.getPaginationSql(clz);
+			sql.getTagSql(clz);
 			sql.getCount(clz);
 			return;
 		}
@@ -392,18 +392,17 @@ public class MapperFactory implements Mapper {
 			return sql;
 		}
 
-		public String getPaginationSql(Class clz) {
+		public String getTagSql(Class clz) {
 			Parsed parsed = Parser.get(clz);
 			String space = " ";
 			StringBuilder sb = new StringBuilder();
 			sb.append("SELECT " + Mapped.TAG + " FROM ");
 			sb.append(BeanUtil.getByFirstLower(parsed.getClzName())).append(space);
-			sb.append("WHERE 1=1 ");
 
 			String sql = sb.toString();
 
 			sql = BeanUtilX.mapper(sql, parsed);
-			sqlsMap.get(clz).put(PAGINATION, sql);
+			sqlsMap.get(clz).put(TAG, sql);
 
 			System.out.println(sql);
 

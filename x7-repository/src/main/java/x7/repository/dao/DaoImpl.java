@@ -498,7 +498,6 @@ public class DaoImpl implements Dao {
 		return flag;
 	}
 
-	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public long create(Object obj) {
 
@@ -731,14 +730,10 @@ public class DaoImpl implements Dao {
 
 		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
 
-		sql = sql.concat(" WHERE 1=1");
-
 		Parsed parsed = Parser.get(clz);
 
 		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
 		sql = SqlUtil.concat(parsed, sql, queryMap);
-
-		// System.out.println("SyncDao.list(obj)...SQL: " + sql);
 
 		List<T> list = new ArrayList<T>();
 
@@ -871,7 +866,7 @@ public class DaoImpl implements Dao {
 
 		Class<?> clz = conditionObj.getClass();
 
-		String sql = MapperFactory.getSql(clz, Mapper.PAGINATION);
+		String sql = MapperFactory.getSql(clz, Mapper.TAG);
 
 		Parsed parsed = Parser.get(clz);
 
@@ -1001,7 +996,7 @@ public class DaoImpl implements Dao {
 
 		Class<?> clz = conditionObj.getClass();
 
-		String sql = MapperFactory.getSql(clz, Mapper.PAGINATION);
+		String sql = MapperFactory.getSql(clz, Mapper.TAG);
 
 		Parsed parsed = Parser.get(clz);
 
@@ -1058,8 +1053,6 @@ public class DaoImpl implements Dao {
 
 		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
 
-		sql = sql.concat(" WHERE 1=1 ");
-
 		Parsed parsed = Parser.get(clz);
 
 		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
@@ -1068,8 +1061,6 @@ public class DaoImpl implements Dao {
 		String mapper = BeanUtilX.getMapper(orderBy);
 		sql = sql + " order by " + mapper + " " + sc;
 		sql = sql + " limit 1";
-
-		// System.out.println("SyncDao.list(obj)...SQL: " + sql);
 
 		List<Object> list = new ArrayList<Object>();
 
@@ -1119,7 +1110,7 @@ public class DaoImpl implements Dao {
 
 		Class clz = conditionObj.getClass();
 
-		String sql = MapperFactory.getSql(clz, Mapper.PAGINATION);
+		String sql = MapperFactory.getSql(clz, Mapper.TAG);
 
 		Parsed parsed = Parser.get(clz);
 

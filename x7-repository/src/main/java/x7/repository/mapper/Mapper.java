@@ -34,7 +34,7 @@ public interface Mapper {
 	String LOAD = "LOAD";
 	String MAX_ID = "MAX_ID";
 	String COUNT = "COUNT";
-	String PAGINATION = "PAGINATION";
+	String TAG = "TAG";
 	String CREATE_TABLE = "CREATE_TABLE";
 	String INDEX = "INDEX";
 	
@@ -53,7 +53,7 @@ public interface Mapper {
 
 		String getCreateSql(Class clz);
 
-		String getPaginationSql(Class clz);
+		String getTagSql(Class clz);
 
 		String getCount(Class clz);
 	}
