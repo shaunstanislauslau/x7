@@ -437,7 +437,7 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 
 					int i = 1;
 					
-					SqlUtil.adpterSqlKey(pstmt, keyOne, null, obj, i);
+					SqlUtil.adpterSqlKey(pstmt, keyOne, obj, i);
 
 					pstmt.addBatch();
 				}
@@ -573,7 +573,7 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 				/*
 				 * 处理KEY
 				 */
-				SqlUtil.adpterSqlKey(pstmt, keyOne, null, obj, i);
+				SqlUtil.adpterSqlKey(pstmt, keyOne, obj, i);
 
 				pstmt.addBatch();
 			}

@@ -295,7 +295,7 @@ public class DaoImpl implements Dao {
 
 			int i = 1;
 
-			SqlUtil.adpterSqlKey(pstmt, parsed.getKeyField(X.KEY_ONE), null, obj, i);
+			SqlUtil.adpterSqlKey(pstmt, parsed.getKeyField(X.KEY_ONE), obj, i);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -468,7 +468,7 @@ public class DaoImpl implements Dao {
 			 * 处理KEY
 			 */
 			Field keyOneF = parsed.getKeyField(X.KEY_ONE);
-			SqlUtil.adpterSqlKey(pstmt, keyOneF, null, obj, i);
+			SqlUtil.adpterSqlKey(pstmt, keyOneF, obj, i);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -1231,7 +1231,7 @@ public class DaoImpl implements Dao {
 			 * 处理KEY
 			 */
 			Field keyOneF = parsed.getKeyField(X.KEY_ONE);
-			SqlUtil.adpterRefreshCondition(pstmt, keyOneF, null, obj, i, conditionMap);
+			SqlUtil.adpterRefreshCondition(pstmt, keyOneF, obj, i, conditionMap);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 

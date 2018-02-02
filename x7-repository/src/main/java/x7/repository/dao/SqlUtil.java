@@ -29,7 +29,7 @@ import x7.core.util.BeanUtil;
 
 public class SqlUtil {
 
-	protected static void adpterSqlKey(PreparedStatement pstmt, String keyOne, String keyTwo, Object obj, int i)
+	protected static void adpterSqlKey(PreparedStatement pstmt, String keyOne, Object obj, int i)
 			throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		/*
@@ -46,7 +46,7 @@ public class SqlUtil {
 
 	}
 
-	protected static void adpterSqlKey(PreparedStatement pstmt, Field keyOneF, Field keyTwoF, Object obj, int i)
+	protected static void adpterSqlKey(PreparedStatement pstmt, Field keyOneF,  Object obj, int i)
 			throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		/*
@@ -152,7 +152,7 @@ public class SqlUtil {
 		return sb.toString();
 	}
 
-	protected static void adpterRefreshCondition(PreparedStatement pstmt, Field keyOneF, Field keyTwoF, Object obj,
+	protected static void adpterRefreshCondition(PreparedStatement pstmt, Field keyOneF, Object obj,
 			int i, Map<String, Object> conditionMap) throws SQLException, NoSuchMethodException, SecurityException,
 					IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		/*
@@ -160,11 +160,6 @@ public class SqlUtil {
 		 */
 		Object value = keyOneF.get(obj);
 		pstmt.setObject(i++, value);
-
-		if (keyTwoF != null) {
-			value = keyTwoF.get(obj);
-			pstmt.setObject(i++, value);
-		}
 
 		if (conditionMap != null) {
 			for (Object v : conditionMap.values()) {
