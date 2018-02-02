@@ -213,9 +213,11 @@ public class DaoImpl implements Dao {
 
 					Object value = ele.getMethod.invoke(o);
 					if (value == null) {
+						if (ele.clz.isEnum())
+							throw new PersistenceException("ENUM CAN NOT NULL, property:" + clz.getName() + "." + ele.getProperty());
 						if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
 								|| ele.clz == Double.class || ele.clz == Float.class || ele.clz == BigDecimal.class
-								|| ele.clz == Byte.class)
+								|| ele.clz == Byte.class || ele.clz == Short.class)
 							value = 0;
 						pstmt.setObject(i++, value);
 					} else {
@@ -251,7 +253,6 @@ public class DaoImpl implements Dao {
 			if (isNoBizTx) {
 				try {
 					conn.rollback();
-					System.out.println("line 199" + e.getMessage());
 					e.printStackTrace();
 
 				} catch (SQLException e1) {
@@ -365,9 +366,11 @@ public class DaoImpl implements Dao {
 
 				Object value = ele.getMethod.invoke(obj);
 				if (value == null) {
+					if (ele.clz.isEnum())
+						throw new PersistenceException("ENUM CAN NOT NULL, property:"+clz.getName()+"."+ele.getProperty());
 					if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
 							|| ele.clz == Double.class || ele.clz == Float.class || ele.clz == BigDecimal.class
-							|| ele.clz == Byte.class)
+							|| ele.clz == Byte.class || ele.clz == Short.class)
 						value = 0;
 					pstmt.setObject(i++, value);
 				} else {
@@ -1185,7 +1188,6 @@ public class DaoImpl implements Dao {
 			e.printStackTrace();
 			try {
 				conn.rollback();
-				System.out.println("line 1560 " + e.getMessage());
 				e.printStackTrace();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
@@ -1252,7 +1254,6 @@ public class DaoImpl implements Dao {
 			if (isNoBizTx) {
 				try {
 					conn.rollback();
-					System.out.println("line 1675 " + e.getMessage());
 					e.printStackTrace();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
