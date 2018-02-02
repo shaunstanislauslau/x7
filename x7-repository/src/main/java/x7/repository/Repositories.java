@@ -35,6 +35,7 @@ import x7.core.repository.CacheException;
 import x7.core.repository.ICacheResolver;
 import x7.core.repository.Repository;
 import x7.core.repository.X;
+import x7.core.web.Direction;
 import x7.core.web.Pagination;
 import x7.repository.dao.Dao;
 import x7.repository.dao.ShardingDao;
@@ -422,7 +423,7 @@ public class Repositories implements Repository {
 	}
 
 	@Override
-	public <T> T getOne(T conditionObj, String orderBy, String sc) {
+	public <T> T getOne(T conditionObj, String orderBy, Direction sc) {
 		testAvailable();
 		Class<T> clz = (Class<T>) conditionObj.getClass();
 		Parsed parsed = Parser.get(clz);

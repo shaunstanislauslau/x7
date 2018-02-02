@@ -21,6 +21,7 @@ import java.util.Map;
 
 import x7.core.bean.Criteria;
 import x7.core.bean.IQuantity;
+import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
 /**
@@ -107,7 +108,7 @@ public interface X7Repository<T> {
 
 	long getCount(T conditonObj);
 
-	T getOne(T conditionObj, String orderBy, String sc);
+	T getOne(T conditionObj, String orderBy, Direction sc);
 
 	T getOne(T conditionObj);
 

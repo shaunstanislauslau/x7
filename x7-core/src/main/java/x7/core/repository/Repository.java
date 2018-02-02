@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import x7.core.bean.Criteria;
+import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
 
@@ -95,7 +96,7 @@ public interface Repository {
 	 * @param sc "DESC", "ASC"
 	 * @return
 	 */
-	<T> T getOne(T conditionObj, String orderBy, String sc);
+	<T> T getOne(T conditionObj, String orderBy, Direction sc);
 
 	/**
 	 * 根据对象内容查询<br>

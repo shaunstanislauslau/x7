@@ -47,6 +47,7 @@ import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
 import x7.core.util.JsonX;
 import x7.core.util.StringUtil;
+import x7.core.web.Direction;
 import x7.core.web.Pagination;
 import x7.repository.ResultSetUtil;
 import x7.repository.exception.PersistenceException;
@@ -1047,7 +1048,7 @@ public class DaoImpl implements Dao {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public <T> T getOne(T conditionObj, String orderBy, String sc) {
+	public <T> T getOne(T conditionObj, String orderBy, Direction sc) {
 
 		Class clz = conditionObj.getClass();
 
@@ -1059,8 +1060,11 @@ public class DaoImpl implements Dao {
 		sql = SqlUtil.concat(parsed, sql, queryMap);
 
 		String mapper = BeanUtilX.getMapper(orderBy);
-		sql = sql + " order by " + mapper + " " + sc;
-		sql = sql + " limit 1";
+		StringBuilder sb = new StringBuilder();
+		sb.append(" order by ").append(mapper).append(" ").append(sc.toString())
+		.append(" limit 1");
+		
+		sql += sb.toString();
 
 		List<Object> list = new ArrayList<Object>();
 

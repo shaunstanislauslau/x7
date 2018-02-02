@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import x7.core.bean.Criteria;
+import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
 
@@ -56,7 +57,7 @@ public interface Dao {
 
 	<T> List<T> list(Class<T> clz);
 	
-	<T> T getOne(T conditionObj, String orderBy, String sc);
+	<T> T getOne(T conditionObj, String orderBy, Direction sc);
 
 	<T> long getMaxId(Class<T> clz);
 	

@@ -33,6 +33,7 @@ import x7.core.bean.Criteria;
 import x7.core.bean.IQuantity;
 import x7.core.bean.Parsed;
 import x7.core.util.StringUtil;
+import x7.core.web.Direction;
 import x7.core.web.Pagination;
 import x7.repository.exception.PersistenceException;
 import x7.repository.mapper.Mapper;
@@ -270,7 +271,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public T getOne(T conditionObj, String orderBy, String sc) {
+	public T getOne(T conditionObj, String orderBy, Direction sc) {
 
 		return Repositories.getInstance().getOne(conditionObj, orderBy, sc);
 	}

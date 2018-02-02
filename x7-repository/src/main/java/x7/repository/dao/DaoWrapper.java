@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import x7.core.bean.Criteria;
+import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
 
@@ -83,7 +84,7 @@ public class DaoWrapper implements Dao{
 	}
 
 	@Override
-	public <T> T getOne(T obj, String orderBy, String sc) {
+	public <T> T getOne(T obj, String orderBy, Direction sc) {
 		
 		return this.dao.getOne(obj, orderBy, sc);
 	}
