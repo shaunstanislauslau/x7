@@ -30,12 +30,9 @@ public class TimeUtil {
 	public final static long ONE_HOUR = 3600000;
 	public final static long ONE_MINUTE = 60000;
 
-	public final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	/**
 	 * 判断是否同一天
-	 * 
-	 * @param time
-	 * @return
+	 *
 	 */
 	public static boolean isSameDay(long time1, long time2) {
 		Calendar c1 = Calendar.getInstance();
@@ -81,9 +78,7 @@ public class TimeUtil {
 
 	/**
 	 * same as now()
-	 * 
-	 * @param strMillis
-	 * @return
+	 *
 	 */
 	public static long toMillis() {
 		return System.currentTimeMillis();
@@ -266,6 +261,7 @@ public class TimeUtil {
 		if (d == null) {
 			return "";
 		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return sdf.format(d);
 	}
 
@@ -354,6 +350,7 @@ public class TimeUtil {
 	public static Date getDate(String timeStr) {
 		try {
 			// 时间格式 yyyy-MM-dd hh:mm:ss
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			return sdf.parse(timeStr);
 			
 		} catch (Exception ex) {
