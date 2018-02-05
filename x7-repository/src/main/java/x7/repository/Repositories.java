@@ -651,8 +651,19 @@ public class Repositories implements Repository {
 
 
 	@Override
-	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList) {
+	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> allList) {
 		testAvailable();
+		
+		List<Object> inList = new ArrayList<Object>();
+
+		for (Object obj : allList) {
+			if (Objects.isNull(obj))
+				continue;
+			if (!inList.contains(obj)) {
+				inList.add(obj);
+			}
+		}
+		
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
 			throw new ShardingException(

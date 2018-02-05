@@ -187,10 +187,6 @@ public class DaoImpl implements Dao {
 				keyOneValue = parsed.getKeyField(X.KEY_ONE).getLong(obj);
 			}
 
-			/*
-			 * 返回自增键
-			 */
-
 			conn = getConnection(false);
 
 			conn.setAutoCommit(false);
@@ -696,8 +692,6 @@ public class DaoImpl implements Dao {
 
 		return list;
 	}
-
-	
 
 	protected <T> List<T> list(Object conditionObj, Connection conn) {
 
@@ -1205,7 +1199,6 @@ public class DaoImpl implements Dao {
 		return refresh(obj, conditionMap, conn);
 	}
 
-
 	@Override
 	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList) {
 
@@ -1216,28 +1209,18 @@ public class DaoImpl implements Dao {
 
 		Parsed parsed = Parser.get(clz);
 
-		Class<?> keyType = null;
-		String mapper = null;
-
 		if (StringUtil.isNullOrEmpty(inProperty)) {
-			String keyOne = parsed.getKey(X.KEY_ONE);
-
-			Field keyField = parsed.getKeyField(X.KEY_ONE);
-			keyType = keyField.getType();
-
-			mapper = BeanUtilX.getMapper(keyOne);
-		} else {
-
-			BeanElement be = parsed.getElement(inProperty);
-			if (be == null)
-				throw new RuntimeException(
-						"Exception in method: <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList), no property: "
-								+ inProperty);
-
-			keyType = be.getMethod.getReturnType();
-
-			mapper = parsed.getMapper(inProperty);
+			inProperty = parsed.getKey(X.KEY_ONE);
 		}
+
+		BeanElement be = parsed.getElement(inProperty);
+		if (be == null)
+			throw new RuntimeException(
+					"Exception in method: <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList), no property: "
+							+ inProperty);
+
+		Class<?> keyType = be.getMethod.getReturnType();
+		String mapper = parsed.getMapper(inProperty);
 
 		StringBuilder sb = new StringBuilder();
 
@@ -1246,7 +1229,7 @@ public class DaoImpl implements Dao {
 
 		boolean isNumber = (keyType == long.class || keyType == int.class || keyType == Long.class
 				|| keyType == Integer.class);
-
+		
 		int size = inList.size();
 		if (isNumber) {
 			for (int i = 0; i < size; i++) {

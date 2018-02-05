@@ -21,11 +21,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
@@ -295,17 +292,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		if (inList.isEmpty())
 			return new ArrayList<T>();
 
-		List<Object> list = new ArrayList<Object>();
-
-		for (Object obj : inList) {
-			if (Objects.isNull(obj))
-				continue;
-			if (!list.contains(obj)) {
-				list.add(obj);
-			}
-		}
-
-		return Repositories.getInstance().in(clz, inProperty, list);
+		return Repositories.getInstance().in(clz, inProperty, inList);
 	}
 
 	@Override
