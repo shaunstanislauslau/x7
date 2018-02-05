@@ -444,5 +444,30 @@ public class TimeUtil {
 		
 		return (CLOCK_0 - t000) / ONE_WEEK;
 	}
+	
+	public static long week_0(Date date){
+		
+		long time = date.getTime();
+		
+		return week_0(time);
+	}
+	
+	public static long week_0(long time){
+		
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(time);
+		
+		int dayWeek = c.get(Calendar.DAY_OF_WEEK);
+		
+		time = time - dayWeek * ONE_DAY;
+		
+		c.setTimeInMillis(time);
+
+		c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+				c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+		c.set(Calendar.MILLISECOND,0);	
+		return c.getTimeInMillis();
+	}
+
 
 }
