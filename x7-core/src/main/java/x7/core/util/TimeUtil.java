@@ -127,6 +127,15 @@ public class TimeUtil {
 		c.set(Calendar.MILLISECOND,0);	
 		return c.getTimeInMillis();
 	}
+	
+	public static long CLOCK_0(long time) {
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(time);
+		c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+				c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+		c.set(Calendar.MILLISECOND,0);	
+		return c.getTimeInMillis();
+	}
 
 	/**
 	 * 计划在几点
@@ -385,16 +394,55 @@ public class TimeUtil {
 		return v;
 	}
 	
-	public static long year(){
-		return Calendar.getInstance().get(Calendar.YEAR);
+	public static long year(Date date){
+		if (date == null)
+			return Calendar.getInstance().get(Calendar.YEAR);;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.get(Calendar.YEAR);
 	}
 	
-	public static long month(){
-		return Calendar.getInstance().get(Calendar.MONTH) + 1;
+	public static long month(Date date){
+		if (date == null)
+			return Calendar.getInstance().get(Calendar.MONTH);;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.get(Calendar.MONTH) + 1;
 	}
 
-	public static long day(){
-		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+	public static long day(Date date){
+		if (date == null)
+			return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.get(Calendar.DAY_OF_MONTH);
+	}
+
+	public static long hour(Date date){
+		if (date == null)
+			return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.get(Calendar.HOUR_OF_DAY);
+	}
+	
+	public static long minute(Date date){
+		if (date == null)
+			return Calendar.getInstance().get(Calendar.MINUTE);;
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.get(Calendar.MINUTE);
+	}
+	
+	public static long weekFrom2000(Date date){
+		
+		long time = date.getTime();
+		
+		long t000 = 946656000450L; //2000-00-01 00:00:00
+		
+		long CLOCK_0 = CLOCK_0(time);
+		
+		return (CLOCK_0 - t000) / ONE_WEEK;
 	}
 
 }
