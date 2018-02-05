@@ -168,7 +168,7 @@ public class Repositories implements Repository {
 			e.printStackTrace();
 		}
 
-		List<T> replenishedList = this.syncDao.in(parsed.getClz(), inList);
+		List<T> replenishedList = this.syncDao.in(parsed.getClz(),null, inList);
 
 		for (T obj : replenishedList) {
 			if (obj == null) {
@@ -602,18 +602,6 @@ public class Repositories implements Repository {
 	}
 
 	@Override
-	public Object getSum(Object conditionObj, String sumProperty) {
-		testAvailable();
-		Class clz = conditionObj.getClass();
-		Parsed parsed = Parser.get(clz);
-		if (parsed.isSharding()) {
-			throw new ShardingException("Sharding not supported: getSum(conditionObj, propertyName)");
-		} else {
-			return syncDao.getSum(conditionObj, sumProperty);
-		}
-	}
-
-	@Override
 	public Object getSum(String sumProperty, Criteria criteria) {
 		testAvailable();
 		Class clz = criteria.getClz();
@@ -661,49 +649,6 @@ public class Repositories implements Repository {
 		return b;
 	}
 
-	@Override
-	public Object getCount(String countProperty, Criteria criteria) {
-		testAvailable();
-		Class clz = criteria.getClz();
-		Parsed parsed = Parser.get(clz);
-		if (parsed.isSharding()) {
-			throw new ShardingException("Sharding not supported: getCount(String countProperty, Criteria criteria)");
-		} else {
-			return syncDao.getCount(countProperty, criteria);
-		}
-	}
-
-	@Override
-	public <T> List<T> in(Class<T> clz, List<? extends Object> inList) {
-		testAvailable();
-		Parsed parsed = Parser.get(clz);
-
-		if (parsed.isSharding()) {
-			throw new ShardingException(
-					"Sharding not supported now: in(Class<T> clz, String inProperty, List<Object> inList)");
-		}
-
-		if (cacheResolver == null || parsed.isNoCache()) {
-			return syncDao.in(clz, inList);
-		}
-
-		List<String> keyList = new ArrayList<String>();
-
-		for (Object obj : inList) {
-			keyList.add(obj.toString());
-		}
-
-		List<T> list = this.cacheResolver.list(clz, keyList);
-
-		if (keyList.size() == list.size())
-			return list;
-
-		replenishAndRefreshCache_In_KeyOne(inList, list, clz, parsed);// FIXME
-
-		List<T> sortedList = sort(keyList, list, parsed);
-
-		return sortedList;
-	}
 
 	@Override
 	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList) {

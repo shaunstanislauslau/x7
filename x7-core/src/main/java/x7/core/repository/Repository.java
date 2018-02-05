@@ -116,12 +116,6 @@ public interface Repository {
 	<T> List<T> list(Class<T> clz);
 	
 	/**
-	 * @param clz
-	 * @param inList
-	 */
-	<T> List<T> in(Class<T> clz, List<? extends Object> inList);
-	
-	/**
 	 * 支持单一的指定property的in查询, 包括主键
 	 * @param clz
 	 * @param inProperty
@@ -150,13 +144,6 @@ public interface Repository {
 	 */
 	long getCount(Object obj);
 	
-	/**
-	 * 查累计数
-	 * @param conditionObj
-	 * @param sumProperty
-	 * 
-	 */
-	Object getSum(Object conditionObj, String sumProperty);
 	
 	/**
 	 * 条件查询累计
@@ -166,24 +153,17 @@ public interface Repository {
 	 * 
 	 */
 	Object getSum(String sumProperty, Criteria criterion);
-	/**
-	 * 条件查询计数
-	 * @param conditionObj
-	 * @param countProperty
-	 * @param criteria
-	 * 
-	 */
-	Object getCount(String countProperty, Criteria criteria);
+
 	
 	/**
 	 * 连表查询，标准化拼接
 	 * 尽量避免在互联网业务系统中使用<br>
 	 * 不支持缓存<br>
-	 * @param criterionJoinable
+	 * @param fetch
 	 * @param pagination
 	 * 
 	 */
-	Pagination<Map<String,Object>> find(Criteria.Fetch criterionJoinable);
+	Pagination<Map<String,Object>> find(Criteria.Fetch fetch);
 	
 	/**
 	 * 
@@ -191,7 +171,7 @@ public interface Repository {
 	 * @param criterionJoinable
 	 * 
 	 */
-	List<Map<String,Object>> list(Criteria.Fetch criteriaJoinable);
+	List<Map<String,Object>> list(Criteria.Fetch fetch);
 
 	boolean createBatch(List<? extends Object> objList);
 }

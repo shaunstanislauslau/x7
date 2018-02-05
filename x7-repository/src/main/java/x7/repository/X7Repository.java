@@ -55,6 +55,8 @@ public interface X7Repository<T> {
 
 	long create(T obj);
 
+	void refreshCache();
+
 	/**
 	 * @param obj
 	 */
@@ -73,8 +75,7 @@ public interface X7Repository<T> {
 	void remove(T obj);
 
 	/**
-	 *  
-	 * @param clz
+	 *
 	 * @param idOne
 	 * 
 	 */
@@ -83,8 +84,7 @@ public interface X7Repository<T> {
 
 	/**
 	 * LOAD
-	 * 
-	 * @param clz
+	 *
 	 * @return
 	 */
 	List<T> list();
@@ -97,42 +97,9 @@ public interface X7Repository<T> {
 	 */
 	List<T> list(T conditionObj);
 
-	/**
-	 * 
-	 * @param clz
-	 * 
-	 */
-	long getMaxId();
-
-	long getMaxId(T conditionObj);
-
-	long getCount(T conditonObj);
-
 	T getOne(T conditionObj, String orderBy, Direction sc);
 
 	T getOne(T conditionObj);
-
-
-	/**
-	 * 
-	 * 
-	 * @param clz
-	 */
-	void refreshCache();
-
-	Object getSum(T conditionObj, String sumProperty);
-
-	Object getSum(T conditionObj, String sumProperty, Criteria criteria);
-
-	/**
-	 * 
-	 * @param countProperty | null
-	 * @param criteria
-	 * @return
-	 */
-	Object getCount(String countProperty, Criteria criteria);
-
-	List<T> in(List<? extends Object> inList);
 
 	List<T> in(String inProperty, List<? extends Object> inList);
 
@@ -140,7 +107,6 @@ public interface X7Repository<T> {
 	 * Standard query pageable API
 	 * 
 	 * @param criteria
-	 * @param pagination
 	 * 
 	 */
 	Pagination<T> find(Criteria criteria);
@@ -149,8 +115,12 @@ public interface X7Repository<T> {
 	 * Standard query pageable API, FETCH supported
 	 * 
 	 * @param criteria
-	 * @param pagination
-	 * 
 	 */
 	Pagination<Map<String, Object>> find(Criteria.Fetch criteria);
+	
+	long getMaxId(T conditionObj);
+
+	long getCount(T conditonObj);
+
+	Object getSum(String sumProperty, Criteria criteria);
 }

@@ -66,12 +66,6 @@ public class DaoWrapper implements Dao{
 	}
 
 	@Override
-	public <T> long getMaxId(Class<T> clz) {
-		return this.dao.getMaxId(clz);
-	}
-
-
-	@Override
 	public <T> List<T> list(Object conditionObj) {
 
 		return this.dao.list(conditionObj);
@@ -115,11 +109,6 @@ public class DaoWrapper implements Dao{
 		return this.dao.execute(obj, sql);
 	}
 
-	@Override
-	public Object getSum(Object conditionObj, String sumProperty) {
-
-		return this.dao.getSum(conditionObj, sumProperty);
-	}
 	
 	@Override
 	public long getCount(Object obj) {
@@ -139,15 +128,6 @@ public class DaoWrapper implements Dao{
 		return this.dao.refresh(obj, conditionMap);
 	}
 
-	@Override
-	public Object getCount(String countProperty, Criteria criteria) {
-		return this.dao.getCount(countProperty, criteria);
-	}
-
-	@Override
-	public <T> List<T> in(Class<T> clz, List<? extends Object> inList) {
-		return this.dao.in(clz, inList);
-	}
 
 	@Override
 	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList) {

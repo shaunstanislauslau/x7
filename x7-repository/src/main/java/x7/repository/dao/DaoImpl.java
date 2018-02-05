@@ -160,7 +160,6 @@ public class DaoImpl implements Dao {
 		}
 	}
 
-
 	@Override
 	public boolean createBatch(List<Object> objList) {
 
@@ -215,7 +214,8 @@ public class DaoImpl implements Dao {
 					Object value = ele.getMethod.invoke(o);
 					if (value == null) {
 						if (ele.clz.isEnum())
-							throw new PersistenceException("ENUM CAN NOT NULL, property:" + clz.getName() + "." + ele.getProperty());
+							throw new PersistenceException(
+									"ENUM CAN NOT NULL, property:" + clz.getName() + "." + ele.getProperty());
 						if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
 								|| ele.clz == Double.class || ele.clz == Float.class || ele.clz == BigDecimal.class
 								|| ele.clz == Byte.class || ele.clz == Short.class)
@@ -226,7 +226,8 @@ public class DaoImpl implements Dao {
 						if (ele.isJson) {
 							String str = JsonX.toJson(value);
 							pstmt.setObject(i++, str);
-						}if (ele.clz.isEnum()){
+						}
+						if (ele.clz.isEnum()) {
 							String str = value.toString();
 							pstmt.setObject(i++, str);
 						} else {
@@ -368,7 +369,8 @@ public class DaoImpl implements Dao {
 				Object value = ele.getMethod.invoke(obj);
 				if (value == null) {
 					if (ele.clz.isEnum())
-						throw new PersistenceException("ENUM CAN NOT NULL, property:"+clz.getName()+"."+ele.getProperty());
+						throw new PersistenceException(
+								"ENUM CAN NOT NULL, property:" + clz.getName() + "." + ele.getProperty());
 					if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
 							|| ele.clz == Double.class || ele.clz == Float.class || ele.clz == BigDecimal.class
 							|| ele.clz == Byte.class || ele.clz == Short.class)
@@ -379,10 +381,11 @@ public class DaoImpl implements Dao {
 					if (ele.isJson) {
 						String str = JsonX.toJson(value);
 						pstmt.setObject(i++, str);
-					} if (ele.clz.isEnum()){
+					}
+					if (ele.clz.isEnum()) {
 						String str = value.toString();
 						pstmt.setObject(i++, str);
-					}else {
+					} else {
 						value = SqlUtil.filter(value);
 						pstmt.setObject(i++, value);
 					}
@@ -655,7 +658,7 @@ public class DaoImpl implements Dao {
 
 		return list(clz, sql, conditionList, conn);
 	}
-	
+
 	@Override
 	public <T> List<T> list(Class<T> clz) {
 
@@ -694,36 +697,7 @@ public class DaoImpl implements Dao {
 		return list;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public long getMaxId(Class clz) {
-
-		long id = 0;
-
-		String sql = MapperFactory.getSql(clz, Mapper.MAX_ID);
-
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection(true);
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			ResultSet rs = pstmt.executeQuery();
-			if (rs != null) {
-				if (rs.next()) {
-					id = rs.getLong("maxId");
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return id;
-	}
+	
 
 	protected <T> List<T> list(Object conditionObj, Connection conn) {
 
@@ -796,10 +770,10 @@ public class DaoImpl implements Dao {
 		if (!criteria.isScroll()) {
 			count = getCount(sqlCount, valueList);
 		}
-		
+
 		int page = criteria.getPage();
 		int rows = criteria.getRows();
-		
+
 		Pagination<T> pagination = new Pagination<T>();
 		pagination.setRows(rows);
 		pagination.setPage(page);
@@ -860,50 +834,6 @@ public class DaoImpl implements Dao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 		return find(criteria, conn);
-	}
-
-	@Override
-	public Object getSum(Object conditionObj, String sumProperty) {
-
-		Class<?> clz = conditionObj.getClass();
-
-		String sql = MapperFactory.getSql(clz, Mapper.TAG);
-
-		Parsed parsed = Parser.get(clz);
-
-		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
-		sql = SqlUtil.concat(parsed, sql, queryMap);
-
-		String countSql = sql.replace(Mapped.TAG, "SUM(*) sum");
-		countSql = countSql.replace("*", sumProperty);
-
-		Object sum = null;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection(true);
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(countSql);
-
-			int i = 1;
-			for (Object o : queryMap.values()) {
-				pstmt.setObject(i++, o);
-			}
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				sum = rs.getObject("sum");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return sum;
 	}
 
 	@Override
@@ -1044,8 +974,6 @@ public class DaoImpl implements Dao {
 		return getCount(conditionObj, conn);
 	}
 
-	
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T> T getOne(T conditionObj, String orderBy, Direction sc) {
@@ -1061,9 +989,8 @@ public class DaoImpl implements Dao {
 
 		String mapper = BeanUtilX.getMapper(orderBy);
 		StringBuilder sb = new StringBuilder();
-		sb.append(" order by ").append(mapper).append(" ").append(sc.toString())
-		.append(" limit 1");
-		
+		sb.append(" order by ").append(mapper).append(" ").append(sc.toString()).append(" limit 1");
+
 		sql += sb.toString();
 
 		List<Object> list = new ArrayList<Object>();
@@ -1278,133 +1205,6 @@ public class DaoImpl implements Dao {
 		return refresh(obj, conditionMap, conn);
 	}
 
-	@Override
-	public Object getCount(String countProperty, Criteria criteria) {
-
-		Class<?> clz = criteria.getClz();
-
-		Parsed parsed = Parser.get(clz);
-
-		List<Object> valueList = criteria.getValueList();
-
-		String[] sqlArr = CriteriaBuilder.parse(criteria);
-
-		String sqlCount = sqlArr[2];
-
-		sqlCount = sqlCount.replace(Mapped.TAG, "COUNT(*) count");
-		if (StringUtil.isNotNull(countProperty)) {
-			countProperty = parsed.getMapper(countProperty);
-			sqlCount = sqlCount.replace("*", countProperty);
-		}
-
-		Object count = null;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection(true);
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sqlCount);
-
-			int i = 1;
-			for (Object o : valueList) {
-				pstmt.setObject(i++, o);
-			}
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				count = rs.getObject("count");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return count;
-	}
-
-	@Override
-	public <T> List<T> in(Class<T> clz, List<? extends Object> inList) {
-
-		Parsed parsed = Parser.get(clz);
-
-		List<T> list = new ArrayList<T>();
-
-		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
-		List<BeanElement> eles = MapperFactory.getElementList(clz);
-
-		String keyOne = parsed.getKey(X.KEY_ONE);
-
-		Field keyField = parsed.getKeyField(X.KEY_ONE);
-		Class<?> keyType = keyField.getType();
-		boolean isNumber = (keyType == long.class || keyType == int.class || keyType == Long.class
-				|| keyType == Integer.class);
-
-		String mapper = BeanUtilX.getMapper(keyOne);
-		StringBuilder sb = new StringBuilder();
-		sb.append(sql).append(" WHERE ").append(mapper);
-		sb.append(" in (");
-
-		int size = inList.size();
-		if (isNumber) {
-			for (int i = 0; i < size; i++) {
-				Object id = inList.get(i);
-				if (id == null)
-					continue;
-				sb.append(id);
-				if (i < size - 1) {
-					sb.append(",");
-				}
-			}
-		} else {
-			for (int i = 0; i < size; i++) {
-				Object id = inList.get(i);
-				if (id == null || StringUtil.isNullOrEmpty(id.toString()))
-					continue;
-				sb.append("'").append(id).append("'");
-				if (i < size - 1) {
-					sb.append(",");
-				}
-			}
-		}
-
-		sb.append(")");
-
-		sql = sb.toString();
-
-		System.out.println(sql);
-
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		BeanElement tempEle = null;
-		try {
-			conn = getConnection(true);
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs != null) {
-				while (rs.next()) {
-					T obj = clz.newInstance();
-					list.add(obj);
-					initObj(obj, rs, tempEle, eles);
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RollbackException(
-					"Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return list;
-	}
 
 	@Override
 	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList) {
@@ -1416,20 +1216,36 @@ public class DaoImpl implements Dao {
 
 		Parsed parsed = Parser.get(clz);
 
-		BeanElement be = parsed.getElement(inProperty);
-		if (be == null) {
-			throw new RuntimeException(
-					"Exception in method: <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList), no property: "
-							+ inProperty);
+		Class<?> keyType = null;
+		String mapper = null;
+
+		if (StringUtil.isNullOrEmpty(inProperty)) {
+			String keyOne = parsed.getKey(X.KEY_ONE);
+
+			Field keyField = parsed.getKeyField(X.KEY_ONE);
+			keyType = keyField.getType();
+
+			mapper = BeanUtilX.getMapper(keyOne);
+		} else {
+
+			BeanElement be = parsed.getElement(inProperty);
+			if (be == null)
+				throw new RuntimeException(
+						"Exception in method: <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList), no property: "
+								+ inProperty);
+
+			keyType = be.getMethod.getReturnType();
+
+			mapper = parsed.getMapper(inProperty);
 		}
-		Class<?> keyType = be.getMethod.getReturnType();
-		boolean isNumber = (keyType == long.class || keyType == int.class || keyType == Long.class
-				|| keyType == Integer.class);
 
 		StringBuilder sb = new StringBuilder();
-		String mapper = parsed.getMapper(inProperty);
+
 		sb.append(sql).append(" WHERE ").append(mapper);
 		sb.append(" in (");
+
+		boolean isNumber = (keyType == long.class || keyType == int.class || keyType == Long.class
+				|| keyType == Integer.class);
 
 		int size = inList.size();
 		if (isNumber) {
@@ -1514,22 +1330,21 @@ public class DaoImpl implements Dao {
 		String sqlCount = sqlArr[0];
 		String sql = sqlArr[1];
 
-		
 		int page = criteriaFetch.getPage();
 		int rows = criteriaFetch.getRows();
-		
+
 		Pagination<Map<String, Object>> pagination = new Pagination<Map<String, Object>>();
 		pagination.setPage(page);
 		pagination.setRows(rows);
 		pagination.setOrderBy(criteriaFetch.getOrderBy());
 		pagination.setDirection(criteriaFetch.getDirection());
-		
+
 		long count = 0;
 		if (!criteriaFetch.isScroll()) {
 			count = getCount(sqlCount, valueList);
 		}
 		pagination.setTotalRows(count);
-		
+
 		int start = (page - 1) * rows;
 
 		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
@@ -1598,7 +1413,7 @@ public class DaoImpl implements Dao {
 		String sql = sqlArr[1];
 
 		sql = sql.replace("*", fetch.getResultScript());
-		
+
 		int page = fetch.getPage();
 		int rows = fetch.getRows();
 		int start = (page - 1) * rows;
@@ -1655,7 +1470,8 @@ public class DaoImpl implements Dao {
 	}
 
 	private <T> void initObj(T obj, ResultSet rs, BeanElement tempEle, List<BeanElement> eles)
-			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
 
 		ResultSetUtil.initObj(obj, rs, tempEle, eles);
 	}

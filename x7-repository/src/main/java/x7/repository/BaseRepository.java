@@ -255,10 +255,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return Repositories.getInstance().find(criteria);
 	}
 
-	@Override
-	public long getMaxId() {
-		return Repositories.getInstance().getMaxId(clz);
-	}
 
 	@Override
 	public long getMaxId(T conditionObj) {
@@ -289,22 +285,13 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public Object getSum(T conditionObj, String sumProperty) {
-		return Repositories.getInstance().getSum(conditionObj, sumProperty);
-	}
-
-	@Override
-	public Object getSum(T conditionObj, String sumProperty, Criteria criteria) {
+	public Object getSum(String sumProperty, Criteria criteria) {
 		return Repositories.getInstance().getSum(sumProperty, criteria);
 	}
 
-	@Override
-	public Object getCount(String countProperty, Criteria criteria) {
-		return Repositories.getInstance().getCount(countProperty, criteria);
-	}
 
 	@Override
-	public List<T> in(List<? extends Object> inList) {
+	public List<T> in(String inProperty, List<? extends Object> inList) {
 		if (inList.isEmpty())
 			return new ArrayList<T>();
 
@@ -316,24 +303,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 			if (!list.contains(obj)) {
 				list.add(obj);
 			}
-		}
-
-		return Repositories.getInstance().in(clz, list);
-	}
-
-	@Override
-	public List<T> in(String inProperty, List<? extends Object> inList) {
-		if (inList.isEmpty())
-			return new ArrayList<T>();
-
-		Set<Object> set = new HashSet<Object>();
-		for (Object obj : inList) {
-			set.add(obj);
-		}
-
-		List<Object> list = new ArrayList<Object>();
-		for (Object obj : set) {
-			list.add(obj);
 		}
 
 		return Repositories.getInstance().in(clz, inProperty, list);

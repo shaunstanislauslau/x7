@@ -58,8 +58,6 @@ public interface Dao {
 	<T> List<T> list(Class<T> clz);
 	
 	<T> T getOne(T conditionObj, String orderBy, Direction sc);
-
-	<T> long getMaxId(Class<T> clz);
 	
 	long getMaxId(Object obj);
 	
@@ -68,13 +66,7 @@ public interface Dao {
 	@Deprecated
 	boolean execute(Object obj, String sql);
 	
-	Object getSum(Object conditionObj, String sumProperty);
-	
 	Object getSum(String sumProperty, Criteria criteria);
-
-	Object getCount(String countProperty, Criteria criteria);
-	
-	<T> List<T> in(Class<T> clz, List<? extends Object> inList);
 	
 	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
 	
