@@ -50,7 +50,6 @@ public class IntMap implements Serializable{
 	 * 如果未来size会超过10个，请使用<br>
 
 	 * @param capacity
-	 * @param factor
 	 * @throws Exception 
 	 */
 	public IntMap(int capacity) {

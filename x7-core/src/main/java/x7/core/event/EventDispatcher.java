@@ -29,13 +29,6 @@ import java.util.TreeMap;
 public class EventDispatcher implements IEventDispatcher {
 	
 
-//	public EventDispatcher() {
-//		addEventListeners();
-//	}
-
-//	public abstract void addEventListeners();
-
-//	@Override
 	public static void addEventListener(String eventType, IEventListener listener) {
 
 		TreeMap<String, IEventListener> listenerMap = listenersMap
@@ -68,7 +61,6 @@ public class EventDispatcher implements IEventDispatcher {
 
 	}
 
-//	@Override
 	public static void dispatch(IEvent event) {
 		TreeMap<String, IEventListener> listenerMap = listenersMap
 				.get(event.getType());
@@ -87,7 +79,7 @@ public class EventDispatcher implements IEventDispatcher {
 
 	}
 	/**
-	 * 创建KEY
+	 * CREATE KEY
 	 */
 	private static String createKey(IEventListener listener){
 		if (listener.getClass().getName().contains("IEventListener")){

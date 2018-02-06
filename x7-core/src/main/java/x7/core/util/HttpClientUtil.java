@@ -46,12 +46,11 @@ public class HttpClientUtil {
 	public static String post(String url, Object param) {
 
 		System.out.println("HttpClientUtil post, url: " + url);
-		// 创建默认的httpClient实例.
+
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-		// 创建httppost
+
 		HttpPost httpPost = new HttpPost(url);
-		// 20161025 modify by cl
-		// String json=JSON.toJSONString(param);
+
 		String json = "";
 		if (param != null) {
 			json = JsonX.toJson(param);

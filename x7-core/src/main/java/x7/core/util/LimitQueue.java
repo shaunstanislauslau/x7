@@ -22,7 +22,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * 固定长度队列
+ * Fixed Length Queue
  * @author Sim
  *
  */

@@ -18,7 +18,7 @@ package x7.core.event;
 
 /**
  * 
- * @author Wangyan
+ * @author Sim
  *
  */
 public interface IEventOwner {

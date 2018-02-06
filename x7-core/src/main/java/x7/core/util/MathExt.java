@@ -46,7 +46,7 @@ public class MathExt {
 	 * 
 	 * @param min
 	 *            <= result
-	 * @param result
+	 * @param i
 	 *            < i
 	 * @return min<= result < i
 	 */

@@ -21,7 +21,7 @@ import x7.core.event.IEventOwner;
 
 /**
  * 
- * @author Wangyan
+ * @author Sim
  *
  */
 public class Event implements IEvent{

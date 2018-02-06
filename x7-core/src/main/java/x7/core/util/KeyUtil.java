@@ -45,7 +45,7 @@ public class KeyUtil {
 
 	/**
 	 * 仅仅用于JAVA类名做为KEY时的转换
-	 * @param key
+	 * @param clz
 	 * @return
 	 */
 	public static String getKey(Class clz) {

@@ -23,7 +23,6 @@ import x7.core.mq.MessageEvent;
 
 public class EventDispatcherX extends EventDispatcher{
 
-//	@Override
 	public static void dispatch(MessageEvent event)  {
 		TreeMap<String, IEventListener> listenerMap = listenersMap
 				.get(event.getType());

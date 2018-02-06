@@ -29,7 +29,7 @@ import java.util.Objects;
 
 /**
  * 
- * 实体类转成MAP
+ * Bean <--> Map
  * @author Sim
  *
  */
@@ -137,21 +137,12 @@ public class BeanMapUtil {
 
 				int modifiers = f.getModifiers();
 				String key = f.getName();
-
-
-
-//
-//				if (Modifier.isTransient(modifiers))
-//					continue;
 				
 				if (Modifier.isStatic(modifiers))
 					continue;
 
 				if (Modifier.isFinal(modifiers))
 					continue;
-
-
-	
 
 				f.setAccessible(true);
 				Object value = f.get(obj);
@@ -246,10 +237,7 @@ public class BeanMapUtil {
 
 				if (Modifier.isFinal(modifiers))
 					continue;
-//
-//
-//				if (modifiers >= 128)
-//					continue;
+
 
 				f.setAccessible(true);
 				Object value = f.get(obj);

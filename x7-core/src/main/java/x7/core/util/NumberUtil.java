@@ -61,7 +61,7 @@ public class NumberUtil {
 	/**
 	 * 截取小数点后3位, 不四舍五入<br>
 	 * 
-	 * @param d
+	 * @param w
 	 * 
 	 */
 	public static double getWeight(double w) {

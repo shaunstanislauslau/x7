@@ -17,7 +17,6 @@
 package x7.core.util;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -32,55 +31,12 @@ public class StringUtil {
 		return strISO88591;
 	}
 	
-	public static int parse(String input) {
-		if(isEmail(input))
-			return 1;
-		else if(isMobile(input))
-			return 2;
-		else 
-			return 3;
-	}
-	
 	public static boolean isNotNull(String str){
 		return !isNullOrEmpty(str);
 	}
 	
 	public static boolean isNullOrEmpty(String str){
 		return str == null || str.equals("") || str.equals("null") || str.equals("NaN") || str.equals("undefined");
-	}
-	
-	public static String filter(String str){
-		if (! isNullOrEmpty(str)){
-			str = str.replace("<", "&lt").replace(">", "&gt");
-			str = str.replace("DROP ", "DROP%")
-					.replace("drop ", "drop%")
-					.replace("DELETE ", "DELETE%")
-					.replace("delete ", "delete%")
-					.replace("CREATE ", "CREATE%")
-					.replace("create ", "create%")
-					.replace("UPDATE ", "UPDATE%")
-					.replace("update ", "update%")
-					;
-		}
-		
-		return str;
-	}
-	
-	public static String replaceForSimpleSplit(String str, String regE){
-		if (! str.contains(",")){
-			if (str.contains(":"))
-				str = str.replace(":", ",");
-			else if (str.contains("/"))
-				str = str.replace("/", ",");
-			else if (str.contains(";"))
-				str = str.replace(";", ",");
-			else if (str.contains("-"))
-				str = str.replace("-", ",");
-			else if (str.contains("_"))
-				str = str.replace("_", ",");
-		}
-		
-		return str;
 	}
 	
 	public static boolean isMobile(String mobile){
@@ -105,17 +61,6 @@ public class StringUtil {
 		String pEmail = "^[\\w-]{1,40}(\\.[\\w-]{1,20}){0,6}@[\\w-]{1,40}(\\.[\\w-]{1,20}){1,6}$";
 		return Pattern.matches(pEmail, email);
 
-	}
-	
-	public static String listToString (List<String> list) {
-		if (list == null || list.isEmpty()) {
-			return "";
-		}
-		String str = "";
-		for (String item : list) {
-			str += item + ",";
-		}
-		return str.substring(0, str.length() - 1);
 	}
 	
 	public static String nullToEmpty(String str){
