@@ -159,10 +159,15 @@ public class ShardingDaoImpl implements ShardingDao {
 		String keyFieldName = getKeyFieldName(clz);
 
 		if (StringUtil.isNotNull(keyFieldName)) {
-			Object obj = criteria.getAndMap().get(keyFieldName);
-			if (obj == null) {
-				obj = criteria.getOrMap().get(keyFieldName);
+			List<Criteria.X> xList = criteria.getListX();
+			Object obj = null;
+			for(Criteria.X x : xList){
+				if (keyFieldName.equals(x.getKey())){
+					obj = x.getValue();
+					break;
+				}
 			}
+
 			if (!Objects.isNull(obj)) {
 				if (obj.getClass() == long.class || obj instanceof Long) {
 					key = getKey(Long.valueOf(obj.toString()).longValue());
@@ -504,7 +509,7 @@ public class ShardingDaoImpl implements ShardingDao {
 			totalRows += p.getTotalRows();
 		}
 
-		String orderBy = criteria.getOrderByList().get(0);
+		String orderBy = criteria.getOrderBy();
 		Direction direction = criteria.getDirection();
 		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(criteria.getClz());
@@ -619,7 +624,7 @@ public class ShardingDaoImpl implements ShardingDao {
 			totalRows += p.getTotalRows();
 		}
 
-		String orderBy = fetch.getOrderByList().get(0);
+		String orderBy = fetch.getOrderBy();
 		Direction direction = fetch.getDirection();
 		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(fetch.getClz());

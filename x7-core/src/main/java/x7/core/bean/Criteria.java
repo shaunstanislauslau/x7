@@ -18,9 +18,7 @@ package x7.core.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import x7.core.bean.CriteriaBuilder.FetchMapper;
 import x7.core.util.BeanUtil;
@@ -37,119 +35,19 @@ public class Criteria implements Paged, Serializable {
 
 	private static final long serialVersionUID = 7088698915888081349L;
 
+	private Class<?> clz;
 	private transient Parsed parsed;
-	private transient boolean isNotFirstCondition = false;
-	private transient boolean isXing = false;
 	private boolean isScroll;
 	private int page;
 	private int rows;
 	private String orderBy;
 	private Direction direction = Direction.DESC;
-	private String groupBy;
-	private Class<?> clz;
-	private Map<String, MinMax> betweenMap = new HashMap<String, MinMax>();
-	private Map<String, List<Object>> inMap = new HashMap<String, List<Object>>();
-	private Map<String, List<Object>> notInMap = new HashMap<String, List<Object>>();
-	private Map<String, MinMax> betweenMap_Or = new HashMap<String, MinMax>();
-	private Map<String, List<Object>> inMap_Or = new HashMap<String, List<Object>>();
-	private Map<String, List<Object>> notInMap_Or = new HashMap<String, List<Object>>();
-	private Map<String, Object> andMap = new HashMap<String, Object>();
-	private Map<String, Object> orMap = new HashMap<String, Object>();
-	private List<String> andList = new ArrayList<String>();
-	private List<String> orList = new ArrayList<String>();
+
 	private List<Object> valueList = new ArrayList<Object>();
-	private List<String> orderByList = new ArrayList<String>();
-	private Map<String, Object> havingMap = new HashMap<String, Object>();
+	
+	private List<X> listX = new ArrayList<X>();
 
 	private FetchMapper fetchMapper;
-	
-	public boolean isXing() {
-		return isXing;
-	}
-
-	public void setXing(boolean isXing) {
-		this.isXing = isXing;
-	}
-
-	public Map<String, MinMax> getBetweenMap() {
-		return betweenMap;
-	}
-
-	public void setBetweenMap(Map<String, MinMax> betweenMap) {
-		this.betweenMap = betweenMap;
-	}
-
-	public Map<String, List<Object>> getInMap() {
-		return inMap;
-	}
-
-	public void setInMap(Map<String, List<Object>> inMap) {
-		this.inMap = inMap;
-	}
-
-	public Map<String, List<Object>> getNotInMap() {
-		return notInMap;
-	}
-
-	public void setNotInMap(Map<String, List<Object>> notInMap) {
-		this.notInMap = notInMap;
-	}
-
-	public Map<String, MinMax> getBetweenMap_Or() {
-		return betweenMap_Or;
-	}
-
-	public void setBetweenMap_Or(Map<String, MinMax> betweenMap_Or) {
-		this.betweenMap_Or = betweenMap_Or;
-	}
-
-	public Map<String, List<Object>> getInMap_Or() {
-		return inMap_Or;
-	}
-
-	public void setInMap_Or(Map<String, List<Object>> inMap_Or) {
-		this.inMap_Or = inMap_Or;
-	}
-
-	public Map<String, List<Object>> getNotInMap_Or() {
-		return notInMap_Or;
-	}
-
-	public void setNotInMap_Or(Map<String, List<Object>> notInMap_Or) {
-		this.notInMap_Or = notInMap_Or;
-	}
-
-	public Map<String, Object> getAndMap() {
-		return andMap;
-	}
-
-	public void setAndMap(Map<String, Object> andMap) {
-		this.andMap = andMap;
-	}
-
-	public Map<String, Object> getOrMap() {
-		return orMap;
-	}
-
-	public void setOrMap(Map<String, Object> orMap) {
-		this.orMap = orMap;
-	}
-
-	public List<String> getAndList() {
-		return andList;
-	}
-
-	public void setAndList(List<String> andList) {
-		this.andList = andList;
-	}
-
-	public List<String> getOrList() {
-		return orList;
-	}
-
-	public void setOrList(List<String> orList) {
-		this.orList = orList;
-	}
 
 	public List<Object> getValueList() {
 		return valueList;
@@ -157,22 +55,6 @@ public class Criteria implements Paged, Serializable {
 
 	public void setValueList(List<Object> valueList) {
 		this.valueList = valueList;
-	}
-
-	public List<String> getOrderByList() {
-		return orderByList;
-	}
-
-	public void setOrderByList(List<String> orderByList) {
-		this.orderByList = orderByList;
-	}
-
-	public Map<String, Object> getHavingMap() {
-		return havingMap;
-	}
-
-	public void setHavingMap(Map<String, Object> havingMap) {
-		this.havingMap = havingMap;
 	}
 
 	public Direction getDirection() {
@@ -183,13 +65,6 @@ public class Criteria implements Paged, Serializable {
 		this.direction = sc;
 	}
 
-	public String getGroupBy() {
-		return groupBy;
-	}
-
-	public void setGroupBy(String groupBy) {
-		this.groupBy = groupBy;
-	}
 
 	public Class<?> getClz() {
 		return clz;
@@ -197,14 +72,6 @@ public class Criteria implements Paged, Serializable {
 
 	public void setClz(Class<?> clz) {
 		this.clz = clz;
-	}
-
-	public boolean isNotFirstCondition() {
-		return isNotFirstCondition;
-	}
-
-	public void setNotFirstCondition(boolean isNotFirstCondition) {
-		this.isNotFirstCondition = isNotFirstCondition;
 	}
 
 	public Parsed getParsed() {
@@ -265,8 +132,15 @@ public class Criteria implements Paged, Serializable {
 		this.rows = rows;
 	}
 
+	public List<X> getListX() {
+		return this.listX;
+	}
+	
+	protected void add(X x) {
+		this.listX.add(x);
+	}
+
 	public void paged(Paged paged) {
-		this.orderByList.add(paged.getOrderBy());
 		this.orderBy = paged.getOrderBy();
 		this.direction = paged.getDirection();
 		this.isScroll = paged.isScroll();
@@ -276,33 +150,12 @@ public class Criteria implements Paged, Serializable {
 
 	@Override
 	public String toString() {
-		return "Criteria{" +
-				"parsed=" + parsed +
-				", isNotFirstCondition=" + isNotFirstCondition +
-				", isXing=" + isXing +
-				", isScroll=" + isScroll +
-				", page=" + page +
-				", rows=" + rows +
-				", orderBy='" + orderBy + '\'' +
-				", direction=" + direction +
-				", groupBy='" + groupBy + '\'' +
-				", clz=" + clz +
-				", betweenMap=" + betweenMap +
-				", inMap=" + inMap +
-				", notInMap=" + notInMap +
-				", betweenMap_Or=" + betweenMap_Or +
-				", inMap_Or=" + inMap_Or +
-				", notInMap_Or=" + notInMap_Or +
-				", andMap=" + andMap +
-				", orMap=" + orMap +
-				", andList=" + andList +
-				", orList=" + orList +
-				", valueList=" + valueList +
-				", orderByList=" + orderByList +
-				", havingMap=" + havingMap +
-				", fetchMapper=" + fetchMapper +
-				'}';
+		return "Criteria [clz=" + clz + ", isScroll=" + isScroll 
+				+ ", page=" + page + ", rows=" + rows + ", orderBy="
+				+ orderBy + ", direction=" + direction + ", valueList="
+				+ valueList + ", listX=" + listX + ", fetchMapper=" + fetchMapper + "]";
 	}
+
 
 	/**
 	 * 可以连表的SQL拼接标准化, 不支持缓存<br>
@@ -421,4 +274,42 @@ public class Criteria implements Paged, Serializable {
 		}
 
 	}
+	
+	public static class X {
+		private Conjunction conjunction;
+		private Predicate predicate;
+		private String key;
+		private Object value;
+		public Conjunction getConjunction() {
+			return conjunction;
+		}
+		public void setConjunction(Conjunction conjunction) {
+			this.conjunction = conjunction;
+		}
+		public Predicate getPredicate() {
+			return predicate;
+		}
+		public void setPredicate(Predicate predicate) {
+			this.predicate = predicate;
+		}
+		public String getKey() {
+			return key;
+		}
+		public void setKey(String key) {
+			this.key = key;
+		}
+		public Object getValue() {
+			return value;
+		}
+		public void setValue(Object value) {
+			this.value = value;
+		}
+		
+		@Override
+		public String toString() {
+			return "X [conjunction=" + conjunction + ", predicate=" + predicate + ", key=" + key + ", value=" + value
+					+ "]";
+		}
+	}
+
 }
