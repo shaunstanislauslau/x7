@@ -48,6 +48,38 @@ public class CriteriaBuilder {
 	private Criteria criteria;
 
 	private CriteriaBuilder instance;
+	
+	public P and() {
+
+		X x = new X();
+		x.setConjunction(Conjunction.AND);
+
+		this.criteria.add(x);
+		p.under(x);
+
+		return p;
+	}
+
+	public P or() {
+
+		X x = new X();
+		x.setConjunction(Conjunction.OR);
+
+		this.criteria.add(x);
+		p.under(x);
+
+		return p;
+	}
+
+	public CriteriaBuilder to() {
+
+		X x = new X();
+		x.setPredicate(Predicate.TO);
+		this.criteria.add(x);
+
+		return instance;
+	}
+
 
 	private P p = new P() {
 
@@ -115,8 +147,6 @@ public class CriteriaBuilder {
 		@Override
 		public CriteriaBuilder gt(String property, Object value) {
 
-			check(property);
-
 			if (value == null)
 				return instance;
 			if (isBaseType_0(property, value))
@@ -150,7 +180,7 @@ public class CriteriaBuilder {
 		}
 
 		@Override
-		public CriteriaBuilder not(String property, Object value) {
+		public CriteriaBuilder ne(String property, Object value) {
 
 			if (value == null)
 				return instance;
@@ -160,7 +190,7 @@ public class CriteriaBuilder {
 			if (isNullOrEmpty(value))
 				return instance;
 
-			x.setPredicate(Predicate.NOT);
+			x.setPredicate(Predicate.NE);
 			x.setKey(property);
 			x.setValue(value);
 
@@ -169,8 +199,6 @@ public class CriteriaBuilder {
 
 		@Override
 		public CriteriaBuilder like(String property, Object value) {
-
-			check(property);
 
 			if (value == null)
 				return instance;
@@ -181,6 +209,22 @@ public class CriteriaBuilder {
 			x.setPredicate(Predicate.LIKE);
 			x.setKey(property);
 			x.setValue("%" + value + "%");
+
+			return instance;
+		}
+		
+		@Override
+		public CriteriaBuilder likeRight(String property, Object value) {
+
+			if (value == null)
+				return instance;
+
+			if (isNullOrEmpty(value))
+				return instance;
+
+			x.setPredicate(Predicate.LIKE);
+			x.setKey(property);
+			x.setValue(value + "%");
 
 			return instance;
 		}
@@ -212,8 +256,6 @@ public class CriteriaBuilder {
 		@Override
 		public CriteriaBuilder in(String property, List<Object> list) {
 
-			check(property);
-
 			if (list == null || list.isEmpty())
 				return instance;
 
@@ -239,8 +281,6 @@ public class CriteriaBuilder {
 		@Override
 		public CriteriaBuilder notIn(String property, List<Object> list) {
 
-			check(property);
-
 			if (list == null || list.isEmpty())
 				return instance;
 
@@ -264,18 +304,32 @@ public class CriteriaBuilder {
 		}
 
 		@Override
-		public P x() {
+		public CriteriaBuilder isNotNull(String property) {
+
+			if (StringUtil.isNullOrEmpty(property))
+				return instance;
+
+			x.setPredicate(Predicate.IS_NOT_NULL);
+			x.setValue(property);
+
+			return instance;
+		}
+
+		@Override
+		public P from() {
+
+			X from = new X();
+			from.setPredicate(Predicate.FROM);
+			criteria.add(from);
 
 			X xx = new X();
 
-			x.setPredicate(Predicate.X);
-
-			x.setValue(xx);
-
+			criteria.add(xx);
 			p.under(xx);
 
 			return p;
 		}
+
 	};
 
 	private CriteriaBuilder() {
@@ -331,33 +385,11 @@ public class CriteriaBuilder {
 		return builder;
 	}
 
-
 	protected String getAliasPoint(String property) {
 		return property.replace("->", ".");
 	}
 
-	public P and() {
-
-		X x = new X();
-		x.setConjunction(Conjunction.AND);
-
-		this.criteria.add(x);
-		p.under(x);
-
-		return p;
-	}
-
-	public P or() {
-
-		X x = new X();
-		x.setConjunction(Conjunction.OR);
-
-		this.criteria.add(x);
-		p.under(x);
-
-		return p;
-	}
-
+	
 	public void paged(Paged paged) {
 
 		criteria.paged(paged);
@@ -380,7 +412,6 @@ public class CriteriaBuilder {
 		return this.criteria.getClz();
 	}
 
-
 	public static String[] parse(Criteria criteria) {
 
 		StringBuilder sb = new StringBuilder();
@@ -399,7 +430,6 @@ public class CriteriaBuilder {
 		 * StringList
 		 */
 		X groupBy = x(sb, criteria);
-
 
 		/*
 		 * sort
@@ -496,36 +526,47 @@ public class CriteriaBuilder {
 
 	private static void sort(StringBuilder sb, Criteria criteria) {
 
-		if (StringUtil.isNotNull(criteria.getOrderBy())){
-			sb.append(Conjunction.ORDER_BY).append(criteria.getOrderBy()).append(SPACE).append(criteria.getDirection());
+		if (StringUtil.isNotNull(criteria.getOrderBy())) {
+			sb.append(Conjunction.ORDER_BY.sql()).append(criteria.getOrderBy()).append(SPACE)
+					.append(criteria.getDirection());
 		}
 
 	}
 
-
-
-
 	private static X x(StringBuilder sb, Criteria criteria) {
 		X xx = null;
 		List<X> xList = criteria.getListX();
-		
+
 		boolean isFirst = true;
-		
+
 		for (X x : xList) {
+
+			if (Predicate.FROM == x.getPredicate()) {
+				sb.append(Predicate.FROM.sql());
+				continue;
+			} else if (Predicate.TO == x.getPredicate()) {
+				sb.append(Predicate.TO.sql());
+				continue;
+			}
+			
+			if (isFirst) {
+				sb.append(" WHERE ");
+				isFirst = false;
+			} else {
+				if (!Objects.isNull(x.getConjunction())) {
+					sb.append(x.getConjunction().sql());
+				}
+			}
+
 			Object v = x.getValue();
 			if (Objects.isNull(v))
 				continue;
-			if (x.getConjunction() == Conjunction.GROUP_BY){
-				
+			if (x.getConjunction() == Conjunction.GROUP_BY) {
+
 				xx = x;
 				continue;
 			}
-			if (isFirst){
-				sb.append(" WHERE ");
-				isFirst = false;
-			}else{
-				sb.append(x.getConjunction().sql());
-			}
+
 			x(sb, x, criteria);
 		}
 		return xx;
@@ -536,35 +577,31 @@ public class CriteriaBuilder {
 		Predicate p = x.getPredicate();
 		Object v = x.getValue();
 
-		if (v instanceof X) {
-			sb.append("(");
-			x(sb, x, criteria);
-			sb.append(") ");
-		}
 		if (p == Predicate.IN || p == Predicate.NOT_IN) {
 			sb.append(p.sql());
 			List<Object> inList = (List<Object>) v;
 			in(sb, inList);
-		}
-		if (p == Predicate.BETWEEN) {
+		} else if (p == Predicate.BETWEEN) {
 			sb.append(p.sql());
 			between(sb);
-			
+
 			MinMax minMax = (MinMax) v;
 			List<Object> valueList = criteria.getValueList();
 			valueList.add(minMax.getMin());
 			valueList.add(minMax.getMax());
 
-		} else{
+		} else if (p == Predicate.IS_NOT_NULL) {
+			sb.append(v).append(p.sql());
+
+		} else {
 			sb.append(x.getKey()).append(x.getPredicate().sql()).append(" ? ");
 			Class clz = v.getClass();
-			if (clz.getSuperclass().isEnum() || clz.isEnum()){
+			if (clz.getSuperclass().isEnum() || clz.isEnum()) {
 				criteria.getValueList().add(v.toString());
-			}else{
+			} else {
 				criteria.getValueList().add(v);
 			}
 		}
-
 	}
 
 	private static void between(StringBuilder sb) {
@@ -584,7 +621,7 @@ public class CriteriaBuilder {
 
 		boolean isNumber = (vType == long.class || vType == int.class || vType == Long.class || vType == Integer.class);
 
-		sb.append("(");
+		sb.append("( ");
 
 		int length = inList.size();
 		if (isNumber) {
@@ -609,7 +646,7 @@ public class CriteriaBuilder {
 			}
 		}
 
-		sb.append(") ");
+		sb.append(" ) ");
 
 	}
 
@@ -754,9 +791,11 @@ public class CriteriaBuilder {
 
 		CriteriaBuilder gte(String property, Object value);
 
-		CriteriaBuilder not(String property, Object value);
+		CriteriaBuilder ne(String property, Object value);
 
 		CriteriaBuilder like(String property, Object value);
+		
+		CriteriaBuilder likeRight(String property, Object value);
 
 		CriteriaBuilder between(String property, Object min, Object max);
 
@@ -764,12 +803,13 @@ public class CriteriaBuilder {
 
 		CriteriaBuilder notIn(String property, List<Object> list);
 
+		CriteriaBuilder isNotNull(String property);
+
 		void under(X x);
 
-		P x();
+		P from();
 
 	}
-
 
 	public Criteria get() {
 		return this.criteria;
@@ -817,22 +857,7 @@ public class CriteriaBuilder {
 			return (Criteria.Fetch) super.criteria;
 		}
 
-		/**
-		 * t->name<br>
-		 * t->name.as.ne<br>
-		 * 
-		 * @param xExpression
-		 */
-		public void xAddResultKey(String xExpression) {
-			getCriteriaFetch().getResultList().add(xExpression);
-		}
-
-		/**
-		 * Not on Alia Name
-		 * 
-		 * @param xExpressionList
-		 */
-		public void xAddResultKey(List<String> xExpressionList) {
+		private void xAddResultKey(List<String> xExpressionList) {
 			for (String xExpression : xExpressionList) {
 				getCriteriaFetch().getResultList().add(xExpression);
 			}
