@@ -317,6 +317,8 @@ public class CriteriaBuilder {
 
 		@Override
 		public P from() {
+			
+			x.setValue(Predicate.FROM);// special treat
 
 			X from = new X();
 			from.setPredicate(Predicate.FROM);
@@ -543,11 +545,17 @@ public class CriteriaBuilder {
 
 			if (Predicate.FROM == x.getPredicate()) {
 				sb.append(Predicate.FROM.sql());
+				System.out.println("________ " + sb.toString());
 				continue;
 			} else if (Predicate.TO == x.getPredicate()) {
 				sb.append(Predicate.TO.sql());
+				System.out.println("________ " + sb.toString());
 				continue;
 			}
+			
+			Object v = x.getValue();
+			if (Objects.isNull(v))
+				continue;
 			
 			if (isFirst) {
 				sb.append(" WHERE ");
@@ -558,14 +566,12 @@ public class CriteriaBuilder {
 				}
 			}
 
-			Object v = x.getValue();
-			if (Objects.isNull(v))
-				continue;
 			if (x.getConjunction() == Conjunction.GROUP_BY) {
 
 				xx = x;
 				continue;
 			}
+			System.out.println("________ " + sb.toString());
 
 			x(sb, x, criteria);
 		}
@@ -594,6 +600,8 @@ public class CriteriaBuilder {
 			sb.append(v).append(p.sql());
 
 		} else {
+			if (StringUtil.isNullOrEmpty(x.getKey()))
+					return;
 			sb.append(x.getKey()).append(x.getPredicate().sql()).append(" ? ");
 			Class clz = v.getClass();
 			if (clz.getSuperclass().isEnum() || clz.isEnum()) {
@@ -602,6 +610,7 @@ public class CriteriaBuilder {
 				criteria.getValueList().add(v);
 			}
 		}
+		System.out.println("________ " + sb.toString());
 	}
 
 	private static void between(StringBuilder sb) {
