@@ -17,7 +17,7 @@
 package x7.repository.mapper;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +61,7 @@ public interface Mapper {
 	public static String getSqlTypeRegX(BeanElement be){
 	
 			Class clz = be.clz;
-			if (clz == Date.class) {
+			if (clz == Date.class || clz == java.sql.Date.class || clz == java.sql.Timestamp.class) {
 				return Dialect.DATE;
 			} else if (clz == String.class) {
 				return Dialect.STRING;
