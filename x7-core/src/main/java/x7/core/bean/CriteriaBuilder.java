@@ -44,6 +44,7 @@ import x7.core.web.Paged;
 public class CriteriaBuilder {
 
 	public final static String SPACE = " ";
+	public final static String PLACE_HOLDER = "?";
 
 	private Criteria criteria;
 
@@ -71,10 +72,10 @@ public class CriteriaBuilder {
 		return p;
 	}
 
-	public CriteriaBuilder to() {
+	public CriteriaBuilder endSub() {
 
 		X x = new X();
-		x.setPredicate(Predicate.TO);
+		x.setPredicate(Predicate.SUB_END);
 		this.criteria.add(x);
 
 		return instance;
@@ -198,12 +199,9 @@ public class CriteriaBuilder {
 		}
 
 		@Override
-		public CriteriaBuilder like(String property, Object value) {
+		public CriteriaBuilder like(String property, String value) {
 
-			if (value == null)
-				return instance;
-
-			if (isNullOrEmpty(value))
+			if (StringUtil.isNullOrEmpty(value))
 				return instance;
 
 			x.setPredicate(Predicate.LIKE);
@@ -214,12 +212,9 @@ public class CriteriaBuilder {
 		}
 		
 		@Override
-		public CriteriaBuilder likeRight(String property, Object value) {
+		public CriteriaBuilder likeRight(String property, String value) {
 
-			if (value == null)
-				return instance;
-
-			if (isNullOrEmpty(value))
+			if (StringUtil.isNullOrEmpty(value))
 				return instance;
 
 			x.setPredicate(Predicate.LIKE);
@@ -316,12 +311,12 @@ public class CriteriaBuilder {
 		}
 
 		@Override
-		public P from() {
+		public P beginSub() {
 			
-			x.setValue(Predicate.FROM);// special treat
+			x.setValue(Predicate.SUB_BEGIN);// special treat
 
 			X from = new X();
-			from.setPredicate(Predicate.FROM);
+			from.setPredicate(Predicate.SUB_BEGIN);
 			criteria.add(from);
 
 			X xx = new X();
@@ -386,28 +381,9 @@ public class CriteriaBuilder {
 
 		return builder;
 	}
-
-	protected String getAliasPoint(String property) {
-		return property.replace("->", ".");
-	}
-
 	
 	public void paged(Paged paged) {
-
 		criteria.paged(paged);
-
-	}
-
-	protected String getX(String xExpression) {
-		if (xExpression.contains("(") || xExpression.contains(")") || xExpression.contains(" ")
-				|| xExpression.contains("%"))
-			throw new RuntimeException("unknow X-expression for x7 repository sql: " + xExpression);
-		xExpression = xExpression.replace("[", "(");
-		xExpression = xExpression.replace("]", ")");
-		xExpression = xExpression.replace(".", " ");
-		xExpression = xExpression.replace("->", ".");
-
-		return xExpression;
 	}
 
 	public Class<?> getClz() {
@@ -460,7 +436,7 @@ public class CriteriaBuilder {
 			// sqlArr[1]: core sql
 			Map<String, List<String>> map = new HashMap<>();
 			{
-				String[] arr = sqlArr[1].split(" ");
+				String[] arr = sqlArr[1].split(SPACE);
 				for (String ele : arr) {
 					if (ele.contains(".")) {
 						ele = ele.replace(",", "");
@@ -497,7 +473,7 @@ public class CriteriaBuilder {
 					}
 				}
 			}
-			System.out.println(fetchMapper);
+
 			for (int i = 0; i < 3; i++) {
 				String temp = sqlArr[i];
 				for (String property : fetchMapper.getPropertyMapperMap().keySet()) {
@@ -543,13 +519,11 @@ public class CriteriaBuilder {
 
 		for (X x : xList) {
 
-			if (Predicate.FROM == x.getPredicate()) {
-				sb.append(Predicate.FROM.sql());
-				System.out.println("________ " + sb.toString());
+			if (Predicate.SUB_BEGIN == x.getPredicate()) {
+				sb.append(Predicate.SUB_BEGIN.sql());
 				continue;
-			} else if (Predicate.TO == x.getPredicate()) {
-				sb.append(Predicate.TO.sql());
-				System.out.println("________ " + sb.toString());
+			} else if (Predicate.SUB_END == x.getPredicate()) {
+				sb.append(Predicate.SUB_END.sql());
 				continue;
 			}
 			
@@ -571,7 +545,6 @@ public class CriteriaBuilder {
 				xx = x;
 				continue;
 			}
-			System.out.println("________ " + sb.toString());
 
 			x(sb, x, criteria);
 		}
@@ -584,11 +557,11 @@ public class CriteriaBuilder {
 		Object v = x.getValue();
 
 		if (p == Predicate.IN || p == Predicate.NOT_IN) {
-			sb.append(p.sql());
+			sb.append(x.getKey()).append(p.sql());
 			List<Object> inList = (List<Object>) v;
 			in(sb, inList);
 		} else if (p == Predicate.BETWEEN) {
-			sb.append(p.sql());
+			sb.append(x.getKey()).append(p.sql());
 			between(sb);
 
 			MinMax minMax = (MinMax) v;
@@ -602,7 +575,7 @@ public class CriteriaBuilder {
 		} else {
 			if (StringUtil.isNullOrEmpty(x.getKey()))
 					return;
-			sb.append(x.getKey()).append(x.getPredicate().sql()).append(" ? ");
+			sb.append(x.getKey()).append(x.getPredicate().sql()).append(PLACE_HOLDER);
 			Class clz = v.getClass();
 			if (clz.getSuperclass().isEnum() || clz.isEnum()) {
 				criteria.getValueList().add(v.toString());
@@ -610,12 +583,11 @@ public class CriteriaBuilder {
 				criteria.getValueList().add(v);
 			}
 		}
-		System.out.println("________ " + sb.toString());
 	}
 
 	private static void between(StringBuilder sb) {
 
-		sb.append(" ? ").append(Conjunction.AND.sql()).append(" ? ");
+		sb.append(PLACE_HOLDER).append(Conjunction.AND.sql()).append(PLACE_HOLDER);
 
 	}
 
@@ -655,44 +627,12 @@ public class CriteriaBuilder {
 			}
 		}
 
-		sb.append(" ) ");
+		sb.append(" )");
 
 	}
 
 	protected static void fetchSql(StringBuilder sb, Criteria criteria) {
 
-	}
-
-	private void check(String property) {
-
-		if (isFetchable) {
-			String str = null;
-			if (property.contains(" ")) {
-				String[] arr = property.split(" ");
-				str = arr[0];
-			} else {
-				str = property;
-			}
-			if (str.contains(".")) {
-				str = str.replace(".", "->");
-				String[] xxx = str.split("->");
-				if (xxx.length == 1)
-					property = xxx[0];
-				else
-					property = xxx[1];
-			} else {
-				property = str;
-			}
-
-		} else {
-
-			BeanElement be = criteria.getParsed().getElement(property);
-
-			if (be == null) {
-				throw new RuntimeException("property = " + property + ", not in " + criteria.getClz());
-			}
-
-		}
 	}
 
 	private BeanElement getBeanElement(String property) {
@@ -705,8 +645,7 @@ public class CriteriaBuilder {
 			str = property;
 		}
 		if (str.contains(".")) {
-			str = str.replace(".", "->");
-			String[] xxx = str.split("->");
+			String[] xxx = str.split("\\.");
 			if (xxx.length == 1)
 				property = xxx[0];
 			else
@@ -802,9 +741,9 @@ public class CriteriaBuilder {
 
 		CriteriaBuilder ne(String property, Object value);
 
-		CriteriaBuilder like(String property, Object value);
+		CriteriaBuilder like(String property, String value);
 		
-		CriteriaBuilder likeRight(String property, Object value);
+		CriteriaBuilder likeRight(String property, String value);
 
 		CriteriaBuilder between(String property, Object min, Object max);
 
@@ -816,15 +755,13 @@ public class CriteriaBuilder {
 
 		void under(X x);
 
-		P from();
+		P beginSub();
 
 	}
 
 	public Criteria get() {
 		return this.criteria;
 	}
-
-	private boolean isFetchable = false;
 
 	public class Fetchable extends CriteriaBuilder {
 
@@ -834,7 +771,6 @@ public class CriteriaBuilder {
 		}
 
 		private void init() {
-			super.isFetchable = true;
 			super.instance = this;
 			Criteria c = new Criteria();
 			Criteria.Fetch join = c.new Fetch();

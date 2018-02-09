@@ -11,11 +11,11 @@ public enum Predicate implements SqlScript{
 	LIKE(" like "),
 	IN(" in "),
 	NOT_IN(" not in "),
-	IS_NOT_NULL(" is not null "),
-	IS_NULL(" is null "),
+	IS_NOT_NULL(" is not null"),
+	IS_NULL(" is null"),
 	BETWEEN(" between "),
-	FROM(" ( "),
-	TO(" ) ");
+	SUB_BEGIN("( "),
+	SUB_END(" )");
 
 	private String sqlOper;
 	private Predicate(String sqlOper){
