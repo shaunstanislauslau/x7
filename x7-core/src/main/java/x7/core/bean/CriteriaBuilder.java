@@ -96,7 +96,6 @@ public class CriteriaBuilder {
 
 			if (value == null)
 				return instance;
-
 			if (isBaseType_0(property, value))
 				return instance;
 			if (isNullOrEmpty(value))
@@ -114,7 +113,6 @@ public class CriteriaBuilder {
 
 			if (value == null)
 				return instance;
-
 			if (isBaseType_0(property, value))
 				return instance;
 			if (isNullOrEmpty(value))
