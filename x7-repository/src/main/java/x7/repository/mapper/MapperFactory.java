@@ -358,7 +358,7 @@ public class MapperFactory implements Mapper {
 				}else if (bet.clz.isEnum()) {
 					sb.append("(").append(bet.length).append(") NOT NULL");
 				} else if (sqlType.equals(Dialect.STRING)) {
-					sb.append("(").append(bet.length).append(")  NULL");
+					sb.append("(").append(bet.length).append(") NULL");
 				} else {
 					if (bet.clz == Boolean.class || bet.clz == boolean.class || bet.clz == Integer.class
 							|| bet.clz == int.class || bet.clz == Long.class || bet.clz == long.class) {

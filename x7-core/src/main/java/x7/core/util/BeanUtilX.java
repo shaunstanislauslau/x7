@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -166,7 +167,7 @@ public class BeanUtilX extends BeanUtil {
 				} else if (ec == boolean.class || ec == Boolean.class) {
 					element.sqlType = SqlFieldType.BYTE;
 					element.length = 1;
-				} else if (ec == Date.class) {
+				} else if (ec == Date.class || clz == java.sql.Date.class || ec == Timestamp.class) {
 					element.sqlType = SqlFieldType.DATE;
 				} else if (ec == String.class) {
 					element.sqlType = SqlFieldType.VARCHAR;
@@ -380,7 +381,7 @@ public class BeanUtilX extends BeanUtil {
 					if (value != null) {
 						map.put(property, value.toString());
 					}
-				}else if (type == Date.class) {
+				}else if (type == Date.class || clz == java.sql.Date.class || type == Timestamp.class) {
 					if (value != null) {
 						map.put(property, value);
 					}
@@ -476,7 +477,7 @@ public class BeanUtilX extends BeanUtil {
 					if (value != null) {
 						map.put(property, value);
 					}
-				} else if (type == Date.class) {
+				} else if (type == Date.class || clz == java.sql.Date.class || type == Timestamp.class) {
 					if (value != null) {
 						map.put(property, value);
 					}
@@ -545,9 +546,7 @@ public class BeanUtilX extends BeanUtil {
 
 					}
 				}
-
 			}
-
 		}
 	}
 

@@ -415,6 +415,9 @@ public class CriteriaBuilder {
 		sort(sb, criteria);
 
 		String sql = sb.toString();
+		
+		String repair = "and (  )";
+		sql = sql.replace(repair, "");
 
 		String column = criteria.resultAllScript();
 
