@@ -329,7 +329,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 						System.exit(1);
 					}
 
-					if (Configs.getString("x7.db.driver").contains("mysql")) {
+					if (DbType.value.equals(DbType.MYSQL)) {
 						Repositories.getInstance().execute(clz.newInstance(), sql);
 					}
 

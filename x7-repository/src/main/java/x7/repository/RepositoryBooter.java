@@ -87,10 +87,20 @@ public class RepositoryBooter {
 	
 	private static void init(String dataSourceType){
 		
-		String repository = Configs.getString(ConfigKey.REPOSITORY);
-		repository = repository.toLowerCase();
+		String driver = Configs.getString("x7.db.driver");
+		driver = driver.toLowerCase();
+
+		if (driver.contains(DbType.MYSQL)){
+			DbType.value = DbType.MYSQL;
+		}else if (driver.contains(DbType.ORACLE)){
+			DbType.value = DbType.ORACLE;
+		}else if (driver.contains(DbType.DB2)){
+			DbType.value = DbType.DB2;
+		}else if (driver.contains(DbType.SQLSERVER)){
+			DbType.value = DbType.SQLSERVER;
+		}
 		
-		switch (repository){
+		switch (DbType.value){
 		
 		default:
 			DataSourcePool pool = DataSourceFactory.get(dataSourceType);
