@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>x7</groupId>
 			<artifactId>x7-core</artifactId>
-			<version>1.0.0.M</version>
+			<version>${x7.version}</version>
 			<scope>compile</scope>
 		</dependency>
 

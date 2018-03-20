@@ -30,45 +30,55 @@ import x7.repository.exception.PersistenceException;
 
 public class ResultSetUtil {
 
-	public static <T> void initObj(T obj, ResultSet rs, BeanElement tempEle, List<BeanElement> eles)
-			throws SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		for (BeanElement ele : eles) {
-			tempEle = ele;
-			Method method = ele.setMethod;
-			String mapper = ele.getMapper();
-			if (ele.clz.isEnum()) {
-				Object v = rs.getObject(mapper);
-				if (v==null)
-					continue;
-				String str = v.toString();
+	public static <T> void initObj(T obj, ResultSet rs, BeanElement tempEle, List<BeanElement> eles) {
+		Object value = null;
+		try {
+			value = null;
+			for (BeanElement ele : eles) {
+				tempEle = ele;
+				Method method = ele.setMethod;
+				String mapper = ele.getMapper();
+				if (ele.clz.isEnum()) {
+					Object v = rs.getObject(mapper);
+					if (v == null)
+						continue;
+					String str = v.toString();
 
-				Method m = ele.clz.getDeclaredMethod("valueOf", String.class);
-				Object e = m.invoke(null, str);
-				method.invoke(obj, e);
+					Method m = ele.clz.getDeclaredMethod("valueOf", String.class);
+					Object e = m.invoke(null, str);
+					value = e;
+					method.invoke(obj, e);
 
-			} else if (ele.isJson) {
-				String str = rs.getString(mapper);
-				if (ele.clz == Map.class) {
-					method.invoke(obj, JsonX.toMap(str));
-				} else if (ele.clz == List.class) {
-					method.invoke(obj, JsonX.toList(str, ele.geneType));
+				} else if (ele.isJson) {
+					String str = rs.getString(mapper);
+					value = str;
+					if (ele.clz == Map.class) {
+						method.invoke(obj, JsonX.toMap(str));
+					} else if (ele.clz == List.class) {
+						method.invoke(obj, JsonX.toList(str, ele.geneType));
+					} else {
+						method.invoke(obj, JsonX.toObject(str, ele.clz));
+					}
+				} else if (ele.clz.getSimpleName().toLowerCase().equals("double")) {
+					Object v = rs.getObject(mapper);
+					if (v != null) {
+						value = v;
+						method.invoke(obj, Double.valueOf(String.valueOf(v)));
+					}
+				} else if (ele.clz == BigDecimal.class) {
+
+					Object v = rs.getObject(mapper);
+					if (v != null) {
+						value = v;
+						method.invoke(obj, new BigDecimal((String.valueOf(v))));
+					}
 				} else {
-					method.invoke(obj, JsonX.toObject(str, ele.clz));
+					value = rs.getObject(mapper);
+					method.invoke(obj, rs.getObject(mapper));
 				}
-			} else if (ele.clz.getSimpleName().toLowerCase().equals("double")) {
-				Object v = rs.getObject(mapper);
-				if (v != null) {
-					method.invoke(obj, Double.valueOf(String.valueOf(v)));
-				}
-			} else if (ele.clz == BigDecimal.class) {
-
-				Object v = rs.getObject(mapper);
-				if (v != null) {
-					method.invoke(obj, new BigDecimal((String.valueOf(v))));
-				}
-			} else {
-				method.invoke(obj, rs.getObject(mapper));
 			}
+		}catch (Exception e){
+			throw new PersistenceException("clz:" + obj.getClass() + ", property: " + tempEle.getProperty() + ", type:" + tempEle.geneType + ", value; " + value );
 		}
 	}
 
