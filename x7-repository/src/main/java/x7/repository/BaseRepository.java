@@ -29,6 +29,7 @@ import x7.core.async.IAsyncTask;
 import x7.core.bean.Criteria;
 import x7.core.bean.IQuantity;
 import x7.core.bean.Parsed;
+import x7.core.config.Configs;
 import x7.core.util.StringUtil;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -328,7 +329,9 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 						System.exit(1);
 					}
 
-					Repositories.getInstance().execute(clz.newInstance(), sql);
+					if (Configs.getString("x7.db.driver").contains("mysql")) {
+						Repositories.getInstance().execute(clz.newInstance(), sql);
+					}
 
 					final String name = clz.getName();
 					IdGenerator generator = new IdGenerator();

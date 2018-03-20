@@ -566,7 +566,7 @@ public class DaoImpl implements Dao {
 			e.printStackTrace();
 
 			throw new RollbackException(
-					"Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
+					"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 
 		} finally {
 			close(pstmt);
@@ -684,7 +684,7 @@ public class DaoImpl implements Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RollbackException(
-					"Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
+					"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 		} finally {
 			close(pstmt);
 			close(conn);
@@ -730,7 +730,7 @@ public class DaoImpl implements Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RollbackException(
-					"Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
+					"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 		} finally {
 			close(pstmt);
 			close(conn);
@@ -809,7 +809,7 @@ public class DaoImpl implements Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RollbackException(
-					"Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
+					"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 		} finally {
 			close(pstmt);
 			close(conn);
@@ -1015,7 +1015,7 @@ public class DaoImpl implements Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RollbackException(
-					"Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
+					"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 		} finally {
 			close(pstmt);
 			close(conn);
@@ -1175,7 +1175,8 @@ public class DaoImpl implements Dao {
 					e1.printStackTrace();
 				}
 			} else {
-				throw new RollbackException("RollbackException: " + e.getMessage());
+				throw new RollbackException(
+						"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 			}
 		} finally {
 			if (isNoBizTx) {
@@ -1280,7 +1281,7 @@ public class DaoImpl implements Dao {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RollbackException(
-					"Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
+					"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 		} finally {
 			close(pstmt);
 			close(conn);
