@@ -272,7 +272,7 @@ public class MapperFactory implements Mapper {
 			for (int i = 0; i < size; i++) {
 				String p = tempList.get(i).property;
 
-				sb.append(p);
+				sb.append(" ").append(p).append(" ");
 				if (i < size - 1) {
 					sb.append(",");
 				}

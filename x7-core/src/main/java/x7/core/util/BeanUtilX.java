@@ -663,7 +663,9 @@ public class BeanUtilX extends BeanUtil {
 		sql = mapperName(sql, parsed);
 		
 		for (String property : parsed.getPropertyMapperMap().keySet()){
-			sql = sql.replaceAll(property, parsed.getMapper(property));
+			String key = " "+property+" ";
+			String value = " "+parsed.getMapper(property)+" ";
+			sql = sql.replaceAll(key, value);
 		}
 		return sql;
 	}
