@@ -38,7 +38,12 @@ public class ResultSetUtil {
 				tempEle = ele;
 				Method method = ele.setMethod;
 				String mapper = ele.getMapper();
-				if (ele.clz.isEnum()) {
+
+				if ( ele.clz == Boolean.class && DbType.ORACLE.equals(DbType.value)) {
+					int ib = rs.getInt(mapper);
+					value = ib;
+					method.invoke(obj, ib == 1 ? true : false);
+				}else if (ele.clz.isEnum()) {
 					value = rs.getObject(mapper);
 					if (Objects.isNull(value))
 						continue;
