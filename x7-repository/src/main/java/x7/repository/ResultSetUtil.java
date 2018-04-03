@@ -81,6 +81,8 @@ public class ResultSetUtil {
 							method.invoke(obj, ((BigDecimal) value).longValue());
 						}else if (ele.clz == Integer.class || ele.clz == int.class){
 							method.invoke(obj, ((BigDecimal) value).intValue());
+						}else if (ele.clz == Boolean.class || ele.clz == boolean.class){
+							method.invoke(obj, ((BigDecimal) value).intValue() == 1 ? true : false);
 						}else if (ele.clz == Double.class || ele.clz == double.class){
 							method.invoke(obj, ((BigDecimal) value).doubleValue());
 						}else if (ele.clz == Float.class || ele.clz == float.class){
