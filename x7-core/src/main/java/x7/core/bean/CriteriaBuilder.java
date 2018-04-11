@@ -576,8 +576,21 @@ public class CriteriaBuilder {
 		} else {
 			if (StringUtil.isNullOrEmpty(x.getKey()))
 					return;
-			sb.append(x.getKey()).append(x.getPredicate().sql()).append(PLACE_HOLDER);
 			Class clz = v.getClass();
+			sb.append(x.getKey()).append(x.getPredicate().sql());
+			if (clz == String.class){
+				String str = v.toString();
+				if (str.startsWith("#")&&str.endsWith("#")){
+					str = str.replace("#", "");
+					sb.append(str);
+					return;
+				}else{
+					sb.append(PLACE_HOLDER);
+				}
+			}else{
+				sb.append(PLACE_HOLDER);
+			}
+
 			if (clz.getSuperclass().isEnum() || clz.isEnum()) {
 				criteria.getValueList().add(v.toString());
 			} else {
@@ -663,6 +676,9 @@ public class CriteriaBuilder {
 
 	private boolean isBaseType_0(String property, Object v) {
 
+		if (v instanceof String)
+			return false;
+		
 		BeanElement be = getBeanElement(property);
 
 		if (be == null) {
