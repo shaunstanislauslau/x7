@@ -16,6 +16,7 @@
  */
 package x7.repository;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -29,7 +30,9 @@ import x7.core.async.IAsyncTask;
 import x7.core.bean.Criteria;
 import x7.core.bean.IQuantity;
 import x7.core.bean.Parsed;
+import x7.core.bean.Parser;
 import x7.core.config.Configs;
+import x7.core.repository.X;
 import x7.core.util.StringUtil;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -334,6 +337,10 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 						Repositories.getInstance().execute(clz.newInstance(), sql);
 					}
 
+					Parsed parsed = Parser.get(clz);
+					Field f = parsed.getKeyField(X.KEY_ONE);
+					if (f.getType() == String.class)
+						continue;
 					final String name = clz.getName();
 					IdGenerator generator = new IdGenerator();
 					generator.setClzName(name);
