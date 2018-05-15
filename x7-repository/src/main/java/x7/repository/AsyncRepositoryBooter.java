@@ -48,10 +48,14 @@ public class AsyncRepositoryBooter {
 	
 	private static void init(){
 		
-		String repository = Configs.getString(ConfigKey.REPOSITORY);
-		repository = repository.toLowerCase();
+		String driver = Configs.getString("x7.db.driver");
+		driver = driver.toLowerCase();
+
+		if (driver.contains(DbType.MYSQL)){
+			DbType.value = DbType.MYSQL;
+		}
 		
-		switch (repository){
+		switch (DbType.value){
 		
 		case MYSQL:
 			HikariPool pool = HikariPool.getInstance();

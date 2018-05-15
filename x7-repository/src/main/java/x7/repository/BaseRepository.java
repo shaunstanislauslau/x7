@@ -330,6 +330,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 					}
 
 					if (DbType.value.equals(DbType.MYSQL)) {
+						System.out.println("________ table check: " + clz.getName());
 						Repositories.getInstance().execute(clz.newInstance(), sql);
 					}
 
@@ -338,12 +339,13 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 					generator.setClzName(name);
 					List<IdGenerator> list = Repositories.getInstance().list(generator);
 					if (list.isEmpty()) {
+						System.out.println("________ id init: " + generator.getClzName());
 						generator.setMaxId(0);
 						Repositories.getInstance().create(generator);
 					}
 
 				} catch (Exception e) {
-
+//					e.printStackTrace();
 				}
 			}
 		}

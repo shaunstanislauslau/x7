@@ -24,6 +24,7 @@ import java.util.Map;
 import x7.core.bean.BeanElement;
 import x7.core.config.Configs;
 import x7.repository.ConfigKey;
+import x7.repository.DbType;
 
 public interface Mapper {
 
@@ -111,8 +112,8 @@ public interface Mapper {
 			String ORACLE_PAGINATION_REGX_END = "${END}";
 			
 			public static String match(String sql,long start, long rows) {
-				String repository = Configs.getString(ConfigKey.REPOSITORY);
-				if (repository.toLowerCase().equals("oracle")){
+				String dbType = DbType.value;
+				if (dbType.toLowerCase().equals("oracle")){
 					return ORACLE_PAGINATION
 							.replace(ORACLE_PAGINATION_REGX_END, String.valueOf(start + rows))
 							.replace(ORACLE_PAGINATION_REGX_BEGIN, String.valueOf(start))

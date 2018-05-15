@@ -47,6 +47,7 @@ public class RepositoryBooter {
 		if (instance == null) {
 			instance = new RepositoryBooter();
 			init();
+			HealthChecker.onStarted();
 		}
 	}
 	

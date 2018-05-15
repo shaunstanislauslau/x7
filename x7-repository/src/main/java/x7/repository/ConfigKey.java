@@ -20,7 +20,7 @@ public interface ConfigKey{
 	String IS_DEVELOPING = "x7.developing";
 	String IS_CACHEABLE = "x7.cache.serving";
 	String IS_ID_GENERATOR = "x7.db.id.generator";
-	String REPOSITORY = "x7.repository.db";
+//	String REPOSITORY = "x7.repository.db";
 	String SHARDING_MODE = "x7.db.sharding.mode";
 	String SHARDING_POLICY = "x7.db.sharding.policy";
 	String DB_NAMING_SPEC = "x7.db.naming.spec";

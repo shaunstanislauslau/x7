@@ -30,6 +30,7 @@ import x7.core.repository.X;
 import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
 import x7.repository.ConfigKey;
+import x7.repository.DbType;
 
 public class MapperFactory implements Mapper {
 
@@ -86,9 +87,8 @@ public class MapperFactory implements Mapper {
 	@SuppressWarnings({ "rawtypes" })
 	public static void parseBean(Class clz) {
 
-		String repository = Configs.getString(ConfigKey.REPOSITORY);
-		repository = repository.toLowerCase();
-		switch (repository) {
+		String dbType = DbType.value;
+		switch (dbType) {
 		default:
 			StandardSql sql = new StandardSql();
 			sql.getTableSql(clz);
@@ -300,7 +300,7 @@ public class MapperFactory implements Mapper {
 
 		public String getTableSql(Class clz) {
 
-			String repository = Configs.getString(ConfigKey.REPOSITORY);
+			String dbType = DbType.value;
 
 			List<BeanElement> temp = Parser.get(clz).getBeanElementList();
 			Map<String, BeanElement> map = new HashMap<String, BeanElement>();
@@ -348,13 +348,13 @@ public class MapperFactory implements Mapper {
 				if (sqlType.equals(Dialect.BIG)) {
 					sb.append(" DEFAULT 0.00 ");
 				} else if (sqlType.equals(Dialect.DATE)) {
-					if (bet.property.equals("createTime")) {
-						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP");
-					} else if (bet.property.equals("refreshTime")) {
-						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP");
-					} else {
-						sb.append(" NULL");
-					}
+//					if (bet.property.equals("createTime")) {
+//						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP");
+//					} else if (bet.property.equals("refreshTime")) {
+//						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP");
+//					} else {
+					sb.append(" NULL");
+//					}
 				}else if (bet.clz.isEnum()) {
 					sb.append("(").append(bet.length).append(") NOT NULL");
 				} else if (sqlType.equals(Dialect.STRING)) {
@@ -382,7 +382,7 @@ public class MapperFactory implements Mapper {
 
 			String sql = sb.toString();
 
-			sql = Dialect.match(sql, repository, CREATE_TABLE);
+			sql = Dialect.match(sql, dbType, CREATE_TABLE);
 
 			sql = BeanUtilX.mapper(sql, parsed);
 			System.out.println(sql);
