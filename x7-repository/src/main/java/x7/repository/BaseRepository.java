@@ -31,7 +31,6 @@ import x7.core.bean.Criteria;
 import x7.core.bean.IQuantity;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
-import x7.core.config.Configs;
 import x7.core.repository.X;
 import x7.core.util.StringUtil;
 import x7.core.web.Direction;
@@ -317,7 +316,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 			+ "PRIMARY KEY (`clzName`) "
 					+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8 ";
 			
-			Repositories.getInstance().execute(IdGenerator.class, idGeneratorSql);
+			ManuRepository.execute(IdGenerator.class, idGeneratorSql);
 
 			System.out.println("-------------------------------------------------");
 

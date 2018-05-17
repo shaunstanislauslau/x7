@@ -1096,7 +1096,7 @@ public class DaoImpl implements Dao {
 
 		Parsed parsed = Parser.get(obj.getClass());
 
-		sql = sql.replace("drop", " ").replace("delete", " ").replace("insert", " ").replace(";", ""); // 手动拼接SQL,
+		sql = sql.replace(" drop ", " ").replace(" delete ", " ").replace(" insert ", " ").replace(";", ""); // 手动拼接SQL,
 																										// 必须考虑应用代码的漏洞
 		sql = BeanUtilX.mapper(sql, parsed);
 		boolean b = false;
