@@ -361,7 +361,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 				}
 			}
 
-			logger.info("X7 Repository " + (flag?"still":"")+ " Started" + (flag ? " OK, wtih some problem" : ""));
+			logger.info("X7 Repository " + (flag?"still ":"")+ "started" + (flag ? " OK, wtih some problem" : ""));
 
 		}
 	}
