@@ -63,7 +63,7 @@ public class Repositories implements Repository {
 	private Dao syncDao;
 
 	public void setSyncDao(Dao syncDao) {
-		logger.info("--------------------X7 Repository Init--------------------");
+		logger.info("X7 Repository prepare starting....");
 		this.syncDao = syncDao;
 	}
 
