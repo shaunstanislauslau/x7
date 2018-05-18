@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
 import x7.core.bean.Criteria;
@@ -49,6 +50,8 @@ import x7.repository.redis.JedisConnector_Persistence;
  * @param <T>
  */
 public abstract class BaseRepository<T> implements X7Repository<T> {
+
+	private final static Logger logger = Logger.getLogger(BaseRepository.class);
 
 	public final static String ID_MAP_KEY = "ID_MAP_KEY";
 
@@ -320,6 +323,8 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 			System.out.println("-------------------------------------------------");
 
+			boolean flag = false;
+
 			for (BaseRepository repository : repositoryList) {
 
 				try {
@@ -351,8 +356,14 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 					}
 
 				} catch (Exception e) {
+					flag |= true;
 //					e.printStackTrace();
 				}
+			}
+
+			logger.info("--------------------X7 Repository started--------------------");
+			if (flag){
+				logger.info("--------------------but with some problem--------------------");
 			}
 		}
 	}
