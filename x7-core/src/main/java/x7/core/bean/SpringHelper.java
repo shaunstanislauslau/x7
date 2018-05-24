@@ -17,7 +17,6 @@ public class SpringHelper implements ApplicationContextAware {
 	private static Logger logger = Logger.getLogger(SpringHelper.class);
 
 	private static ApplicationContext applicationContext;
-
 	private static Map<Method, String> mappingMap = new HashMap<Method, String>();
 
 	@Override
