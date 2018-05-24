@@ -1,5 +1,6 @@
 package x7.core.bean;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 
 import org.apache.commons.codec.binary.Base64;
@@ -21,10 +22,16 @@ public class EncryptionObject<T> {
 	public String getText() {
 		if (!Objects.isNull(text))
 			return text;
-		String json = JsonX.toJson(obj);
-		byte[] bytes = Base64.encodeBase64(json.getBytes());
-		text = new String(bytes);
-		return text;
+		try {
+			String json = JsonX.toJson(obj);
+			byte[] bytes = Base64.encodeBase64(json.getBytes("UTF-8"));
+			text = new String(bytes,"UTF-8");
+			return text;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 	public void setText(String text) {
 		this.text = text;
@@ -32,10 +39,14 @@ public class EncryptionObject<T> {
 	public T getObj() {
 		if (Objects.isNull(obj) && !Objects.isNull(text)){
 			byte[] bytes = Base64.decodeBase64(text);
-			String json = new String(bytes);
-
-			obj = (T) JsonX.toObject(json, clz);
-			return obj;
+			try {
+				String json = new String(bytes,"UTF-8");
+				obj = (T) JsonX.toObject(json, clz);
+				return obj;
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+				return null;
+			}
 		}
 		return obj;
 	}

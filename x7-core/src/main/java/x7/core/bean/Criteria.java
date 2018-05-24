@@ -46,6 +46,8 @@ public class Criteria implements Paged, Serializable {
 	private List<Object> valueList = new ArrayList<Object>();
 	
 	private List<X> listX = new ArrayList<X>();
+	
+	private String dataPermissionSn;
 
 	private FetchMapper fetchMapper;
 
@@ -138,6 +140,14 @@ public class Criteria implements Paged, Serializable {
 	
 	protected void add(X x) {
 		this.listX.add(x);
+	}
+
+	protected String getDataPermissionSn() {
+		return dataPermissionSn;
+	}
+
+	protected void setDataPermissionSn(String dataPermissionSn) {
+		this.dataPermissionSn = dataPermissionSn;
 	}
 
 	public void paged(Paged paged) {

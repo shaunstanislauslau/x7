@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import x7.config.ConfigProperties;
+import x7.core.bean.SpringHelper;
 import x7.repository.RepositoryProperties_W;
 
 @Configuration
@@ -16,7 +17,12 @@ public class BootConfiguration {
 	private ConfigProperties configProperies;
 	@Autowired
 	private RepositoryProperties_W repositoryProperties;
-	
+
+	@Bean
+	SpringHelper getHelper(){
+		return new SpringHelper();
+	}
+
 	@Bean
     ConfigStarter x7ConfigStarter (){
 		

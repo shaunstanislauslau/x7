@@ -24,18 +24,18 @@ import java.util.Map;
 import x7.core.bean.BeanElement;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
-import x7.core.config.Configs;
 import x7.core.repository.Mapped;
 import x7.core.repository.X;
 import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
-import x7.repository.ConfigKey;
 import x7.repository.DbType;
 
 public class MapperFactory implements Mapper {
 
 	private static Map<Class, Map<String, String>> sqlsMap = new HashMap<Class, Map<String, String>>();
 
+	public static Mapper.Dialect Dialect;
+	
 	/**
 	 * 返回SQL
 	 * 
@@ -382,7 +382,7 @@ public class MapperFactory implements Mapper {
 
 			String sql = sb.toString();
 
-			sql = Dialect.match(sql, dbType, CREATE_TABLE);
+			sql = Dialect.match(sql, CREATE_TABLE);
 
 			sql = BeanUtilX.mapper(sql, parsed);
 			System.out.println(sql);

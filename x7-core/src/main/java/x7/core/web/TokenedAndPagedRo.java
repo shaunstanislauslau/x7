@@ -16,9 +16,11 @@
  */
 package x7.core.web;
 
+import x7.core.util.StringUtil;
+
 public class TokenedAndPagedRo implements Paged, Tokened{
 
-	private long passportId;
+	private String passportId;
 	private String token;
 	private String passportType;
 	private boolean isScroll;
@@ -27,9 +29,11 @@ public class TokenedAndPagedRo implements Paged, Tokened{
 	private String orderBy;
 	private Direction direction;
 	public long getPassportId() {
-		return passportId;
+		if (StringUtil.isNullOrEmpty(passportId))
+			return 0;
+		return Long.valueOf(passportId);
 	}
-	public void setPassportId(long passportId) {
+	public void setPassportId(String passportId) {
 		this.passportId = passportId;
 	}
 	public String getToken() {

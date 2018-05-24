@@ -214,6 +214,9 @@ public class CriteriaBuilder {
 
 			if (StringUtil.isNullOrEmpty(value))
 				return instance;
+			
+			if (property.equals("dataPermissionSn"))
+				throw new RuntimeException("X7 framework will handle dataPermission, do not build by it");
 
 			x.setPredicate(Predicate.LIKE);
 			x.setKey(property);
@@ -375,6 +378,7 @@ public class CriteriaBuilder {
 			if (ro instanceof Paged) {
 				builder.paged((Paged) ro);
 			}
+			
 		}
 
 		return builder;
@@ -382,6 +386,10 @@ public class CriteriaBuilder {
 	
 	public void paged(Paged paged) {
 		criteria.paged(paged);
+		if (paged instanceof DataPermission){
+			DataPermission dp = (DataPermission) paged;
+			criteria.setDataPermissionSn(dp.getDataPermissionSn());
+		}
 	}
 
 	public Class<?> getClz() {
@@ -549,6 +557,16 @@ public class CriteriaBuilder {
 
 			x(sb, x, criteria);
 		}
+
+		if (StringUtil.isNotNull(criteria.getDataPermissionSn())){
+			String prop = "dataPermissionSn";	
+			if (criteria instanceof Fetch){
+				prop = criteria.getClz().getSimpleName() + "." + prop;
+			}
+			sb.append(Conjunction.AND).append(prop)
+			.append(Predicate.LIKE).append("'"+criteria.getDataPermissionSn()+"%'");
+		}
+		
 		return xx;
 	}
 

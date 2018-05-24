@@ -6,5 +6,6 @@ package x7.core.web;
 public enum ViewStatus {
     OK,
     FAIL,
+    LOGOUT
     ;
 }

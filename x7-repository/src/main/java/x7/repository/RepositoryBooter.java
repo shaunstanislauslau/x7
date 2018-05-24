@@ -21,9 +21,14 @@ import java.util.List;
 
 import x7.core.config.Configs;
 import x7.repository.BaseRepository.HealthChecker;
+import x7.repository.dao.DaoImpl;
 import x7.repository.dao.DaoInitializer;
 import x7.repository.dao.DaoWrapper;
 import x7.repository.dao.ShardingDaoImpl;
+import x7.repository.mapper.Mapper;
+import x7.repository.mapper.MapperFactory;
+import x7.repository.mapper.MySqlDialect;
+import x7.repository.mapper.OracleDialect;
 import x7.repository.pool.DataSourceFactory;
 import x7.repository.pool.DataSourcePool;
 import x7.repository.redis.CacheResolver;
@@ -60,6 +65,7 @@ public class RepositoryBooter {
 	}
 	
 	public static void generateId(){
+		System.out.println("\n" +"----------------------------------------");
 		List<IdGenerator> idGeneratorList = Repositories.getInstance().list(IdGenerator.class);
 		for (IdGenerator generator : idGeneratorList) {
 			String name = generator.getClzName();
@@ -80,6 +86,7 @@ public class RepositoryBooter {
 
 		
 		}
+		System.out.println("----------------------------------------"+"\n");
 	}
 	
 	private static void init(){
@@ -93,13 +100,18 @@ public class RepositoryBooter {
 
 		if (driver.contains(DbType.MYSQL)){
 			DbType.value = DbType.MYSQL;
+			initDialect(new MySqlDialect());
 		}else if (driver.contains(DbType.ORACLE)){
 			DbType.value = DbType.ORACLE;
+			initDialect(new OracleDialect());
 		}else if (driver.contains(DbType.DB2)){
 			DbType.value = DbType.DB2;
+			initDialect(new MySqlDialect());//FIXME
 		}else if (driver.contains(DbType.SQLSERVER)){
 			DbType.value = DbType.SQLSERVER;
+			initDialect(new MySqlDialect());//FIXME
 		}
+
 		
 		switch (DbType.value){
 		
@@ -118,6 +130,12 @@ public class RepositoryBooter {
 		if (Configs.isTrue(ConfigKey.IS_CACHEABLE)){
 			Repositories.getInstance().setCacheResolver(CacheResolver.getInstance());
 		}
+	}
+	
+	private static void initDialect(Mapper.Dialect dialect){
+		MapperFactory.Dialect = dialect;
+		DaoImpl.dialect = dialect;
+		ResultSetUtil.dialect = dialect;
 	}
 	
 }

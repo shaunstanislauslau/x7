@@ -77,6 +77,8 @@ public class DaoImpl implements Dao {
 	private DataSource dataSource;
 
 	private DataSource dataSource_R;
+	
+	public static Mapper.Dialect dialect;
 
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -531,7 +533,6 @@ public class DaoImpl implements Dao {
 		return refresh(obj, conn);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean remove(Object obj) {
 		Connection conn = null;
@@ -787,7 +788,7 @@ public class DaoImpl implements Dao {
 
 		int start = (page - 1) * rows;
 
-		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
+		sql = dialect.match(sql, start, rows);
 
 		PreparedStatement pstmt = null;
 		BeanElement tempEle = null;
@@ -1345,7 +1346,7 @@ public class DaoImpl implements Dao {
 
 		int start = (page - 1) * rows;
 
-		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
+		sql = dialect.match(sql, start, rows);
 
 		sql = sql.replace("*", criteriaFetch.getResultScript());
 
@@ -1416,7 +1417,7 @@ public class DaoImpl implements Dao {
 		int rows = fetch.getRows();
 		int start = (page - 1) * rows;
 
-		sql = Mapper.Dialect.Pagination.match(sql, start, rows);
+		sql = dialect.match(sql, start, rows);
 
 		System.out.println(sql);
 

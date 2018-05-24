@@ -27,6 +27,7 @@ public class ViewEntity {
 
 	private ViewStatus status;
 	private Object body;
+	private long handledTimeMillis;
 
 	public void setStatus(ViewStatus status) {
 		this.status = status;
@@ -42,6 +43,14 @@ public class ViewEntity {
 
 	public Object getBody() {
 		return body;
+	}
+
+	public void setHandledTimeMillis(long handledTimeMillis) {
+		this.handledTimeMillis = handledTimeMillis;
+	}
+
+	public long getHandledTimeMillis() {
+		return handledTimeMillis;
 	}
 
 	public static ViewEntity toast(String str) {
@@ -67,7 +76,7 @@ public class ViewEntity {
 
 	@Override
 	public String toString() {
-		return "ViewEntity [status=" + status + ", body=" + body + "]";
+		return "ViewEntity [status=" + status + ", body=" + body + ", handledTimeMillis=" + handledTimeMillis + "]";
 	}
 
 }
