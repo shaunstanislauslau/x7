@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import x7.core.bean.BeanElement;
+import x7.core.bean.DataPermission;
 import x7.core.bean.Parsed;
 import x7.core.repository.X;
 import x7.core.repository.SqlFieldType;
@@ -326,6 +327,12 @@ public class BeanUtilX extends BeanUtil {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		Class clz = obj.getClass();
+		
+		if (obj instanceof DataPermission){
+			DataPermission dp = (DataPermission)obj;
+			dp.setDataPermissionSn(null);
+		}
+		
 		try {
 			for (BeanElement element : parsed.getBeanElementList()) {
 
