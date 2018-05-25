@@ -5,6 +5,8 @@ package x7.core.bean;
  * Created by Sim on 2016/5/23.
  */
 public interface DataPermission {
+	
+	String KEY = "dataPermissionSn";
 
 	void setDataPermissionSn(String dataPermissionSn);
     String getDataPermissionSn();

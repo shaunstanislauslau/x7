@@ -214,9 +214,6 @@ public class CriteriaBuilder {
 
 			if (StringUtil.isNullOrEmpty(value))
 				return instance;
-			
-			if (property.equals("dataPermissionSn"))
-				throw new RuntimeException("X7 framework will handle dataPermission, do not build by it");
 
 			x.setPredicate(Predicate.LIKE);
 			x.setKey(property);
@@ -519,8 +516,44 @@ public class CriteriaBuilder {
 		}
 
 	}
+	
+	
+	private static void filterDataPermission(Criteria criteria) {
+		if (StringUtil.isNotNull(criteria.getDataPermissionSn())){
+
+			final String key = DataPermission.KEY;
+					
+			for (X x : criteria.getListX()){
+				if (x.getKey().endsWith(key)){
+					return;
+				}
+			}
+			
+			criteria.add(new X(){
+
+				@Override
+				public String getKey() {
+					return (criteria instanceof Fetch) ? (criteria.getClz().getSimpleName() + "." + key):key ;
+				}
+
+				@Override
+				public Predicate getPredicate() {
+					return Predicate.LIKE;
+				}
+
+				@Override
+				public Object getValue() {
+					return criteria.getDataPermissionSn();
+				}
+				
+			});
+		}
+	}
 
 	private static X x(StringBuilder sb, Criteria criteria) {
+		
+		filterDataPermission(criteria);
+		
 		X xx = null;
 		List<X> xList = criteria.getListX();
 
@@ -558,14 +591,6 @@ public class CriteriaBuilder {
 			x(sb, x, criteria);
 		}
 
-		if (StringUtil.isNotNull(criteria.getDataPermissionSn())){
-			String prop = "dataPermissionSn";	
-			if (criteria instanceof Fetch){
-				prop = criteria.getClz().getSimpleName() + "." + prop;
-			}
-			sb.append(Conjunction.AND).append(prop)
-			.append(Predicate.LIKE).append("'"+criteria.getDataPermissionSn()+"%'");
-		}
 		
 		return xx;
 	}
@@ -891,5 +916,5 @@ public class CriteriaBuilder {
 					+ "]";
 		}
 	}
-
+	
 }
