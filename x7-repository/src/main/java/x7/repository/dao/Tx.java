@@ -22,6 +22,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -46,46 +47,48 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Tx {
 
-	private static Map<Long, Connection> connMap = new ConcurrentHashMap<>();
-	private static Map<Long, List<Statement>> map = new ConcurrentHashMap<Long, List<Statement>>();
+	private static Map<String, Connection> connMap = new ConcurrentHashMap<>();
+	private static Map<String, List<Statement>> map = new ConcurrentHashMap<String, List<Statement>>();
 
+	private static Map<String,String> kkMap = new ConcurrentHashMap<>();
+	
 	private static List<Statement> remove() {
-		long threadId = Thread.currentThread().getId();
-		return map.remove(threadId);
+		String key = getKey();
+		return map.remove(key);
 	}
 	
 	
 	protected static void add(Connection connection){
-		long threadId = Thread.currentThread().getId();
-		connMap.put(threadId, connection);
+		String key = getKey();
+		connMap.put(key, connection);
 	}
 	
 	protected static Connection getConnection(){
-		long threadId = Thread.currentThread().getId();
-		return connMap.get(threadId);
+		String key = getKey();
+		return connMap.get(key);
 	}
 
 	protected static boolean isNoBizTx() {
-		long threadId = Thread.currentThread().getId();
-		return !map.containsKey(threadId);
+		String key = getKey();
+		return !map.containsKey(key);
 	}
 
 	protected static void add(Statement stmt) {
-		long threadId = Thread.currentThread().getId();
-		List<Statement> list = map.get(threadId);
+		String key = getKey();
+		List<Statement> list = map.get(key);
 		list.add(stmt);
 	}
 
 	public static void begin() {
-		long threadId = Thread.currentThread().getId();
-		map.put(threadId, new ArrayList<Statement>());
+		String key = getKey();
+		map.put(key, new ArrayList<Statement>());
 	}
 
 	
 	public static void commit() {
 		
-		long threadId = Thread.currentThread().getId();
-		Connection connection = connMap.remove(threadId);
+		String key = getKey();
+		Connection connection = connMap.remove(key);
 		
 		if (connection == null){
 			remove();
@@ -120,8 +123,8 @@ public class Tx {
 
 	public static void rollback() {
 		
-		long threadId = Thread.currentThread().getId();
-		Connection connection = connMap.remove(threadId);
+		String key = getKey();
+		Connection connection = connMap.remove(key);
 		
 		if (connection == null){
 			remove();
@@ -153,4 +156,101 @@ public class Tx {
 		}
 	}
 
+	public static String getKey(){
+		long threadId = Thread.currentThread().getId();
+		String key = String.valueOf(threadId);
+		String xKey = kkMap.get(key);
+		if (Objects.isNull(xKey))
+			return key;
+		return xKey;
+	}
+	
+	public static class X {
+		
+		private static List<Statement> remove(String xKey) {
+			String key = xKey;
+			return map.remove(key);
+		}
+		
+		public static void begin(String xKey) {
+			long threadId = Thread.currentThread().getId();
+			String key = String.valueOf(threadId);
+			kkMap.put(key, xKey);
+			map.put(xKey, new ArrayList<Statement>());
+		}
+
+		
+		public static void commit(String xKey) {
+			
+			String key = xKey;
+			Connection connection = connMap.remove(key);
+			
+			if (connection == null){
+				remove(key);
+				return;
+			}
+			
+			try {
+				connection.commit();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new RuntimeException("TX commit fail, key = " + xKey);
+			}finally{
+				
+				List<Statement> list = remove(key);
+				if (list != null) {
+					for (Statement stmt : list) {
+						try {
+							stmt.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		public static void rollback(String xKey) {
+			
+			String key = xKey;
+			Connection connection = connMap.remove(key);
+			
+			if (connection == null){
+				remove(key);
+				return;
+			}
+			
+			try {
+				connection.rollback();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new RuntimeException("TX rollback fail, key = " + xKey);
+			}finally{
+				
+				List<Statement> list = remove(key);
+				if (list != null) {
+					for (Statement stmt : list) {
+						try {
+							stmt.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }

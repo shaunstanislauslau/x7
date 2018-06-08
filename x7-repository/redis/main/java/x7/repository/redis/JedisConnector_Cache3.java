@@ -23,6 +23,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import x7.core.config.Configs;
+import x7.core.util.StringUtil;
 
 public class JedisConnector_Cache3 {
 
@@ -40,7 +41,19 @@ public class JedisConnector_Cache3 {
 			config.setJmxNamePrefix("redis-cahce3");
 			config.setTestOnBorrow(true);
 			
-			pool = new JedisPool( config, Configs.getString("x7.redis.ip.cache3"), Configs.getIntValue("x7.redis.port.cache3"));  //6379
+			String password= Configs.getString("x7.redis.password.cache3");
+			
+			if (StringUtil.isNullOrEmpty(password)) {
+				pool = new JedisPool( config, Configs.getString("x7.redis.ip.cache3"), Configs.getIntValue("x7.redis.port.cache3"));  //6379
+				
+				JedisTest.test(pool, "Redis start fail without password, instance of: " + JedisConnector_Cache3.class.getName());
+			}else {
+				pool = new JedisPool( config, Configs.getString("x7.redis.ip.cache3"), Configs.getIntValue("x7.redis.port.cache3"),
+					1000,password);  //6379
+				
+				JedisTest.test(pool, "Redis start fail with password: "+password + ", instance of: " + JedisConnector_Cache3.class.getName());
+
+			}
 		}
 		return instance;
 	}
@@ -73,7 +86,7 @@ public class JedisConnector_Cache3 {
 		try{
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.set(key,value);
 			pool.returnResource(jedis);
 		}catch(Exception e){
@@ -88,7 +101,7 @@ public class JedisConnector_Cache3 {
 		try{
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.set(key,value);
 			jedis.expire(key, validSeconds);
 			pool.returnResource(jedis);
@@ -105,7 +118,7 @@ public class JedisConnector_Cache3 {
 		try{
 			jedis = get();
 			if (jedis == null)
-				return null;
+				throw new RuntimeException("no redis connection");
 			str = jedis.get(key);
 			pool.returnResource(jedis);
 		}catch(Exception e){
@@ -125,7 +138,7 @@ public class JedisConnector_Cache3 {
 		try{
 			jedis = get();
 			if (jedis == null)
-				return null;
+				throw new RuntimeException("no redis connection");
 			byteList = jedis.mget(keyArr);
 			pool.returnResource(jedis);
 		}catch(Exception e){
@@ -142,7 +155,7 @@ public class JedisConnector_Cache3 {
 		try{
 			jedis = get();
 			if (jedis == null)
-				return null;
+				throw new RuntimeException("no redis connection");
 			value = jedis.get(key);
 			pool.returnResource(jedis);
 		}catch(Exception e){
@@ -157,7 +170,7 @@ public class JedisConnector_Cache3 {
 		try{
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.del(key);
 			pool.returnResource(jedis);
 		}catch(Exception e){

@@ -22,6 +22,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import x7.core.config.Configs;
+import x7.core.util.StringUtil;
 
 /**
  * 禁止用flushall命令<br>
@@ -47,9 +48,19 @@ public class JedisConnector_Persistence {
 
 			System.out.println("x7.redis.ip.persistence = " + Configs.getString("x7.redis.ip.persistence"));
 			System.out.println("x7.redis.port.persistence = " + Configs.getString("x7.redis.port.persistence"));
-
-			pool = new JedisPool(config, Configs.getString("x7.redis.ip.persistence"),
-					Configs.getIntValue("x7.redis.port.persistence")); // 6379
+			
+			String password= Configs.getString("x7.redis.password.persistence");
+			
+			if (StringUtil.isNullOrEmpty(password)) {
+				pool = new JedisPool(config, Configs.getString("x7.redis.ip.persistence"),
+						Configs.getIntValue("x7.redis.port.persistence")); // 6379
+				JedisTest.test(pool, "Redis start fail without password, instance of: " + JedisConnector_Persistence.class.getName());
+			}else{
+				pool = new JedisPool(config, Configs.getString("x7.redis.ip.persistence"),
+					Configs.getIntValue("x7.redis.port.persistence"),1000,password); // 6379
+				
+				JedisTest.test(pool, "Redis start fail with password: "+password + ", instance of: " + JedisConnector_Persistence.class.getName());
+			}
 		}
 		return instance;
 	}
@@ -79,7 +90,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.set(key, value);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -96,7 +107,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.set(key, value);
 			jedis.expire(key, seconds);
 			pool.returnResource(jedis);
@@ -111,7 +122,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.set(key, value);
 			jedis.expire(key, seconds);
 			pool.returnResource(jedis);
@@ -127,7 +138,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.set(key, value);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -143,7 +154,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return null;
+				throw new RuntimeException("no redis connection");
 			str = jedis.get(key);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -163,7 +174,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return null;
+				throw new RuntimeException("no redis connection");
 			byteList = jedis.mget(keyArr);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -180,7 +191,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return null;
+				throw new RuntimeException("no redis connection");
 			value = jedis.get(key);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -189,13 +200,27 @@ public class JedisConnector_Persistence {
 
 		return value;
 	}
+	
+	public void delete(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = get();
+			if (jedis == null)
+				throw new RuntimeException("no redis connection");
+			jedis.del(key);
+			pool.returnResource(jedis);
+		} catch (Exception e) {
+			pool.returnBrokenResource(jedis);
+		}
+
+	}
 
 	public void delete(byte[] key) {
 		Jedis jedis = null;
 		try {
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.del(key);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -209,7 +234,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.hset(mapName, key, value);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -223,7 +248,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return "";
+				throw new RuntimeException("no redis connection");
 			value = jedis.hget(mapName, key);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -239,7 +264,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return 0;
+				throw new RuntimeException("no redis connection");
 			value = jedis.hincrBy(mapName, key, increment);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
@@ -276,7 +301,7 @@ public class JedisConnector_Persistence {
 		try {
 			jedis = get();
 			if (jedis == null)
-				return;
+				throw new RuntimeException("no redis connection");
 			jedis.del(key);
 			pool.returnResource(jedis);
 		} catch (Exception e) {
