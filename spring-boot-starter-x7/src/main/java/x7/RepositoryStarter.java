@@ -5,10 +5,20 @@ import x7.repository.RepositoryBooter;
 
 public class RepositoryStarter {
 
-	public RepositoryStarter() {
+	public RepositoryStarter(){
 
-		System.out.println("_________Will start repository: " + Configs.isTrue("x7.repository.local"));
-		if (Configs.isTrue("x7.repository.local")) {
+	}
+
+	public RepositoryStarter(Boolean isRemote) {
+
+		boolean remote = false;
+		if (isRemote == null){
+			remote = Configs.isTrue("x7.repository.local");
+		}else{
+			remote = isRemote;
+		}
+		System.out.println("_________Will start repository: " + !remote);
+		if (!remote) {
 
 			String dataSourceType = null;
 			try{

@@ -16,13 +16,8 @@
  */
 package x7.core.bean;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
 
 import x7.core.bean.Criteria.Fetch;
 import x7.core.bean.Criteria.X;
@@ -820,6 +815,12 @@ public class CriteriaBuilder {
 	}
 
 	public Criteria get() {
+		Iterator<X> ite = this.criteria.getListX().iterator();
+		while (ite.hasNext()){
+			X x = ite.next();
+			if (Objects.isNull(x.getKey()))
+				ite.remove();
+		}
 		return this.criteria;
 	}
 

@@ -19,6 +19,9 @@ package x7.core.bean;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import x7.core.bean.CriteriaBuilder.FetchMapper;
 import x7.core.util.BeanUtil;
@@ -36,6 +39,7 @@ public class Criteria implements Paged, Serializable {
 	private static final long serialVersionUID = 7088698915888081349L;
 
 	private Class<?> clz;
+	@JsonIgnore
 	private transient Parsed parsed;
 	private boolean isScroll;
 	private int page;
@@ -50,6 +54,10 @@ public class Criteria implements Paged, Serializable {
 	private String dataPermissionSn;
 
 	private FetchMapper fetchMapper;
+
+	public Criteria(){
+
+	}
 
 	public List<Object> getValueList() {
 		return valueList;
@@ -286,10 +294,12 @@ public class Criteria implements Paged, Serializable {
 	}
 	
 	public static class X {
+		private static final long serialVersionUID = 7088698915888083256L;
 		private Conjunction conjunction;
 		private Predicate predicate;
 		private String key;
 		private Object value;
+		public X(){}
 		public Conjunction getConjunction() {
 			return conjunction;
 		}
