@@ -3,6 +3,8 @@ package x7;
 import x7.core.config.Configs;
 import x7.repository.RepositoryBooter;
 
+import java.util.Objects;
+
 public class RepositoryStarter {
 
 	public RepositoryStarter(){
@@ -13,7 +15,11 @@ public class RepositoryStarter {
 
 		boolean remote = false;
 		if (isRemote == null){
-			remote = Configs.isTrue("x7.repository.local");
+			try {
+				remote = Configs.isTrue("x7.repository.local");
+			}catch (Exception e){
+
+			}
 		}else{
 			remote = isRemote;
 		}
@@ -24,8 +30,11 @@ public class RepositoryStarter {
 			try{
 				dataSourceType = Configs.getString("x7.repository.dataSourceType");
 			}catch (Exception e){
-				
+
 			}
+			Object key = Configs.get("x7.db");
+			if (Objects.isNull(key))
+				return;
 			RepositoryBooter.boot(dataSourceType);
 		}
 
