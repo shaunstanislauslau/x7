@@ -16,14 +16,14 @@
  */
 package x7.core.bean;
 
+import x7.core.repository.X;
+import x7.core.search.TagParsed;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import x7.core.repository.X;
-import x7.core.search.TagParsed;
 
 
 public class Parsed {	

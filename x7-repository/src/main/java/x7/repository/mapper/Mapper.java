@@ -16,17 +16,12 @@
  */
 package x7.repository.mapper;
 
+import x7.core.bean.BeanElement;
+
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import x7.core.bean.BeanElement;
-import x7.core.config.Configs;
-import x7.repository.ConfigKey;
-import x7.repository.DbType;
 
 public interface Mapper {
 

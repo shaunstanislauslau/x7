@@ -16,16 +16,16 @@
  */
 package x7.repository.dao;
 
+import x7.core.bean.Parsed;
+import x7.core.repository.X;
+import x7.core.util.BeanUtil;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
-
-import x7.core.bean.Parsed;
-import x7.core.repository.X;
-import x7.core.util.BeanUtil;
 
 public class SqlUtil {
 

@@ -16,16 +16,12 @@
  */
 package x7.tool;
 
-import java.util.List;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
-
-import x7.config.ConfigBuilder;
-import x7.core.config.Configs;
-import x7.core.util.StringUtil;
 import x7.tool.bean.BeanTemplate;
 import x7.tool.generator.KeyGenerator3;
+
+import java.util.List;
 
 public class App3 {
 

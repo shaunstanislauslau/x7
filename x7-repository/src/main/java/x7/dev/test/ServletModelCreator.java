@@ -16,16 +16,14 @@
  */
 package x7.dev.test;
 
+import org.apache.log4j.Logger;
+import x7.core.util.JsonX;
+import x7.core.util.StringUtil;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
-import x7.core.util.JsonX;
-import x7.core.util.StringUtil;
 
 public class ServletModelCreator {
 	private static Logger logger = Logger.getLogger(ServletModelCreator.class.getName());

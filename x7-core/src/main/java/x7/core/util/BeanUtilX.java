@@ -16,28 +16,20 @@
  */
 package x7.core.util;
 
+import x7.core.bean.BeanElement;
+import x7.core.bean.DataPermission;
+import x7.core.bean.Parsed;
+import x7.core.repository.SqlFieldType;
+import x7.core.repository.X;
+import x7.core.search.Search;
+import x7.core.search.TagParsed;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import x7.core.bean.BeanElement;
-import x7.core.bean.DataPermission;
-import x7.core.bean.Parsed;
-import x7.core.repository.X;
-import x7.core.repository.SqlFieldType;
-import x7.core.search.Search;
-import x7.core.search.TagParsed;
+import java.util.*;
 
 
 public class BeanUtilX extends BeanUtil {

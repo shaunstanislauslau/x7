@@ -1,11 +1,11 @@
 package redis.clients.jedis;
 
+import redis.clients.jedis.exceptions.JedisDataException;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import redis.clients.jedis.exceptions.JedisDataException;
 
 /**
  * Transaction is nearly identical to Pipeline, only differences are the multi/discard behaviors

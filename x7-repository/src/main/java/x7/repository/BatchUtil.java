@@ -16,12 +16,12 @@
  */
 package x7.repository;
 
+import x7.core.util.BeanUtil;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import x7.core.util.BeanUtil;
 
 
 public class BatchUtil {

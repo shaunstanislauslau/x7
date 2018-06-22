@@ -16,20 +16,10 @@
  */
 package x7.config.zk;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.*;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.data.Stat;
-
 import x7.core.config.Configs;
 import x7.core.keeper.IKeeper;
 import x7.core.type.DataEventType;
@@ -37,7 +27,7 @@ import x7.core.util.JsonX;
 import x7.core.util.KeyUtil;
 import x7.core.util.StringUtil;
 
-import org.apache.zookeeper.ZooKeeper;
+import java.util.*;
 
 public class ZkClient {
 

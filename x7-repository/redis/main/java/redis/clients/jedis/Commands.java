@@ -1,8 +1,8 @@
 package redis.clients.jedis;
 
-import java.util.Map;
-
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
+
+import java.util.Map;
 
 public interface Commands {
 

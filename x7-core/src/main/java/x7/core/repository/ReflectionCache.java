@@ -17,13 +17,13 @@
  */
 package x7.core.repository;
 
+import x7.core.bean.FieldAndMethod;
+import x7.core.util.BeanUtil;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
-import x7.core.bean.FieldAndMethod;
-import x7.core.util.BeanUtil;
 
 public class ReflectionCache {
 

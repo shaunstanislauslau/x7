@@ -9,9 +9,12 @@
 
 package redis.clients.util;
 
-import java.io.*;
-
 import redis.clients.jedis.exceptions.JedisConnectionException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * This class assumes (to some degree) that we are reading a RESP stream. As such it assumes certain

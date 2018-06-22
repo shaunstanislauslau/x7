@@ -16,16 +16,13 @@
  */
 package x7.tool;
 
+import x7.core.util.ClassFileReader;
+import x7.tool.bean.BeanTemplate;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import x7.core.util.ClassFileReader;
-import x7.tool.bean.BeanTemplate;
 
 
 

@@ -16,9 +16,9 @@
  */
 package x7.repository;
 
-import java.io.Serializable;
-
 import x7.core.repository.X;
+
+import java.io.Serializable;
 
 
 public class IdGenerator implements Serializable{

@@ -16,11 +16,11 @@
  */
 package x7.repository;
 
-import java.sql.ResultSet;
-import java.util.List;
-
 import x7.core.bean.BeanElement;
 import x7.repository.mapper.Mapper;
+
+import java.sql.ResultSet;
+import java.util.List;
 
 public class ResultSetUtil {
 

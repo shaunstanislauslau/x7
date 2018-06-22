@@ -16,10 +16,10 @@
  */
 package x7.core.bean;
 
+import x7.core.repository.ISerialWR;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import x7.core.repository.ISerialWR;
 
 public class BeanSerial {
 

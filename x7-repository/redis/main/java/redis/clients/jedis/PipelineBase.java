@@ -1,12 +1,12 @@
 package redis.clients.jedis;
 
-import static redis.clients.jedis.Protocol.toByteArray;
+import redis.clients.jedis.BinaryClient.LIST_POSITION;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import redis.clients.jedis.BinaryClient.LIST_POSITION;
+import static redis.clients.jedis.Protocol.toByteArray;
 
 public abstract class PipelineBase extends Queable implements BinaryRedisPipeline, RedisPipeline {
 

@@ -17,8 +17,6 @@
 package x7.repository;
 
 
-import java.util.List;
-
 import x7.core.config.Configs;
 import x7.repository.BaseRepository.HealthChecker;
 import x7.repository.dao.DaoImpl;
@@ -33,6 +31,8 @@ import x7.repository.pool.DataSourceFactory;
 import x7.repository.pool.DataSourcePool;
 import x7.repository.redis.CacheResolver;
 import x7.repository.redis.JedisConnector_Persistence;
+
+import java.util.List;
 
 
 public class RepositoryBooter {

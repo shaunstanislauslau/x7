@@ -16,17 +16,15 @@
  */
 package x7.repository.pool;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.sql.DataSource;
-
 import com.zaxxer.hikari.HikariDataSource;
-
 import x7.core.config.Configs;
 import x7.core.util.StringUtil;
 import x7.repository.exception.PersistenceException;
 import x7.repository.sharding.ShardingPolicy;
+
+import javax.sql.DataSource;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 

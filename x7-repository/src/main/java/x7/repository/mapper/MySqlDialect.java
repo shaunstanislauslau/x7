@@ -1,5 +1,10 @@
 package x7.repository.mapper;
 
+import x7.core.bean.BeanElement;
+import x7.core.util.JsonX;
+import x7.core.util.StringUtil;
+import x7.repository.exception.SqlTypeException;
+
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -7,11 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import x7.core.bean.BeanElement;
-import x7.core.util.JsonX;
-import x7.core.util.StringUtil;
-import x7.repository.exception.SqlTypeException;
 
 public class MySqlDialect implements Mapper.Dialect {
 

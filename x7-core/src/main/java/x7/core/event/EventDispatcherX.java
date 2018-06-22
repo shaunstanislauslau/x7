@@ -16,10 +16,10 @@
  */
 package x7.core.event;
 
+import x7.core.mq.MessageEvent;
+
 import java.util.Objects;
 import java.util.TreeMap;
-
-import x7.core.mq.MessageEvent;
 
 public class EventDispatcherX extends EventDispatcher{
 

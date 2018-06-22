@@ -1,7 +1,6 @@
 package x7.txtrace;
 
 import org.apache.log4j.Logger;
-
 import x7.core.tx.TxTraceManager;
 import x7.core.tx.TxTraceable;
 import x7.core.tx.TxTraceable.TxKeyed;

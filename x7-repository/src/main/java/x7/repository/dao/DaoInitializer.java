@@ -16,9 +16,8 @@
  */
 package x7.repository.dao;
 
-import java.util.Map;
-
 import javax.sql.DataSource;
+import java.util.Map;
 
 
 public class DaoInitializer {

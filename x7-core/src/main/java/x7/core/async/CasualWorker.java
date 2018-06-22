@@ -21,8 +21,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import x7.core.async.IAsyncTask;
-
 /**
  * 
  * 任何复杂的计算，但计算结果不影响后面的计算的情况下，可以创建临时任务, 交给此类处理<br>

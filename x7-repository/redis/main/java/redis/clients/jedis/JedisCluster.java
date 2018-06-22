@@ -1,5 +1,6 @@
 package redis.clients.jedis;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 
 import java.io.Closeable;
@@ -7,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 public class JedisCluster implements JedisCommands, BasicCommands, Closeable {
   public static final short HASHSLOTS = 16384;

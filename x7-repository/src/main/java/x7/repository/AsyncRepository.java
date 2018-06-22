@@ -16,15 +16,15 @@
  */
 package x7.repository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.repository.X;
 import x7.repository.dao.AsyncDaoWrapper;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 

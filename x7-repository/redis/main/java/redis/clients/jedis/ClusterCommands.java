@@ -1,8 +1,8 @@
 package redis.clients.jedis;
 
-import java.util.List;
-
 import redis.clients.jedis.JedisCluster.Reset;
+
+import java.util.List;
 
 public interface ClusterCommands {
   String clusterNodes();

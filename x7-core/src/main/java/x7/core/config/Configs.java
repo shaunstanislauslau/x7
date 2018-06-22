@@ -16,12 +16,12 @@
  */
 package x7.core.config;
 
+import x7.core.util.KeyUtil;
+
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.concurrent.ConcurrentHashMap;
-
-import x7.core.util.KeyUtil;
 
 public class Configs {
 

@@ -19,8 +19,6 @@ package x7.core.async;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import x7.core.async.IAsyncTask;
-
 /**
  * 
  * @author Sim

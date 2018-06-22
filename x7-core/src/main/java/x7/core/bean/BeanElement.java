@@ -16,11 +16,11 @@
  */
 package x7.core.bean;
 
-import java.lang.reflect.Method;
-
 import x7.core.config.Configs;
 import x7.core.util.BeanUtil;
 import x7.core.util.StringUtil;
+
+import java.lang.reflect.Method;
 
 public class BeanElement {
 

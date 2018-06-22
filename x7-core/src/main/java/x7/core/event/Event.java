@@ -16,9 +16,6 @@
  */
 package x7.core.event;
 
-import x7.core.event.IEventOwner;
-
-
 /**
  * 
  * @author Sim

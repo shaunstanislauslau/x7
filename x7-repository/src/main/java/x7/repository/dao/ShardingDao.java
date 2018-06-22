@@ -16,10 +16,10 @@
  */
 package x7.repository.dao;
 
-import java.util.Map;
-
 import x7.core.bean.Criteria;
 import x7.core.web.Pagination;
+
+import java.util.Map;
 
 
 
@@ -30,7 +30,7 @@ import x7.core.web.Pagination;
  * 
  * @author Sim
  *
- * @param <T>
+ * @param
  */
 public interface ShardingDao {
 

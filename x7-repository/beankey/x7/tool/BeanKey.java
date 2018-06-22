@@ -16,13 +16,13 @@
  */
 package x7.tool;
 
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Set;
-
 import x7.core.util.BeanUtil;
 import x7.core.util.ClassFileReader;
 import x7.tool.bean.BeanTemplate;
+
+import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class BeanKey {

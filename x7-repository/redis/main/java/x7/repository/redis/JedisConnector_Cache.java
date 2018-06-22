@@ -16,14 +16,13 @@
  */
 package x7.repository.redis;
 
-import java.util.List;
-import java.util.Objects;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import x7.core.config.Configs;
 import x7.core.util.StringUtil;
+
+import java.util.List;
 
 public class JedisConnector_Cache {
 

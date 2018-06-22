@@ -16,16 +16,14 @@
  */
 package x7.dev.test;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import x7.core.config.Configs;
 import x7.core.util.StringUtil;
 import x7.core.web.ViewEntity;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 
 @RestController

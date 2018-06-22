@@ -16,9 +16,8 @@
  */
 package x7.repository.pool;
 
-import java.util.Map;
-
 import javax.sql.DataSource;
+import java.util.Map;
 
 public interface DataSourcePool {
 

@@ -16,9 +16,9 @@
  */
 package x7.core.mq;
 
-import java.io.Serializable;
-
 import x7.core.event.IEvent;
+
+import java.io.Serializable;
 
 /**
  * 

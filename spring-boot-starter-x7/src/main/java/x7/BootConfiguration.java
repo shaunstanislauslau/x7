@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import x7.config.ConfigProperties;
 import x7.core.bean.SpringHelper;
 import x7.repository.RepositoryProperties;

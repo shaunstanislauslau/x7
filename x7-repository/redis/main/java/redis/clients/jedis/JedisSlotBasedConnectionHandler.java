@@ -1,13 +1,12 @@
 package redis.clients.jedis;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import redis.clients.jedis.exceptions.JedisConnectionException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-
 import java.util.Set;
-
-import redis.clients.jedis.exceptions.JedisConnectionException;
 
 public class JedisSlotBasedConnectionHandler extends JedisClusterConnectionHandler {
 

@@ -16,10 +16,10 @@
  */
 package x7.core.config;
 
+import x7.core.bean.Config;
+
 import java.util.List;
 import java.util.Map;
-
-import x7.core.bean.Config;
 
 public class ConfigRefresher {
 

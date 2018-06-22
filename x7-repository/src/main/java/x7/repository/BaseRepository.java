@@ -16,15 +16,6 @@
  */
 package x7.repository;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
@@ -40,6 +31,11 @@ import x7.repository.exception.PersistenceException;
 import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
 import x7.repository.redis.JedisConnector_Persistence;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * 

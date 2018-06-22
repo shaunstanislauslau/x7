@@ -17,7 +17,6 @@
 package x7.repository.pool;
 
 import org.springframework.stereotype.Component;
-
 import x7.core.util.StringUtil;
 import x7.repository.exception.PersistenceException;
 

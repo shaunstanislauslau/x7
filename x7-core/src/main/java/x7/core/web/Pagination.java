@@ -17,12 +17,11 @@
 package x7.core.web;
 
 
+import x7.core.search.Tag;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import x7.core.search.Tag;
 
 /**
  * Pagination

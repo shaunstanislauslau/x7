@@ -1,13 +1,12 @@
 package redis.clients.jedis;
 
-import java.net.URI;
-
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-
 import redis.clients.jedis.exceptions.JedisException;
 import redis.clients.util.JedisURIHelper;
 import redis.clients.util.Pool;
+
+import java.net.URI;
 
 public class JedisPool extends Pool<Jedis> {
 

@@ -1,11 +1,10 @@
 package x7.core.bean;
 
+import org.apache.commons.codec.binary.Base64;
+import x7.core.util.JsonX;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;
-
-import org.apache.commons.codec.binary.Base64;
-
-import x7.core.util.JsonX;
 
 public class EncryptionObject<T> {
 

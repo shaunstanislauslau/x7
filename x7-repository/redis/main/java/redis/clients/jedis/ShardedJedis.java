@@ -1,17 +1,15 @@
 package redis.clients.jedis;
 
-import java.io.Closeable;
-
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.util.Hashing;
+import redis.clients.util.Pool;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import redis.clients.util.Pool;
 
 public class ShardedJedis extends BinaryShardedJedis implements JedisCommands, Closeable {
 
