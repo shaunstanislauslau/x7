@@ -24,11 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
@@ -181,13 +177,13 @@ public class DaoImpl implements Dao {
 		try {
 			Parsed parsed = Parser.get(clz);
 
-			String keyOne = parsed.getKey(X.KEY_ONE);
-
 			Long keyOneValue = 0L;
 			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
+			if (Objects.isNull(keyOneField))
+				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
 			Class keyOneType = keyOneField.getType();
 			if (keyOneType != String.class) {
-				keyOneValue = parsed.getKeyField(X.KEY_ONE).getLong(obj);
+				keyOneValue = keyOneField.getLong(obj);
 			}
 
 			conn = getConnection(false);
@@ -298,7 +294,10 @@ public class DaoImpl implements Dao {
 
 			int i = 1;
 
-			SqlUtil.adpterSqlKey(pstmt, parsed.getKeyField(X.KEY_ONE), obj, i);
+			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
+			if (Objects.isNull(keyOneField))
+				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
+			SqlUtil.adpterSqlKey(pstmt, keyOneField, obj, i);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -343,9 +342,11 @@ public class DaoImpl implements Dao {
 			Parsed parsed = Parser.get(clz);
 			Long keyOneValue = 0L;
 			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
+			if (Objects.isNull(keyOneField))
+				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
 			Class keyOneType = keyOneField.getType();
 			if (keyOneType != String.class) {
-				keyOneValue = parsed.getKeyField(X.KEY_ONE).getLong(obj);
+				keyOneValue = keyOneField.getLong(obj);
 			}
 
 			/*
@@ -478,8 +479,10 @@ public class DaoImpl implements Dao {
 			/*
 			 * 处理KEY
 			 */
-			Field keyOneF = parsed.getKeyField(X.KEY_ONE);
-			SqlUtil.adpterSqlKey(pstmt, keyOneF, obj, i);
+			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
+			if (Objects.isNull(keyOneField))
+				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
+			SqlUtil.adpterSqlKey(pstmt, keyOneField, obj, i);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -1170,8 +1173,10 @@ public class DaoImpl implements Dao {
 			/*
 			 * 处理KEY
 			 */
-			Field keyOneF = parsed.getKeyField(X.KEY_ONE);
-			SqlUtil.adpterRefreshCondition(pstmt, keyOneF, obj, i, conditionMap);
+			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
+			if (Objects.isNull(keyOneField))
+				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
+			SqlUtil.adpterRefreshCondition(pstmt, keyOneField, obj, i, conditionMap);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -1227,6 +1232,8 @@ public class DaoImpl implements Dao {
 
 		if (StringUtil.isNullOrEmpty(inProperty)) {
 			inProperty = parsed.getKey(X.KEY_ONE);
+			if (Objects.isNull(inProperty))
+				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
 		}
 
 		BeanElement be = parsed.getElement(inProperty);

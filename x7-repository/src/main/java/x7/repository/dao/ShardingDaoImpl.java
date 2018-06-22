@@ -92,9 +92,8 @@ public class ShardingDaoImpl implements ShardingDao {
 		String fieldName = null;
 		try {
 			fieldName = parsed.getKey(X.KEY_SHARDING);
-			if (fieldName == null) {
-				fieldName = parsed.getKey(X.KEY_ONE);
-			}
+			if (Objects.isNull(fieldName))
+				throw new PersistenceException("No setting of ShardingKey by @X.Sharding");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,6 +110,8 @@ public class ShardingDaoImpl implements ShardingDao {
 		Field field = null;
 		try {
 			field = parsed.getKeyField(X.KEY_SHARDING);
+			if (Objects.isNull(field))
+				throw new PersistenceException("No setting of ShardingKey by @X.Sharding");
 			field.setAccessible(true);
 			Object o = field.get(obj);
 			value = String.valueOf(o);
@@ -119,7 +120,11 @@ public class ShardingDaoImpl implements ShardingDao {
 		}
 
 		String idOne = parsed.getKey(X.KEY_ONE);
+		if (Objects.isNull(idOne))
+			throw new PersistenceException("No setting of PrimaryKey by @X.Key");
 		String keySharding = parsed.getKey(X.KEY_SHARDING);
+		if (Objects.isNull(keySharding))
+			throw new PersistenceException("No setting of ShardingKey by @X.Sharding");
 		if (idOne.equals(keySharding)) {
 			if (value.equals("0"))
 				throw new ShardingException(
@@ -514,6 +519,8 @@ public class ShardingDaoImpl implements ShardingDao {
 		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(criteria.getClz());
 			orderBy = parsed.getKey(X.KEY_ONE);
+			if (Objects.isNull(orderBy))
+				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
 		}
 		if (Objects.isNull(direction)) {
 			direction = Direction.DESC;
@@ -629,6 +636,8 @@ public class ShardingDaoImpl implements ShardingDao {
 		if (StringUtil.isNullOrEmpty(orderBy)) {
 			Parsed parsed = Parser.get(fetch.getClz());
 			orderBy = parsed.getKey(X.KEY_ONE);
+			if (Objects.isNull(orderBy))
+				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
 		}
 		if (Objects.isNull(direction)) {
 			direction = Direction.DESC;
