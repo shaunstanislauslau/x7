@@ -52,21 +52,7 @@ public @interface X {
 	@interface Mapping {
 		String value() default "";
 	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ElementType.FIELD})
-	@interface IsMobile{
-	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ElementType.FIELD})
-	@interface IsEmail{
-	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ElementType.FIELD})
-	@interface NotNull{
-	}
+
 	
 	/**
 	 * 

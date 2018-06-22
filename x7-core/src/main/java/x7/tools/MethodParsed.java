@@ -9,6 +9,8 @@ public class MethodParsed {
 	private String mapping;
 	private String methodStr;
 	private String calledMethodStr;
+	private String intfStr;
+	private String fallbackStr;
 	
 	public MethodParsed(){}
 	public MethodParsed(Method method){
@@ -47,10 +49,29 @@ public class MethodParsed {
 	public void setCalledMethodStr(String calledMethodStr) {
 		this.calledMethodStr = calledMethodStr;
 	}
-	@Override
-	public String toString() {
-		return "MethodParsed [method=" + method + ", name=" + name + ", mapping=" + mapping + ", methodStr=" + methodStr
-				+ ", calledMethodStr=" + calledMethodStr + "]";
+	public String getIntfStr() {
+		return intfStr;
+	}
+	public void setIntfStr(String intfStr) {
+		this.intfStr = intfStr;
+	}
+	public String getFallbackStr() {
+		return fallbackStr;
+	}
+	public void setFallbackStr(String fallbackStr) {
+		this.fallbackStr = fallbackStr;
 	}
 
+	@Override
+	public String toString() {
+		return "MethodParsed{" +
+				"method=" + method +
+				", name='" + name + '\'' +
+				", mapping='" + mapping + '\'' +
+				", methodStr='" + methodStr + '\'' +
+				", calledMethodStr='" + calledMethodStr + '\'' +
+				", intfStr='" + intfStr + '\'' +
+				", fallbackStr='" + fallbackStr + '\'' +
+				'}';
+	}
 }

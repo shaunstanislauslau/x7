@@ -263,20 +263,6 @@ public class BeanUtilX extends BeanUtil {
 					ele.mapper = mapping.value();
 			}
 
-			X.IsMobile isMobile = f.getAnnotation(X.IsMobile.class);
-			if (isMobile != null) {
-				ele.isMobile = true;
-			}
-
-			X.IsEmail isEmail = f.getAnnotation(X.IsEmail.class);
-			if (isEmail != null) {
-				ele.isEmail = true;
-			}
-
-			X.NotNull notNull = f.getAnnotation(X.NotNull.class);
-			if (notNull != null) {
-				ele.notNull = true;
-			}
 		}
 
 		return type;

@@ -31,17 +31,17 @@ public class App3 {
 
 	
 	public static void main(String[] args) {
-		
-		ConfigBuilder.build(false, "generated", "../config", null);
-		
-		Config.BASE = "../"+Configs.getString("x7.bean.project") + "/generated/" ;
-		Config.PKG = Configs.getString("x7.bean.package");
-		
-		if (StringUtil.isNullOrEmpty(Config.BASE))
-			throw new RuntimeException("can't find configKey of [generated/*] 'x7.bean.project'");
-		
-		if (StringUtil.isNullOrEmpty(Config.PKG))
-			throw new RuntimeException("can't find configKey of [generated/*] 'x7.bean.package'");
+//
+//		ConfigBuilder.build(false, "generated", "../config", null);
+//
+//		Config.BASE = "../"+Configs.getString("x7.bean.project") + "/generated/" ;
+//		Config.PKG = Configs.getString("x7.bean.package");
+//
+//		if (StringUtil.isNullOrEmpty(Config.BASE))
+//			throw new RuntimeException("can't find configKey of [generated/*] 'x7.bean.project'");
+//
+//		if (StringUtil.isNullOrEmpty(Config.PKG))
+//			throw new RuntimeException("can't find configKey of [generated/*] 'x7.bean.package'");
 		
 		String projectPath = Config.BASE;
 		String template_path = "template/beankey3.vm";

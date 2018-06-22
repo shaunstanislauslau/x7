@@ -100,9 +100,7 @@ public interface Repository {
 
 	/**
 	 * 根据对象内容查询<br>
-	 * 
-	 * @param conditionObj
-	 * @param extConditionMap
+	 *
 	 *            可以拼接的条件
 	 * 
 	 */
@@ -132,7 +130,7 @@ public interface Repository {
 	
 	/**
 	 * 最大值
-	 * @param clz
+	 * @param conditionObj
 	 * 
 	 */
 	long getMaxId(Object conditionObj);
@@ -147,7 +145,6 @@ public interface Repository {
 	
 	/**
 	 * 条件查询累计
-	 * @param conditionObj
 	 * @param sumProperty
 	 * @param criterion
 	 * 
@@ -160,7 +157,6 @@ public interface Repository {
 	 * 尽量避免在互联网业务系统中使用<br>
 	 * 不支持缓存<br>
 	 * @param fetch
-	 * @param pagination
 	 * 
 	 */
 	Pagination<Map<String,Object>> find(Criteria.Fetch fetch);
@@ -168,7 +164,7 @@ public interface Repository {
 	/**
 	 * 
 	 * 不要通过WEB传来的参数调用此接口, 因为没有分页限制
-	 * @param criterionJoinable
+	 * @param fetch
 	 * 
 	 */
 	List<Map<String,Object>> list(Criteria.Fetch fetch);
