@@ -118,9 +118,9 @@ public interface X7Repository<T> {
 	 */
 	Pagination<Map<String, Object>> find(Criteria.Fetch criteria);
 	
-	long getMaxId(T conditionObj);
+	long getMax(String property, Criteria criteria);
 
-	long getCount(T conditonObj);
+	long getCount(String property, Criteria criteria);
 
-	Object getSum(String sumProperty, Criteria criteria);
+	Object getSum(String property, Criteria criteria);
 }

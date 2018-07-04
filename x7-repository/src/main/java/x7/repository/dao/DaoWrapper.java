@@ -84,12 +84,6 @@ public class DaoWrapper implements Dao{
 	}
 
 	@Override
-	public long getMaxId(Object obj) {
-
-		return this.dao.getMaxId(obj);
-	}
-
-	@Override
 	public boolean refresh(Object obj) {
 		
 		return this.dao.refresh(obj);
@@ -109,17 +103,23 @@ public class DaoWrapper implements Dao{
 		return this.dao.execute(obj, sql);
 	}
 
+
+	@Override
+	public long getMax(String property, Criteria criteria) {
+
+		return this.dao.getMax(property, criteria);
+	}
 	
 	@Override
-	public long getCount(Object obj) {
+	public long getCount(String property, Criteria criteria) {
 		
-		return this.dao.getCount(obj);
+		return this.dao.getCount(property, criteria);
 	}
 
 	@Override
-	public Object getSum(String sumProperty, Criteria criteria) {
+	public Object getSum(String property, Criteria criteria) {
 		
-		return this.dao.getSum(sumProperty, criteria);
+		return this.dao.getSum(property, criteria);
 	}
 
 	@Override

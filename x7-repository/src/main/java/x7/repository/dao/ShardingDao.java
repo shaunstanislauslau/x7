@@ -50,7 +50,7 @@ public interface ShardingDao {
 
 	<T> T get(Class<T> clz, long idOne);
 	<T> T getOne(T conditionObj);
-	<T> long getCount(Object obj);
+	<T> long getCount(String property, Criteria criteria);
 	
 	<T> Pagination<T> find(Criteria criteria);
 	

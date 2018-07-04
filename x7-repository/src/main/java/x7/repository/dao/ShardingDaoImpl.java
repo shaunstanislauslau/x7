@@ -108,17 +108,9 @@ public class ShardingDaoImpl implements ShardingDao {
 			e.printStackTrace();
 		}
 
-		String idOne = parsed.getKey(X.KEY_ONE);
-		if (Objects.isNull(idOne))
-			throw new PersistenceException("No setting of PrimaryKey by @X.Key");
 		String keySharding = parsed.getKey(X.KEY_SHARDING);
 		if (Objects.isNull(keySharding))
 			throw new PersistenceException("No setting of ShardingKey by @X.Sharding");
-		if (idOne.equals(keySharding)) {
-			if (value.equals("0"))
-				throw new ShardingException(
-						"\n SHARDING NO VALUE, IF SHARDING = IDONE, SHARDING CAN BE NOT 0, \n obj = " + obj + "\n");
-		}
 
 		if (value.equals("")) {
 			throw new ShardingException("SHARDING VALUE IS NULL, ojb = " + obj);
@@ -644,23 +636,25 @@ public class ShardingDaoImpl implements ShardingDao {
 		return pagination;
 	}
 
-	private <T> long getCount(Object obj, String key) {
+	private long getCount(String property, Criteria criteria, String key) {
 		Connection conn = null;
 		try {
 			conn = getConnection(key, true);// FIXME true, need a policy
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return DaoImpl.getInstance().getCount(obj, conn);
+		return DaoImpl.getInstance().getCount(property,criteria, conn);
 	}
 
 	@Override
-	public <T> long getCount(Object obj) {
+	public long getCount(String property, Criteria criteria) {
 
-		String key = getKey(obj);
+		tryToParse(criteria.getClz());
+
+		String key = getKey(criteria);
 
 		if (StringUtil.isNotNull(key)) {
-			return getCount(obj, key);
+			return getCount(property,criteria, key);
 		}
 
 		String policy = Configs.getString("x7.db.sharding.policy");
@@ -680,7 +674,7 @@ public class ShardingDaoImpl implements ShardingDao {
 
 					Long count = 0L;
 					try {
-						count = getCount(obj, k);
+						count = getCount(property,criteria, k);
 					} catch (Exception e) {
 						for (Future<Long> f : futureMap.values()) {
 							f.cancel(true);

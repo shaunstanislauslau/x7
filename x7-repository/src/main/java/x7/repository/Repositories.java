@@ -571,52 +571,39 @@ public class Repositories implements Repository {
 
 
 	@Override
-	public <T> long getMaxId(Class<T> clz) {
+	public long getMax(String property, Criteria criteria) {
 		testAvailable();
-		Parsed parsed = Parser.get(clz);
+		Parsed parsed = Parser.get(criteria.getClz());
 		if (parsed.isSharding()) {
-			throw new ShardingException("Sharding not supported: getMaxId(Class<T> clz)");
+			throw new ShardingException("Sharding not supported: getMax(Class<T> clz)");
 		} else {
-			return syncDao.getMaxId(clz);
+			return syncDao.getMax(property, criteria);
 		}
 	}
 
 	@Override
-	public long getCount(Object conditonObj) {
+	public long getCount(String property, Criteria criteria) {
 		testAvailable();
-		Parsed parsed = Parser.get(conditonObj.getClass());
+		Parsed parsed = Parser.get(criteria.getClz());
 		if (parsed.isSharding()) {
-			return shardingDao.getCount(conditonObj);
+			return shardingDao.getCount(property, criteria);
 		} else {
-			return syncDao.getCount(conditonObj);
+			return syncDao.getCount(property, criteria);
 		}
 	}
 
 	@Override
-	public Object getSum(String sumProperty, Criteria criteria) {
+	public Object getSum(String property, Criteria criteria) {
 		testAvailable();
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
 			throw new ShardingException(
-					"Sharding not supported: getSum(Object conditionObj, String sumProperty, Criteria criteria)");
+					"Sharding not supported: getSum(Object conditionObj, String property, Criteria criteria)");
 		} else {
-			return syncDao.getSum(sumProperty, criteria);
+			return syncDao.getSum(property, criteria);
 		}
 	}
-
-	@Override
-	public long getMaxId(Object conditionObj) {
-		testAvailable();
-		Class clz = conditionObj.getClass();
-		Parsed parsed = Parser.get(clz);
-		if (parsed.isSharding()) {
-			throw new ShardingException("Sharding not supported: getMaxId(Class<T> clz)");
-		} else {
-			return syncDao.getMaxId(conditionObj);
-		}
-	}
-
 
 	protected <T> boolean execute(Object obj, String sql) {
 		testAvailable();

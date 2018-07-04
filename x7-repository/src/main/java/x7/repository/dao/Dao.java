@@ -59,14 +59,11 @@ public interface Dao {
 	
 	<T> T getOne(T conditionObj, String orderBy, Direction sc);
 	
-	long getMaxId(Object obj);
+	long getMax(String property, Criteria criteria);
 	
-	long getCount(Object obj);
+	long getCount(String property, Criteria criteria);
 	
-	@Deprecated
-	boolean execute(Object obj, String sql);
-	
-	Object getSum(String sumProperty, Criteria criteria);
+	Object getSum(String property, Criteria criteria);
 	
 	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
 	
@@ -75,4 +72,7 @@ public interface Dao {
 	List<Map<String,Object>> list(Criteria.Fetch fetch);
 	
 	<T> Pagination<T> find(Criteria criteria);
+
+	@Deprecated
+	boolean execute(Object obj, String sql);
 }

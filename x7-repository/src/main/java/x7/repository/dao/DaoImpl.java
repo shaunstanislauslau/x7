@@ -916,27 +916,33 @@ public class DaoImpl implements Dao {
 		return count;
 	}
 
-	protected long getCount(Object conditionObj, Connection conn) {
+	protected long getCount(String property, Criteria criteria, Connection conn) {
 
-		Class<?> clz = conditionObj.getClass();
-
-		String sql = MapperFactory.getSql(clz, Mapper.TAG);
-
+		Class<?> clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 
-		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
-		sql = SqlUtil.concat(parsed, sql, queryMap);
+		List<Object> valueList = criteria.getValueList();
 
-		String countSql = sql.replace(Mapped.TAG, "COUNT(*) count");
+		String[] sqlArr = CriteriaBuilder.parse(criteria);
+
+		String sql = sqlArr[2];
+
+		sql = sql.replace(Mapped.TAG, "COUNT(*) count");
+		if (StringUtil.isNotNull(property)) {
+			property = parsed.getMapper(property);
+			sql = sql.replace("*", property);
+		}
+
+		System.out.println(sql);
 
 		long count = 0;
 		PreparedStatement pstmt = null;
 		try {
 			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(countSql);
+			pstmt = conn.prepareStatement(sql);
 
 			int i = 1;
-			for (Object o : queryMap.values()) {
+			for (Object o : valueList) {
 				pstmt.setObject(i++, o);
 			}
 
@@ -957,14 +963,14 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public long getCount(Object conditionObj) {
+	public long getCount(String property, Criteria criteria) {
 		Connection conn = null;
 		try {
 			conn = getConnection(true);
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return getCount(conditionObj, conn);
+		return getCount(property,criteria, conn);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -1028,20 +1034,26 @@ public class DaoImpl implements Dao {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public long getMaxId(Object conditionObj) {
+	public long getMax(String property, Criteria criteria) {
 
-		long id = 0;
+		long max = 0;
 
-		Class clz = conditionObj.getClass();
-
-		String sql = MapperFactory.getSql(clz, Mapper.TAG);
-
+		Class<?> clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
 
-		Map<String, Object> queryMap = BeanUtilX.getQueryMap(parsed, conditionObj);
-		sql = SqlUtil.concat(parsed, sql, queryMap);
+		List<Object> valueList = criteria.getValueList();
 
-		sql = sql.replace(Mapped.TAG, "max(id) maxId");
+		String[] sqlArr = CriteriaBuilder.parse(criteria);
+
+		String sql = sqlArr[2];
+
+		sql = sql.replace(Mapped.TAG, "MAX(*) max");
+		if (StringUtil.isNotNull(property)) {
+			property = parsed.getMapper(property);
+			sql = sql.replace("*", property);
+		}
+
+		System.out.println(sql);
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -1052,16 +1064,16 @@ public class DaoImpl implements Dao {
 
 			int i = 1;
 
-			for (Object o : queryMap.values()) {
+			for (Object o : valueList) {
 				pstmt.setObject(i++, o);
 			}
 
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next()) {
-				Object obj = rs.getObject("maxId");
+				Object obj = rs.getObject("max");
 				if (obj != null) {
-					id = Long.valueOf(obj.toString());
+					max = Long.valueOf(obj.toString());
 				}
 			}
 
@@ -1072,7 +1084,7 @@ public class DaoImpl implements Dao {
 			close(conn);
 		}
 
-		return id;
+		return max;
 	}
 
 	/**

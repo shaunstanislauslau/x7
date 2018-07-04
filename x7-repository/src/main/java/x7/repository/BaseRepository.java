@@ -256,13 +256,13 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 
 	@Override
-	public long getMaxId(T conditionObj) {
-		return Repositories.getInstance().getMaxId(conditionObj);
+	public long getMax(String property, Criteria criteria) {
+		return Repositories.getInstance().getMax(property, criteria);
 	}
 
 	@Override
-	public long getCount(T conditonObj) {
-		return Repositories.getInstance().getCount(conditonObj);
+	public long getCount(String property, Criteria criteria) {
+		return Repositories.getInstance().getCount(property, criteria);
 	}
 
 	@Override

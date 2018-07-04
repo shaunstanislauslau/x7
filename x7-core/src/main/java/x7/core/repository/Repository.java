@@ -120,36 +120,27 @@ public interface Repository {
 	 * @param inList
 	 */
 	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
-
-	/**
-	 * 单主键，最大值
-	 * @param clz
-	 * 
-	 */
-	<T> long getMaxId(Class<T> clz);
 	
 	/**
 	 * 最大值
-	 * @param conditionObj
 	 * 
 	 */
-	long getMaxId(Object conditionObj);
+	long getMax(String property, Criteria criteria);
 	
 	/**
 	 * 查总条数
-	 * @param obj
 	 * 
 	 */
-	long getCount(Object obj);
+	long getCount(String property, Criteria criteria);
 	
 	
 	/**
 	 * 条件查询累计
-	 * @param sumProperty
-	 * @param criterion
+	 * @param property
+	 * @param criteria
 	 * 
 	 */
-	Object getSum(String sumProperty, Criteria criterion);
+	Object getSum(String property, Criteria criteria);
 
 	
 	/**
