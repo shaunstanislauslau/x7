@@ -330,4 +330,11 @@ public class Criteria implements Paged, Serializable {
 		}
 	}
 
+	public enum ReduceType {
+		SUM,
+		COUNT,
+		MAX,
+		MIN
+	}
+
 }

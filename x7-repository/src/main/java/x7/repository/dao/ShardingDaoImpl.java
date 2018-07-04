@@ -33,6 +33,7 @@ import x7.repository.sharding.ShardingPolicy;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -636,25 +637,25 @@ public class ShardingDaoImpl implements ShardingDao {
 		return pagination;
 	}
 
-	private long getCount(String property, Criteria criteria, String key) {
+	private Object reduce(Criteria.ReduceType type, String property, Criteria criteria, String key) {
 		Connection conn = null;
 		try {
 			conn = getConnection(key, true);// FIXME true, need a policy
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return DaoImpl.getInstance().getCount(property,criteria, conn);
+		return DaoImpl.getInstance().reduce(type, property, criteria, conn);
 	}
 
 	@Override
-	public long getCount(String property, Criteria criteria) {
+	public Object reduce(Criteria.ReduceType type, String property, Criteria criteria) {
 
 		tryToParse(criteria.getClz());
 
 		String key = getKey(criteria);
 
 		if (StringUtil.isNotNull(key)) {
-			return getCount(property,criteria, key);
+			return reduce(type, property, criteria, key);
 		}
 
 		String policy = Configs.getString("x7.db.sharding.policy");
@@ -663,31 +664,31 @@ public class ShardingDaoImpl implements ShardingDao {
 		/*
 		 * map script
 		 */
-		Map<String, Future<Long>> futureMap = new HashMap<>();
+		Map<String, Future<Object>> futureMap = new HashMap<>();
 
 		for (String k : keyArr) {
 
-			Callable<Long> task = new Callable<Long>() {
+			Callable<Object> task = new Callable<Object>() {
 
 				@Override
-				public Long call() throws Exception {
+				public Object call() throws Exception {
 
-					Long count = 0L;
+					Object result = null;
 					try {
-						count = getCount(property,criteria, k);
+						result = reduce(type,property, criteria, k);
 					} catch (Exception e) {
-						for (Future<Long> f : futureMap.values()) {
+						for (Future<Object> f : futureMap.values()) {
 							f.cancel(true);
 						}
 						throw new PersistenceException("Exception occured while query from sharding DB: " + k);
 					}
-					return count;
+					return result;
 
 				}
 
 			};
 
-			Future<Long> future = service.submit(task);
+			Future<Object> future = service.submit(task);
 			futureMap.put(k, future);
 
 		}
@@ -695,23 +696,34 @@ public class ShardingDaoImpl implements ShardingDao {
 		/*
 		 * reduce script
 		 */
-		long totalCount = 0;
-		Set<Entry<String, Future<Long>>> entrySet = futureMap.entrySet();
-		for (Entry<String, Future<Long>> entry : entrySet) {
+		BigDecimal bd = new BigDecimal(0);//sum
+		long l = 0;//count
+		Set<Entry<String, Future<Object>>> entrySet = futureMap.entrySet();
+		for (Entry<String, Future<Object>> entry : entrySet) {
 			String k = entry.getKey();
-			Future<Long> future = entry.getValue();
+			Future<Object> future = entry.getValue();
 			try {
-				Long count = future.get(2, TimeUnit.MINUTES);
-				totalCount += count;
+				Object r = future.get(2, TimeUnit.MINUTES);
+				if (type == Criteria.ReduceType.COUNT) {
+					l += Long.valueOf(r.toString());
+				}else if (type == Criteria.ReduceType.SUM){
+					bd.add(new BigDecimal(r.toString()));
+				}else if (type == Criteria.ReduceType.MAX){
+					//FIXME
+				}else if (type == Criteria.ReduceType.MIN){
+					//FIXME
+				}
 			} catch (InterruptedException | ExecutionException | TimeoutException e) {
-				for (Future<Long> f : futureMap.values()) {
+				for (Future<Object> f : futureMap.values()) {
 					f.cancel(true);
 				}
 				throw new PersistenceException("DB is busy, while query from sharding DB: " + k);
 			}
 		}
 
-		return totalCount;
+		if (type == Criteria.ReduceType.COUNT)
+			return l;
+		return bd;
 	}
 
 }

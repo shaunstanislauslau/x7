@@ -59,12 +59,6 @@ public interface Dao {
 	
 	<T> T getOne(T conditionObj, String orderBy, Direction sc);
 	
-	long getMax(String property, Criteria criteria);
-	
-	long getCount(String property, Criteria criteria);
-	
-	Object getSum(String property, Criteria criteria);
-	
 	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
 	
 	Pagination<Map<String, Object>> find(Criteria.Fetch fetch);
@@ -72,6 +66,8 @@ public interface Dao {
 	List<Map<String,Object>> list(Criteria.Fetch fetch);
 	
 	<T> Pagination<T> find(Criteria criteria);
+
+	Object reduce(Criteria.ReduceType type, String property, Criteria criteria);
 
 	@Deprecated
 	boolean execute(Object obj, String sql);

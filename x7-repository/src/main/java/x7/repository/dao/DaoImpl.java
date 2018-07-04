@@ -830,7 +830,18 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public Object getSum(String sumProperty, Criteria criteria) {
+	public Object reduce(Criteria.ReduceType type, String property, Criteria criteria) {
+
+		Connection conn = null;
+		try {
+			conn = getConnection(true);
+		} catch (SQLException e) {
+			throw new RuntimeException("NO CONNECTION");
+		}
+		return reduce(type, property, criteria, conn);
+	}
+
+	protected Object reduce(Criteria.ReduceType type, String property, Criteria criteria, Connection conn) {
 
 		Class<?> clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
@@ -839,23 +850,26 @@ public class DaoImpl implements Dao {
 
 		String[] sqlArr = CriteriaBuilder.parse(criteria);
 
-		String sqlSum = sqlArr[2];
+		String sql = sqlArr[2];
 
-		sqlSum = sqlSum.replace(Mapped.TAG, "SUM(*) sum");
-		if (StringUtil.isNotNull(sumProperty)) {
-			sumProperty = parsed.getMapper(sumProperty);
-			sqlSum = sqlSum.replace("*", sumProperty);
+		String returnStr = type.toString().toLowerCase();
+		String script = type.toString() + "("+property+") " + returnStr;
+
+		sql = sql.replace(Mapped.TAG, script);
+		if (StringUtil.isNotNull(property)) {
+			property = parsed.getMapper(property);
+			sql = sql.replace("*", property);
 		}
 
-		System.out.println(sqlSum);
+		System.out.println(sql);
 
-		Object count = null;
-		Connection conn = null;
+		Object result = null;
+
 		PreparedStatement pstmt = null;
 		try {
 			conn = getConnection(true);
 			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sqlSum);
+			pstmt = conn.prepareStatement(sql);
 
 			int i = 1;
 			for (Object o : valueList) {
@@ -865,7 +879,7 @@ public class DaoImpl implements Dao {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next()) {
-				count = rs.getObject("sum");
+				result = rs.getObject(returnStr);
 			}
 
 		} catch (Exception e) {
@@ -875,7 +889,7 @@ public class DaoImpl implements Dao {
 			close(conn);
 		}
 
-		return count;
+		return result;
 	}
 
 	/**
@@ -962,17 +976,6 @@ public class DaoImpl implements Dao {
 		return count;
 	}
 
-	@Override
-	public long getCount(String property, Criteria criteria) {
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
-		return getCount(property,criteria, conn);
-	}
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <T> T getOne(T conditionObj, String orderBy, Direction sc) {
@@ -1030,61 +1033,6 @@ public class DaoImpl implements Dao {
 			return null;
 
 		return (T) list.get(0);
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public long getMax(String property, Criteria criteria) {
-
-		long max = 0;
-
-		Class<?> clz = criteria.getClz();
-		Parsed parsed = Parser.get(clz);
-
-		List<Object> valueList = criteria.getValueList();
-
-		String[] sqlArr = CriteriaBuilder.parse(criteria);
-
-		String sql = sqlArr[2];
-
-		sql = sql.replace(Mapped.TAG, "MAX(*) max");
-		if (StringUtil.isNotNull(property)) {
-			property = parsed.getMapper(property);
-			sql = sql.replace("*", property);
-		}
-
-		System.out.println(sql);
-
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection(true);
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			int i = 1;
-
-			for (Object o : valueList) {
-				pstmt.setObject(i++, o);
-			}
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				Object obj = rs.getObject("max");
-				if (obj != null) {
-					max = Long.valueOf(obj.toString());
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return max;
 	}
 
 	/**

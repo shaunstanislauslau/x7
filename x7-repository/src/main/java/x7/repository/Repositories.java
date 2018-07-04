@@ -569,31 +569,8 @@ public class Repositories implements Repository {
 		return sortedList;
 	}
 
-
 	@Override
-	public long getMax(String property, Criteria criteria) {
-		testAvailable();
-		Parsed parsed = Parser.get(criteria.getClz());
-		if (parsed.isSharding()) {
-			throw new ShardingException("Sharding not supported: getMax(Class<T> clz)");
-		} else {
-			return syncDao.getMax(property, criteria);
-		}
-	}
-
-	@Override
-	public long getCount(String property, Criteria criteria) {
-		testAvailable();
-		Parsed parsed = Parser.get(criteria.getClz());
-		if (parsed.isSharding()) {
-			return shardingDao.getCount(property, criteria);
-		} else {
-			return syncDao.getCount(property, criteria);
-		}
-	}
-
-	@Override
-	public Object getSum(String property, Criteria criteria) {
+	public Object reduce(Criteria.ReduceType type, String property, Criteria criteria) {
 		testAvailable();
 		Class clz = criteria.getClz();
 		Parsed parsed = Parser.get(clz);
@@ -601,7 +578,7 @@ public class Repositories implements Repository {
 			throw new ShardingException(
 					"Sharding not supported: getSum(Object conditionObj, String property, Criteria criteria)");
 		} else {
-			return syncDao.getSum(property, criteria);
+			return syncDao.reduce(type,property, criteria);
 		}
 	}
 

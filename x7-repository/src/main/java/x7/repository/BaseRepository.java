@@ -254,17 +254,6 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		return Repositories.getInstance().find(criteria);
 	}
 
-
-	@Override
-	public long getMax(String property, Criteria criteria) {
-		return Repositories.getInstance().getMax(property, criteria);
-	}
-
-	@Override
-	public long getCount(String property, Criteria criteria) {
-		return Repositories.getInstance().getCount(property, criteria);
-	}
-
 	@Override
 	public T getOne(T conditionObj, String orderBy, Direction sc) {
 
@@ -284,8 +273,8 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public Object getSum(String sumProperty, Criteria criteria) {
-		return Repositories.getInstance().getSum(sumProperty, criteria);
+	public Object reduce(Criteria.ReduceType type,String sumProperty, Criteria criteria) {
+		return Repositories.getInstance().reduce(type, sumProperty, criteria);
 	}
 
 

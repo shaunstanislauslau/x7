@@ -120,19 +120,7 @@ public interface Repository {
 	 * @param inList
 	 */
 	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
-	
-	/**
-	 * 最大值
-	 * 
-	 */
-	long getMax(String property, Criteria criteria);
-	
-	/**
-	 * 查总条数
-	 * 
-	 */
-	long getCount(String property, Criteria criteria);
-	
+
 	
 	/**
 	 * 条件查询累计
@@ -140,7 +128,7 @@ public interface Repository {
 	 * @param criteria
 	 * 
 	 */
-	Object getSum(String property, Criteria criteria);
+	Object reduce(Criteria.ReduceType type, String property, Criteria criteria);
 
 	
 	/**

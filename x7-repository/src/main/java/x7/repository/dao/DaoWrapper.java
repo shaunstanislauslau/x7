@@ -105,21 +105,9 @@ public class DaoWrapper implements Dao{
 
 
 	@Override
-	public long getMax(String property, Criteria criteria) {
-
-		return this.dao.getMax(property, criteria);
-	}
-	
-	@Override
-	public long getCount(String property, Criteria criteria) {
+	public Object reduce(Criteria.ReduceType type, String property, Criteria criteria) {
 		
-		return this.dao.getCount(property, criteria);
-	}
-
-	@Override
-	public Object getSum(String property, Criteria criteria) {
-		
-		return this.dao.getSum(property, criteria);
+		return this.dao.reduce(type,property, criteria);
 	}
 
 	@Override

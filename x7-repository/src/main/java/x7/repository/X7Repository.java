@@ -117,10 +117,6 @@ public interface X7Repository<T> {
 	 * @param criteria
 	 */
 	Pagination<Map<String, Object>> find(Criteria.Fetch criteria);
-	
-	long getMax(String property, Criteria criteria);
 
-	long getCount(String property, Criteria criteria);
-
-	Object getSum(String property, Criteria criteria);
+	Object reduce(Criteria.ReduceType type, String property, Criteria criteria);
 }
