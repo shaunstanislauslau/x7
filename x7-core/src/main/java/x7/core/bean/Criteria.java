@@ -334,7 +334,8 @@ public class Criteria implements Paged, Serializable {
 		SUM,
 		COUNT,
 		MAX,
-		MIN
+		MIN,
+		AVG
 	}
 
 }
