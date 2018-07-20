@@ -16,6 +16,8 @@
  */
 package x7.core.event;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -26,16 +28,25 @@ import java.util.TreeMap;
  * @author Wangyan
  * 
  */
-public class EventDispatcher implements IEventDispatcher {
-	
+public class EventDispatcher implements EventReceiver {
 
-	public static void addEventListener(String eventType, IEventListener listener) {
+	private static List<Event> eventList = new ArrayList<Event>();
 
-		TreeMap<String, IEventListener> listenerMap = listenersMap
+	public static  List<Event> getEventTemplateList(){
+		return  eventList;
+	}
+
+	protected static void addEventTemplate(Event event){
+		eventList.add(event);
+	}
+
+	public static void addEventListener(String eventType, EventListener.Handler listener) {
+
+		TreeMap<String, EventListener.Handler> listenerMap = listenersMap
 				.get(eventType);
 
 		if (listenerMap == null) {
-			listenerMap = new TreeMap<String, IEventListener>();
+			listenerMap = new TreeMap<String, EventListener.Handler>();
 			listenersMap.put(eventType, listenerMap);
 		} 
 		String key = createKey(listener);
@@ -46,10 +57,10 @@ public class EventDispatcher implements IEventDispatcher {
 
 	}
 
-//	@Override
+
 	public static void removeEventListener(String eventType,
-			IEventListener listener) {
-		TreeMap<String, IEventListener> listenerMap = listenersMap
+										   EventListener.Handler listener) {
+		TreeMap<String, EventListener.Handler> listenerMap = listenersMap
 				.get(eventType);
 
 		if (listenerMap != null) {
@@ -61,12 +72,13 @@ public class EventDispatcher implements IEventDispatcher {
 
 	}
 
-	public static void dispatch(IEvent event) {
-		TreeMap<String, IEventListener> listenerMap = listenersMap
-				.get(event.getType());
+	public static void dispatch(Event event) {
+		String key = event.getType() + event.getTag();
+		TreeMap<String, EventListener.Handler> listenerMap = listenersMap
+				.get(key);
 		if (listenerMap == null)
 			return;
-		for (IEventListener listener : listenerMap.values()) {
+		for (EventListener.Handler listener : listenerMap.values()) {
 			if (listener != null) {
 				try{
 					listener.handle(event);
@@ -81,8 +93,8 @@ public class EventDispatcher implements IEventDispatcher {
 	/**
 	 * CREATE KEY
 	 */
-	private static String createKey(IEventListener listener){
-		if (listener.getClass().getName().contains("IEventListener")){
+	private static String createKey(EventListener.Handler listener){
+		if (listener.getClass().getName().contains("EventListener.Handler")){
 			return listener.getClass().getName()+listener.hashCode();
 		}
 		return listener.getClass().getName();

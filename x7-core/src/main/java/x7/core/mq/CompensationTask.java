@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package x7.core.event;
+package x7.core.mq;
 
-public interface IEvent {
 
-	String getType();
+public interface CompensationTask {
+	void submit(MessageEvent event) throws Exception;
 }

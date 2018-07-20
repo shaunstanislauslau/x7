@@ -14,24 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package x7.core.event;
+package x7.core.mq;
 
-import x7.core.mq.MessageEvent;
+import x7.core.event.EventDispatcher;
+import x7.core.event.EventListener;
+import x7.core.event.MessageListenerException;
 
 import java.util.Objects;
 import java.util.TreeMap;
 
-public class EventDispatcherX extends EventDispatcher{
+public class EventDispatcherX extends EventDispatcher {
 
 	public static void dispatch(MessageEvent event)  {
-		TreeMap<String, IEventListener> listenerMap = listenersMap
-				.get(event.getType());
+		String key = event.getType() + event.getTag();
+		TreeMap<String, EventListener.Handler> listenerMap = listenersMap
+				.get(key);
 		if (listenerMap == null)
 			return;
 		
 		System.out.println(event.getType() + ", listenerMap.size = " + listenerMap.size());
 		
-		for (IEventListener listener : listenerMap.values()) {
+		for (EventListener.Handler listener : listenerMap.values()) {
 			if (listener != null) {
 				try{
 					if (event.getReTimes() == 0){

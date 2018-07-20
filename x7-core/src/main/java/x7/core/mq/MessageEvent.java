@@ -16,48 +16,54 @@
  */
 package x7.core.mq;
 
-import x7.core.event.IEvent;
+import org.springframework.context.ApplicationEvent;
+import x7.core.event.Event;
+import x7.core.event.EventOwner;
+import x7.core.util.JsonX;
 
 import java.io.Serializable;
 
-/**
- * 
- * 收到来自消息中间件的消息后, 需要派发(EventDispatcher.dispatch(event)) <br>
- *
- */
-public class MessageEvent implements IEvent, Serializable{
 
-	private static final long serialVersionUID = -2529175147748847706L;
+public class MessageEvent<T> extends ApplicationEvent implements Event, Serializable{
+
+	private static final long serialVersionUID = -4325175147748849706L;
 	private String type; //topic
-	private String content;// IEventOwner有时候无法自动转JSON,
-	private int reTimes;
+	private String body;
+	private long reTimes;
 	private String tag;
-	
-	public MessageEvent(String type, String content){
-		this.type = type;
-		this.content = content;
+
+
+	public MessageEvent(Object obj){
+		super(obj);
+		this.type = obj.toString();
 	}
 
-	@Override
 	public String getType() {
 		return type;
 	}
 
-	/**
-	 * IEventOwner有时候无法自动转JSON,<br>
-	 * 复杂的对象无法用字符串传输
-	 * 
-	 */
-	public String getContent() {
-		return content;
+	@Override
+	public EventOwner getOwner() {
+		return null;
 	}
 
+	public void setType(String type) {
+		this.type = type;
+	}
 
-	public int getReTimes() {
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
+	public long getReTimes() {
 		return reTimes;
 	}
 
-	public void setReTimes(int reTimes) {
+	public void setReTimes(long reTimes) {
 		this.reTimes = reTimes;
 	}
 
@@ -69,9 +75,14 @@ public class MessageEvent implements IEvent, Serializable{
 		this.tag = tag;
 	}
 
+	public T get(){
+		return (T) JsonX.toObjectByClassName(this.body,this.tag);
+	}
+
 	@Override
 	public String toString() {
-		return "MessageEvent [type=" + type + ", content=" + content + ", reTimes=" + reTimes + ", tag=" + tag
+		return "MessageEvent [type=" + type + ", body=" + body + ", reTimes=" + reTimes + ", tag=" + tag
 				+ "]";
 	}
+
 }

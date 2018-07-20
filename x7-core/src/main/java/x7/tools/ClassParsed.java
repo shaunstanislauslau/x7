@@ -1,5 +1,8 @@
 package x7.tools;
 
+import x7.core.util.BeanUtil;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +19,8 @@ public class ClassParsed {
 	private String mapping;
 	private Set<String> importSet = new HashSet<>();
 	private List<MethodParsed> methodList = new ArrayList<>();
+
+	private Class actualType;
 	
 	public ClassParsed(){}
 	public ClassParsed(Class<?> clz2) {
@@ -57,6 +62,15 @@ public class ClassParsed {
 	public Set<String> getImportSet() {
 		return importSet;
 	}
+
+	public Class getActualType() {
+		return actualType;
+	}
+
+	public void setActualType(Class actualType) {
+		this.actualType = actualType;
+	}
+
 	public void setImportSet(Set<String> importSet) {
 		this.importSet = importSet;
 	}
@@ -72,6 +86,23 @@ public class ClassParsed {
 	public void setBasePkg(String basePkg) {
 		this.basePkg = basePkg;
 	}
+
+	public void createMapping(String pkg,String clzSuffix, String simpleName){
+		String clzMapping = simpleName.replace(clzSuffix, "");
+		clzMapping = BeanUtil.getByFirstLower(clzMapping);
+		if (clzMapping.contains("$")){
+			clzMapping = clzMapping.substring(clzMapping.lastIndexOf("$"));
+		}
+		pkg = pkg.replace(basePkg, "");
+		String mapping = pkg;
+		if (! pkg.endsWith("."+clzMapping)){
+			mapping = pkg + "." + clzMapping;
+		}
+
+		mapping = mapping.replace(".", "/");
+		setMapping(mapping);
+	}
+
 	@Override
 	public String toString() {
 		return "ClassParsed [clz=" + clz + ", simpleName=" + simpleName + ", fullName=" + fullName + ", pkg=" + pkg

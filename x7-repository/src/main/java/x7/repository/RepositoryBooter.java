@@ -17,6 +17,8 @@
 package x7.repository;
 
 
+import x7.core.async.CasualWorker;
+import x7.core.async.IAsyncTask;
 import x7.core.config.Configs;
 import x7.repository.BaseRepository.HealthChecker;
 import x7.repository.dao.DaoImpl;
@@ -53,6 +55,17 @@ public class RepositoryBooter {
 			instance = new RepositoryBooter();
 			init();
 			HealthChecker.onStarted();
+			CasualWorker.accept(new IAsyncTask() {
+				@Override
+				public void execute() throws Exception {
+					try {
+						Thread.sleep(1000);
+						generateId();
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+			});
 		}
 	}
 	
@@ -61,6 +74,17 @@ public class RepositoryBooter {
 			instance = new RepositoryBooter();
 			init(dataSourceType);
 			HealthChecker.onStarted();
+			CasualWorker.accept(new IAsyncTask() {
+				@Override
+				public void execute() throws Exception {
+					try {
+						Thread.sleep(1000);
+						generateId();
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+			});
 		}
 	}
 	

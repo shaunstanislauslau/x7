@@ -41,4 +41,12 @@ public class KV implements Serializable{
 	public void setV(Object v) {
 		this.v = v;
 	}
+
+	@Override
+	public String toString() {
+		return "KV{" +
+				"k='" + k + '\'' +
+				", v=" + v +
+				'}';
+	}
 }

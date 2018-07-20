@@ -96,4 +96,67 @@ public class JsonX {
 			return false;
 		return true;
 	}
+	
+	public static Object toObjectByClassName(String unknown, String clzName){
+		if (StringUtil.isNullOrEmpty(unknown))
+			return null;
+		if (StringUtil.isNullOrEmpty(clzName))
+			return  unknown;
+
+		if (clzName.contains("java.util.List")){
+			int start = clzName.indexOf("<")+1;
+			int end = clzName.indexOf(">");
+			String actualTypeStr = clzName.substring(start,end);
+			try {
+				Class actualType = Class.forName(actualTypeStr);
+				return  toList(unknown,actualType);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (clzName.contains("java.util.Map")){
+			return  toMap(unknown);
+		}
+
+		Class clz = null;
+		try {
+			clz = Class.forName(clzName);
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		if (clz == Long.class)
+			return  Long.valueOf(unknown);
+
+		if (clz == Integer.class)
+			return  Integer.valueOf(unknown);
+
+		if (clz == BigDecimal.class)
+			return  new BigDecimal(unknown);
+
+		if (clz == Double.class)
+			return  Double.valueOf(unknown);
+
+		if (clz == Float.class)
+			return  Integer.valueOf(unknown);
+
+		if (clz == Short.class)
+			return  Short.valueOf(unknown);
+
+		if (clz == Byte.class)
+			return  Byte.valueOf(unknown);
+
+		if (clz == String.class)
+			return  String.valueOf(unknown);
+
+		if (clz == java.util.Date.class)
+			return  new java.util.Date(Long.valueOf(unknown));
+		if (clz == java.sql.Timestamp.class)
+			return  new java.sql.Timestamp(Long.valueOf(unknown));
+
+		return toObject(unknown,clz);
+	}
 }

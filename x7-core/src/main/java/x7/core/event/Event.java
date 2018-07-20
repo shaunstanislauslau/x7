@@ -21,34 +21,17 @@ package x7.core.event;
  * @author Sim
  *
  */
-public class Event implements IEvent{
+public interface Event {
 
-	private String type;
-	private IEventOwner owner;
-	
-	public void setType(String type) {
-		this.type = type;
-	}
 
-	public Event(String type){
-		this.type = type;
-	}
+	String getType();
 	
-	public String getType(){
-		return this.type;
-	}
-	
-	public IEventOwner getOwner(){
-		return this.owner;
-	}
-	public void setOwner(IEventOwner owner){
-		this.owner = owner;
-	}
+	EventOwner getOwner();
 
-	@Override
-	public String toString() {
-		return "Event [type=" + type + ", owner=" + owner + "]";
-	}
+	String getTag();
+
+	long getReTimes();
+
 }
 
 

@@ -52,6 +52,7 @@ public class ServletModelCreator {
 		return map;
 	}
 
+
 	public static Map<String, Object> createMapBySimpleHttp(HttpServletRequest request) {
 
 		StringBuffer jb = new StringBuffer();
@@ -101,4 +102,32 @@ public class ServletModelCreator {
 		return map;
 	}
 
+	public static <T> T create(HttpServletRequest request, Class<T> clz) {
+
+		StringBuffer jb = new StringBuffer();
+		String line = null;
+		try {
+			BufferedReader reader = request.getReader();
+			while ((line = reader.readLine()) != null)
+				jb.append(line);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String str = jb.toString();
+		str = str.trim();
+
+		if (str.startsWith("{") && str.endsWith("}")) {
+
+			str = str.replace("<", "&lt").replace(">", "&gt");
+
+			T t = JsonX.toObject(str, clz);
+
+			System.out.println("ServletModelCreator.create:  " + t);
+
+			return t;
+		}
+
+		return null;
+	}
 }

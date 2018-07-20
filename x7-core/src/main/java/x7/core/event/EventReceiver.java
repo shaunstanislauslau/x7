@@ -16,32 +16,18 @@
  */
 package x7.core.event;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-@Target({java.lang.annotation.ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface EventListener {
+/**
+ * 
+ * @author Sim Wang
+ *
+ */
+public interface EventReceiver {
 
-	/**
-	 * type or topic
-	 */
-	String value() default "";
-	/**
-	 * type as topic
-	 */
-	String type() default "";
-
-	/**
-	 * like class name
-	 */
-	String tag() default "";
-
-	interface Handler {
-		void handle(Event event);
-	}
-
+	ConcurrentHashMap<String,TreeMap<String,EventListener.Handler>> listenersMap = new ConcurrentHashMap<String,TreeMap<String,EventListener.Handler>>();
+	
 }
+
+

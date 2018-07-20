@@ -11,6 +11,11 @@ public class MethodParsed {
 	private String calledMethodStr;
 	private String intfStr;
 	private String fallbackStr;
+	private String paraName;
+	private String paraSimpleName;
+	private String paraSimpleNameLower;
+	private String returnStr;
+	private String returnType;
 	
 	public MethodParsed(){}
 	public MethodParsed(Method method){
@@ -60,6 +65,40 @@ public class MethodParsed {
 	}
 	public void setFallbackStr(String fallbackStr) {
 		this.fallbackStr = fallbackStr;
+	}
+	public String getParaName() {
+		return paraName;
+	}
+	public void setParaName(String paraName) {
+		this.paraName = paraName;
+	}
+	public String getParaSimpleName() {
+		return paraSimpleName;
+	}
+	public void setParaSimpleName(String paraSimpleName) {
+		this.paraSimpleName = paraSimpleName;
+	}
+	public String getParaSimpleNameLower() {
+		return paraSimpleNameLower;
+	}
+	public void setParaSimpleNameLower(String paraSimpleNameLower) {
+		this.paraSimpleNameLower = paraSimpleNameLower;
+	}
+
+	public String getReturnStr() {
+		return returnStr;
+	}
+
+	public void setReturnStr(String returnStr) {
+		this.returnStr = returnStr;
+	}
+
+	public String getReturnType() {
+		return returnType;
+	}
+
+	public void setReturnType(String returnType) {
+		this.returnType = returnType;
 	}
 
 	@Override

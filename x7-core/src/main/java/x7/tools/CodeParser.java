@@ -1,9 +1,12 @@
 package x7.tools;
 
+import x7.core.async.ActualType;
+import x7.core.bean.KV;
 import x7.core.util.BeanUtil;
 import x7.core.util.ClassFileReader;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -46,22 +49,21 @@ public class CodeParser {
 			
 			ClassParsed cp = new ClassParsed(clz);
 
+			Type[] typeArr = clz.getGenericInterfaces();
+			if (typeArr != null && typeArr.length > 0) {
+				Type actualType = typeArr[0];
+				if (actualType.getTypeName().startsWith(ActualType.class.getName())) {
+					Type[] tt = ((ParameterizedType) actualType).getActualTypeArguments();
+					Class actualClz = (Class)tt[0];
+					cp.setActualType(actualClz);
+					cp.getImportSet().add(actualClz.getName());
+				}
+			}
+
 			cp.setBasePkg(packagePrefix);
 			
 			String pkg = cp.getPkg();
-			String clzMapping = cp.getSimpleName().replace(clzSuffix, "");
-			clzMapping = BeanUtil.getByFirstLower(clzMapping);
-			if (clzMapping.contains("$")){
-				clzMapping = clzMapping.substring(clzMapping.lastIndexOf("$"));
-			}
-			pkg = pkg.replace(packagePrefix, "");
-			String mapping = pkg;
-			if (! pkg.endsWith("."+clzMapping)){
-				mapping = pkg + "." + clzMapping;
-			}
-			
-			mapping = mapping.replace(".", "/");
-			cp.setMapping(mapping);
+			cp.createMapping(pkg,clzSuffix,cp.getSimpleName());
 
 			String importService = cp.getFullName();
 			if (importService.contains("$")) {
@@ -135,14 +137,24 @@ public class CodeParser {
 
 			mp.setFallbackStr(fallbackStr);
 
-
 			List<String> paraClzStrList = new ArrayList<>();
+			List<KV> kvList = new ArrayList<KV>();
 			Type[] paramTypeList = method.getGenericParameterTypes();// 方法的参数列表
 
 			for (Type paramType : paramTypeList) {
+
 				String str = paramType.getTypeName();
 				str = stringifyGeneric(str, paramType, importSet);
 				paraClzStrList.add(str);
+
+				String ptName = paramType.getTypeName();
+//				String fullName = ptName;
+//				if (ptName.contains("."+str)) {
+//					fullName = ptName.substring(0, ptName.indexOf(str)) + str;
+//				}
+
+				KV kv = new KV(str,ptName);
+				kvList.add(kv);
 			}
 			
 			methodStr =  mp.getName() + "(";
@@ -154,14 +166,17 @@ public class CodeParser {
 					"byte","Byte","char","Char",
 					"float","Float","double","Double",
 					"short","Short","BigDecimal",
-					"boolean","Boolean"
+					"boolean","Boolean","String"
 			};
 
 			calledMethodStr += methodStr;
 
 			String baseStr = Arrays.toString(baseArr);
-			for (String clzStr: paraClzStrList){
+			for (KV kv: kvList){
 
+				String clzStr = kv.getK();
+				String paraName = kv.getV().toString();
+				paraName = paraName.replace("$",".");
 				if (clzStr.contains("$")){
 					clzStr = clzStr.replace("$",".");
 				}
@@ -173,25 +188,51 @@ public class CodeParser {
 				if (baseStr.contains(clzStr)){
 					methodStr = methodStr + " value" + (i>0?i:"");
 					calledMethodStr = calledMethodStr + "value" + (i>0?i:"");
+
+					String temp = "java.lang." + BeanUtil.getByFirstUpper(clzStr);
+					mp.setParaName(temp);
+					mp.setParaSimpleName(clzStr);
+					mp.setParaSimpleNameLower("value");
+
 				}else if (clzStr.contains("Map")){
 					methodStr = methodStr + " map" + (mapI>0?mapI:"");
 					calledMethodStr = calledMethodStr + "map" + (mapI>0?mapI:"");
 					mapI++;
+
+					mp.setParaName(paraName);
+					mp.setParaSimpleName(clzStr);
+					mp.setParaSimpleNameLower("map");
+
 				}else if(clzStr.contains("List")){
 					methodStr = methodStr + " list" + (listI>0?listI:"");
 					calledMethodStr = calledMethodStr + "list" + (listI>0?listI:"");
 					listI++;
+
+					mp.setParaName(paraName);
+					mp.setParaSimpleName(clzStr);
+					mp.setParaSimpleNameLower("list");
+
 				}else if(clzStr.contains("Set")){
 					methodStr = methodStr + " set" + (setI>0?setI:"");
 					calledMethodStr = calledMethodStr + "set" + (setI>0?setI:"");
 					setI++;
+
+					mp.setParaName(paraName);
+					mp.setParaSimpleName(clzStr);
+					mp.setParaSimpleNameLower("set");
+
 				}else{
 					String valueStr = clzStr;
 					if (valueStr.contains(".")){
 						valueStr = valueStr.substring(valueStr.lastIndexOf(".")+1);
 					}
-					methodStr = methodStr + " " + BeanUtil.getByFirstLower(valueStr) + (i>0?i:"");
+					String paraStr = BeanUtil.getByFirstLower(valueStr) + (i>0?i:"");
+					methodStr = methodStr + " " + paraStr;
 					calledMethodStr = calledMethodStr  + BeanUtil.getByFirstLower(valueStr) + (i>0?i:"");
+
+					mp.setParaName(paraName);
+					mp.setParaSimpleName(clzStr);
+					mp.setParaSimpleNameLower(paraStr);
 				}
 				i++;
 			}
@@ -201,10 +242,24 @@ public class CodeParser {
 			methodStr = "public " + returnStr +" " + methodStr;
 
 			String intfStr = methodStr.replace("public ","").replace("@RequestBody ","");
+
+			String returnType = method.getReturnType().getTypeName();
+			System.out.println("----------> return type: " + returnType);
+			returnStr = "null";
+			String numStr = "long,int,short,double,float,byte";
+			String bStr = "boolean";
+			if (numStr.contains(returnType)){
+				returnStr = "1";
+			}else if (bStr.contains(returnType)){
+				returnStr = "true";
+			}
+
 			
 			mp.setCalledMethodStr(calledMethodStr);
 			mp.setMethodStr(methodStr);
 			mp.setIntfStr(intfStr);
+			mp.setReturnType(returnType);
+			mp.setReturnStr(returnStr);
 			return mp;
 		}
 		
@@ -250,4 +305,6 @@ public class CodeParser {
 			return str;
 		}
 	}
+
+
 }

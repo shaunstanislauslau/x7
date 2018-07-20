@@ -71,7 +71,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 		this.clz = (Class) params[0];
 
-		System.out.println("______BaseRepository, " + this.clz.getName());
+		logger.info("BaseRepository<T>, T: " + this.clz.getName());
 		HealthChecker.repositoryList.add(this);
 	}
 
@@ -161,15 +161,17 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 			public void execute() throws Exception {
 				IdGenerator generator = new IdGenerator();
 				generator.setClzName(name);
-				// List<IdGenerator> list =
-				// Repositories.getInstance().list(generator);
-				// if (list.isEmpty()){
-				// generator.setMaxId(id);
-				// Repositories.getInstance().create(generator);
-				// }else{
 				generator.setMaxId(id);
-				Repositories.getInstance().refresh(generator);
-				// }
+				StringBuilder sb = new StringBuilder();
+				sb.append("update idGenerator set maxId = ").append(id).append(" where clzName = '").append(name)
+						.append("' and ").append(id).append(" > maxId;");
+
+				try {
+					ManuRepository.execute(generator, sb.toString());
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+
 			}
 
 		});

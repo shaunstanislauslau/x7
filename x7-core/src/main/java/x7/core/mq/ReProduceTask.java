@@ -14,34 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package x7.core.event;
+package x7.core.mq;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Target({java.lang.annotation.ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface EventListener {
-
-	/**
-	 * type or topic
-	 */
-	String value() default "";
-	/**
-	 * type as topic
-	 */
-	String type() default "";
-
-	/**
-	 * like class name
-	 */
-	String tag() default "";
-
-	interface Handler {
-		void handle(Event event);
-	}
-
+public interface ReProduceTask {
+	void submit(MessageEvent event) throws Exception;
 }
