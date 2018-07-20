@@ -44,12 +44,12 @@ public class EventListenerBeanPostProcesser implements BeanPostProcessor {
         Method[] methods = ReflectionUtils.getAllDeclaredMethods(bean.getClass());
         if (methods != null) {
             for (Method method : methods) {
-                EventListener myListener = AnnotationUtils.findAnnotation(method,EventListener.class);
-                if (myListener != null){
-                    String type = myListener.type();
-                    String tag = myListener.type();
+                EventListener listener = AnnotationUtils.findAnnotation(method,EventListener.class);
+                if (listener != null){
+                    String type = listener.type();
+                    String tag = listener.type();
                     if (StringUtil.isNullOrEmpty(type)) {
-                        type = myListener.value();
+                        type = listener.value();
                     }
                     final String t = type;
 
@@ -75,6 +75,10 @@ public class EventListenerBeanPostProcesser implements BeanPostProcessor {
                             return 0;
                         }
                     };
+
+                    if (! EventDispatcher.isEventListenerEnabled()){
+                        EventDispatcher.enableEventListener();
+                    }
 
                     EventDispatcher.addEventTemplate(event);
                     logger.info("@EventListener event: " + event.getType() + " " + event.getTag() );

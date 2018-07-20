@@ -21,11 +21,8 @@ import java.util.List;
 import java.util.TreeMap;
 
 /**
- * 游戏事件派发器的简单实现<br>
- * 简化版的实现,能满足ARPG游戏的需求
- * <br>
  * 
- * @author Wangyan
+ * @author Sim Wang
  * 
  */
 public class EventDispatcher implements EventReceiver {
@@ -34,6 +31,16 @@ public class EventDispatcher implements EventReceiver {
 
 	public static  List<Event> getEventTemplateList(){
 		return  eventList;
+	}
+
+	private static boolean eventListenerEnabled = false;
+
+	protected  static void enableEventListener(){
+		eventListenerEnabled = true;
+	}
+
+	public static boolean isEventListenerEnabled(){
+		return eventListenerEnabled;
 	}
 
 	protected static void addEventTemplate(Event event){
@@ -53,7 +60,6 @@ public class EventDispatcher implements EventReceiver {
 		if (! (listenerMap.containsKey(key))){
 			listenerMap.put(key, listener);
 		}
-
 
 	}
 
