@@ -67,6 +67,7 @@ public class CriteriaBuilder {
 
 		X x = new X();
 		x.setPredicate(Predicate.SUB_END);
+		x.setValue(Predicate.SUB_END);
 		this.criteria.add(x);
 
 		return instance;
@@ -306,6 +307,7 @@ public class CriteriaBuilder {
 
 			X from = new X();
 			from.setPredicate(Predicate.SUB_BEGIN);
+			from.setValue(Predicate.SUB_BEGIN);
 			criteria.add(from);
 
 			X xx = new X();
@@ -403,15 +405,27 @@ public class CriteriaBuilder {
 		 */
 		X groupBy = x(sb, criteria);
 
+		String sql = sb.toString();
+		
+		String repair = "and (  )";
+		if (sql.contains(repair))
+			sql = sql.replace(repair, " ");
+		repair = "(  and";
+		if (sql.contains(repair))
+			sql = sql.replace(repair, "(");
+		repair = "WHERE (  )";
+		if (sql.contains(repair))
+			sql = sql.replace(repair, "WHERE ");
+		sql = sql.trim();
+		if (sql.endsWith("WHERE"))
+			sql = sql.replace("WHERE", " ");
+
+
 		/*
 		 * sort
 		 */
 		sort(sb, criteria);
 
-		String sql = sb.toString();
-		
-		String repair = "and (  )";
-		sql = sql.replace(repair, "");
 
 		String column = criteria.resultAllScript();
 
@@ -551,14 +565,6 @@ public class CriteriaBuilder {
 		boolean isFirst = true;
 
 		for (X x : xList) {
-
-			if (Predicate.SUB_BEGIN == x.getPredicate()) {
-				sb.append(Predicate.SUB_BEGIN.sql());
-				continue;
-			} else if (Predicate.SUB_END == x.getPredicate()) {
-				sb.append(Predicate.SUB_END.sql());
-				continue;
-			}
 			
 			Object v = x.getValue();
 			if (Objects.isNull(v))
@@ -571,6 +577,14 @@ public class CriteriaBuilder {
 				if (!Objects.isNull(x.getConjunction())) {
 					sb.append(x.getConjunction().sql());
 				}
+			}
+
+			if (Predicate.SUB_BEGIN == x.getPredicate()) {
+				sb.append(Predicate.SUB_BEGIN.sql());
+				continue;
+			} else if (Predicate.SUB_END == x.getPredicate()) {
+				sb.append(Predicate.SUB_END.sql());
+				continue;
 			}
 
 			if (x.getConjunction() == Conjunction.GROUP_BY) {
@@ -814,7 +828,7 @@ public class CriteriaBuilder {
 		Iterator<X> ite = this.criteria.getListX().iterator();
 		while (ite.hasNext()){
 			X x = ite.next();
-			if (Objects.isNull(x.getKey()))
+			if (Objects.isNull(x.getConjunction()) && Objects.isNull(x.getPredicate()) && Objects.isNull(x.getKey()))
 				ite.remove();
 		}
 		return this.criteria;

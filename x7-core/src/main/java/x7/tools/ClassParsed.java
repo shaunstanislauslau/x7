@@ -2,7 +2,6 @@ package x7.tools;
 
 import x7.core.util.BeanUtil;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -90,14 +89,20 @@ public class ClassParsed {
 	public void createMapping(String pkg,String clzSuffix, String simpleName){
 		String clzMapping = simpleName.replace(clzSuffix, "");
 		clzMapping = BeanUtil.getByFirstLower(clzMapping);
+		String find = "";
 		if (clzMapping.contains("$")){
-			clzMapping = clzMapping.substring(clzMapping.lastIndexOf("$"));
+			find = clzMapping.substring(clzMapping.lastIndexOf("$"));
+			clzMapping = clzMapping.replace(find,"");
+			find = "/" + find;
 		}
+
 		pkg = pkg.replace(basePkg, "");
+
 		String mapping = pkg;
 		if (! pkg.endsWith("."+clzMapping)){
 			mapping = pkg + "." + clzMapping;
 		}
+		mapping += find;
 
 		mapping = mapping.replace(".", "/");
 		setMapping(mapping);

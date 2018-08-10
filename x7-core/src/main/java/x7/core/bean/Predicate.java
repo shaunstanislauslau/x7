@@ -15,7 +15,8 @@ public enum Predicate implements SqlScript{
 	IS_NULL(" is null"),
 	BETWEEN(" between "),
 	SUB_BEGIN("( "),
-	SUB_END(" )");
+	SUB_END(" )"),
+	SUB("${SUB}");
 
 	private String sqlOper;
 	private Predicate(String sqlOper){
