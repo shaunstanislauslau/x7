@@ -303,7 +303,7 @@ public class CriteriaBuilder {
 		@Override
 		public P beginSub() {
 			
-			x.setValue(Predicate.SUB_BEGIN);// special treat
+			x.setValue(Predicate.SUB_BEGIN);// special treat FIXME
 
 			X from = new X();
 			from.setPredicate(Predicate.SUB_BEGIN);
