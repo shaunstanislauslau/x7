@@ -8,15 +8,15 @@ public enum Predicate implements SqlScript{
 	LTE(" <= "),
 	GTE(" >= "),
 	NE(" <> "),
-	LIKE(" like "),
-	IN(" in "),
-	NOT_IN(" not in "),
-	IS_NOT_NULL(" is not null"),
-	IS_NULL(" is null"),
-	BETWEEN(" between "),
+	LIKE(" LIKE "),
+	IN(" IN "),
+	NOT_IN(" NOT IN "),
+	IS_NOT_NULL(" IS NOT NULL "),
+	IS_NULL(" IS NULL "),
+	BETWEEN(" BETWEEN "),
 	SUB_BEGIN("( "),
 	SUB_END(" )"),
-	SUB("${SUB}");
+	SUB(" SUB ");
 
 	private String sqlOper;
 	private Predicate(String sqlOper){

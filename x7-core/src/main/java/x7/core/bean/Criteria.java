@@ -53,6 +53,8 @@ public class Criteria implements Paged, Serializable {
 
 	private FetchMapper fetchMapper;
 
+	protected transient boolean isWhere = true;
+
 	public Criteria(){
 
 	}
@@ -297,6 +299,9 @@ public class Criteria implements Paged, Serializable {
 		private Predicate predicate;
 		private String key;
 		private Object value;
+		private List<X> subList;
+		private X parent;
+		private transient String script;
 		public X(){}
 		public Conjunction getConjunction() {
 			return conjunction;
@@ -322,11 +327,35 @@ public class Criteria implements Paged, Serializable {
 		public void setValue(Object value) {
 			this.value = value;
 		}
-		
+		public List<X> getSubList() {
+			return subList;
+		}
+		public void setSubList(List<X> subList) {
+			this.subList = subList;
+		}
+		public X getParent() {
+			return parent;
+		}
+		public void setParent(X parent) {
+			this.parent = parent;
+		}
+		public String getScript() {
+			return script;
+		}
+		public void setScript(String script) {
+			this.script = script;
+		}
+
 		@Override
 		public String toString() {
-			return "X [conjunction=" + conjunction + ", predicate=" + predicate + ", key=" + key + ", value=" + value
-					+ "]";
+			return "X{" +
+					"conjunction=" + conjunction +
+					", predicate=" + predicate +
+					", key=" + key +
+					", value=" + value +
+					", subList=" + subList +
+					", script=" + script +
+					'}';
 		}
 	}
 

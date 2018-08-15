@@ -2,11 +2,12 @@ package x7.core.bean;
 
 public enum Conjunction implements SqlScript{
 
-	AND(" and "),
-	OR(" or "),
-	ORDER_BY(" order by "),
-	GROUP_BY(" group by "),
-	HAVING(" having "),
+	AND(" AND "),
+	OR(" OR "),
+	ORDER_BY(" ORDER BY "),
+	GROUP_BY(" GROUP BY "),
+	HAVING(" HAVING "),
+	WHERE(" WHERE "),
 	;
 	
 	private String sqlOper;
