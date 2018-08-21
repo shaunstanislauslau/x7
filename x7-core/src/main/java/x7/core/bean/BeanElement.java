@@ -35,10 +35,6 @@ public class BeanElement {
 
 	public String mapper = "";
 
-	public boolean isMobile;
-	public boolean isEmail;
-	public boolean notNull;
-
 	public Method getMethod;
 	public Method setMethod;
 
