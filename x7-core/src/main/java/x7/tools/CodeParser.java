@@ -172,6 +172,7 @@ public class CodeParser {
 			calledMethodStr += methodStr;
 
 			String baseStr = Arrays.toString(baseArr);
+			int size = kvList.size();
 			for (KV kv: kvList){
 
 				String clzStr = kv.getK();
@@ -236,6 +237,9 @@ public class CodeParser {
 					mp.setParaName(paraName);
 					mp.setParaSimpleName(clzStr);
 					mp.setParaSimpleNameLower(paraStr);
+				}
+				if (i<size-1){
+					calledMethodStr +=", ";
 				}
 				i++;
 			}

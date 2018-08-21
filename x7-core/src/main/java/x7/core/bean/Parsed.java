@@ -18,6 +18,7 @@ package x7.core.bean;
 
 import x7.core.repository.X;
 import x7.core.search.TagParsed;
+import x7.core.util.BeanUtilX;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -133,7 +134,7 @@ public class Parsed {
 	}
 
 	public void setTableName(String tableName) {
-		this.tableName = tableName;
+		this.tableName = BeanUtilX.filterSQLKeyword(tableName);
 	}
 	
 	public String getClzName() {
