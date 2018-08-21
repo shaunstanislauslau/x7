@@ -25,6 +25,7 @@ import x7.core.web.Paged;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 简单的SQL拼接标准化
@@ -366,5 +367,6 @@ public class Criteria implements Paged, Serializable {
 		MIN,
 		AVG
 	}
+
 
 }

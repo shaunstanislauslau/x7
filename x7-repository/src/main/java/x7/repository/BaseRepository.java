@@ -275,8 +275,8 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public Object reduce(Criteria.ReduceType type,String sumProperty, Criteria criteria) {
-		return Repositories.getInstance().reduce(type, sumProperty, criteria);
+	public Object reduce(Criteria.ReduceType type,String reduceProperty, Criteria criteria) {
+		return Repositories.getInstance().reduce(type, reduceProperty, criteria);
 	}
 
 

@@ -17,6 +17,8 @@
 package x7.core.mq;
 
 import org.springframework.context.ApplicationEvent;
+import x7.core.bean.condition.ReduceCondition;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.event.Event;
 import x7.core.event.EventOwner;
 import x7.core.util.JsonX;
@@ -76,7 +78,31 @@ public class MessageEvent<T> extends ApplicationEvent implements Event, Serializ
 	}
 
 	public T get(){
-		return (T) JsonX.toObjectByClassName(this.body,this.tag);
+		T t = (T) JsonX.toObjectByClassName(this.body,this.tag);
+
+		if (t instanceof RefreshCondition){
+			RefreshCondition refreshCondition = (RefreshCondition) t;
+
+			/*
+			 * this.tag
+			 */
+			if (this.tag.contains("<")){
+				int start = this.tag.indexOf("<")+1;
+				int end = this.tag.indexOf(">");
+				String actualTypeStr = this.tag.substring(start,end);
+				try {
+					Class actualType = Class.forName(actualTypeStr);
+					Object obj = refreshCondition.getObj();
+					obj = JsonX.toObject(obj,actualType);
+					refreshCondition.setObj(obj);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		return t;
 	}
 
 	@Override

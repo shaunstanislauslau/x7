@@ -223,6 +223,9 @@ public class CodeParser {
 
 				}else{
 					String valueStr = clzStr;
+					if (valueStr.contains("<")){
+						valueStr = valueStr.substring(0,valueStr.indexOf("<"));
+					}
 					if (valueStr.contains(".")){
 						valueStr = valueStr.substring(valueStr.lastIndexOf(".")+1);
 					}
@@ -266,7 +269,7 @@ public class CodeParser {
 		private static String stringifyGeneric(String str, Type type, Set<String> importSet) {
 
 			String typeName = type.getTypeName();
-
+			System.out.println(typeName);
 			if (typeName.contains("$")){
 				typeName = typeName.substring(0,typeName.lastIndexOf("$"));
 			}
@@ -276,6 +279,7 @@ public class CodeParser {
 			}
 			if (!(typeName.startsWith("java.lang") || !typeName.contains("."))){
 				importSet.add(typeName);
+				System.out.println("______Method import1: " + typeName);
 			}
 			String typeNameSimpe = typeName.substring(typeName.lastIndexOf(".") + 1);
 			str = str.replace(typeName, typeNameSimpe);
