@@ -19,10 +19,7 @@ package x7.repository;
 import org.apache.log4j.Logger;
 import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
-import x7.core.bean.Criteria;
-import x7.core.bean.IQuantity;
-import x7.core.bean.Parsed;
-import x7.core.bean.Parser;
+import x7.core.bean.*;
 import x7.core.repository.X;
 import x7.core.util.StringUtil;
 import x7.core.web.Direction;
@@ -82,32 +79,32 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		String sql = map.get(methodName);
 		if (StringUtil.isNullOrEmpty(sql)) {
 
-			methodName = methodName.replace("list", "").replace("get", "").replace("find", "").replace("from", " ")
-					.replace("By", " where ");
-			methodName = methodName.replace("And", " = ? and ").replace("Or", " = ? or ");
 
-			Parsed parsed = x7.core.bean.Parser.get(clz);
-			String clzName = parsed.getClzName();
-			String tableName = parsed.getTableName();
+			Parsed parsed = Parser.get(this.clz);
 
-			methodName = methodName.toLowerCase();
+			String[] arr = methodName.split("By");
 
-			StringBuilder sb = new StringBuilder();
-			sb.append("select * from ");
+			String conditionSql = arr[1];
 
-			if (methodName.contains(clzName)) {
-				methodName.replace(clzName, tableName);
-			} else {
-				sb.append(parsed.getTableName()).append(" ");
+			String defaultKeyword = "eq";
+			String[] keywordArr = {"And", "Or", "NotIn", "In", "Like", "IsNotNull", "IsNull", "Ne", "Eq", "Gte", "Gt", "Lte", "Lt"};
+			String space = " ";
+
+			for (String keyword : keywordArr) {
+				String target = space + keyword + space;
+				conditionSql = conditionSql.replace(keyword, target);
 			}
 
-			sb.append(methodName).append(" = ?");
-
-			sql = sb.toString();
-
-			map.put(methodName, sql);
-
 		}
+
+
+
+
+
+
+
+
+
 		List<Object> conditionList = Arrays.asList(s);
 		List<T> list = (List<T>) ManuRepository.list(clz, sql, conditionList);
 
@@ -352,4 +349,105 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 		}
 	}
+
+	public enum SimpleX {
+
+		//"And", "Or", "NotIn", "In", "Like", "IsNotNull", "IsNull", "Ne", "Eq", "Gte", "Gt", "Lte", "Lt"
+		AND{
+
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setConjunction(Conjunction.AND);
+				return x;
+			}
+
+		},
+		OR{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setConjunction(Conjunction.OR);
+				return x;
+			}
+		},
+		NOTIN{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.NOT_IN);
+				return x;
+			}
+		},
+		IN{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.IN);
+				return x;
+			}
+		},
+		LIKE{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.LIKE);
+				return x;
+			}
+		},
+		ISNOTNULL{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.IS_NOT_NULL);
+				return x;
+			}
+		},
+		ISNULL{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.IS_NULL);
+				return x;
+			}
+		},
+		NE{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.NE);
+				return x;
+			}
+		},
+		EQ{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.EQ);
+				return x;
+			}
+		},
+		GTE{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.GTE);
+				return x;
+			}
+		},
+		GT{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.GT);
+				return x;
+			}
+		},
+		LTE{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.LTE);
+				return x;
+			}
+		},
+		LT{
+			public Criteria.X x() {
+				Criteria.X x = new Criteria.X();
+				x.setPredicate(Predicate.LT);
+				return x;
+			}
+		};
+
+		public abstract Criteria.X x();
+	}
+
 }

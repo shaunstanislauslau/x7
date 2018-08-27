@@ -714,6 +714,9 @@ public class BeanUtilX extends BeanUtil {
 			"count",
 			"where",
 			"and",
+			"add",
+			"index",
+			"exists",
 			"or",
 			"null",
 			"is",
@@ -732,6 +735,7 @@ public class BeanUtilX extends BeanUtil {
 			"references",
 			"char",
 			"varchar",
+			"varchar2",
 			"int",
 			"bigint",
 			"smallint",
@@ -746,7 +750,13 @@ public class BeanUtilX extends BeanUtil {
 			"timestamp",
 			"date",
 			"real",
-			"precision"
+			"precision",
+			"date",
+			"datetime",
+			"boolean",
+			"bool",
+			"blob",
+			"now"
 	};
 
 	public static String filterSQLKeyword(String mapper){

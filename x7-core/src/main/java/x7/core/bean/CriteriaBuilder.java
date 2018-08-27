@@ -310,7 +310,7 @@ public class CriteriaBuilder {
         }
 
         @Override
-        public CriteriaBuilder notIn(String property, List<Object> list) {
+        public CriteriaBuilder nin(String property, List<Object> list) {
 
             if (list == null || list.isEmpty())
                 return instance;
@@ -900,29 +900,17 @@ public class CriteriaBuilder {
     public interface P {
 
         CriteriaBuilder eq(String property, Object value);
-
         CriteriaBuilder lt(String property, Object value);
-
         CriteriaBuilder lte(String property, Object value);
-
         CriteriaBuilder gt(String property, Object value);
-
         CriteriaBuilder gte(String property, Object value);
-
         CriteriaBuilder ne(String property, Object value);
-
         CriteriaBuilder like(String property, String value);
-
         CriteriaBuilder likeRight(String property, String value);
-
         CriteriaBuilder between(String property, Object min, Object max);
-
         CriteriaBuilder in(String property, List<Object> list);
-
-        CriteriaBuilder notIn(String property, List<Object> list);
-
+        CriteriaBuilder nin(String property, List<Object> list);
         CriteriaBuilder isNotNull(String property);
-
         CriteriaBuilder isNull(String property);
 
         void under(X x);
