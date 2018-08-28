@@ -61,7 +61,7 @@ public class QuantityIncrement {
 		 */
 		if (quantity <= offset) {
 			obj.setQuantity(0);
-			List<IQuantity> list = Repositories.getInstance().list(obj);
+			List<IQuantity> list = SqlRepository.getInstance().list(obj);
 
 			if (! list.isEmpty()) {
 				IQuantity q = list.get(0);

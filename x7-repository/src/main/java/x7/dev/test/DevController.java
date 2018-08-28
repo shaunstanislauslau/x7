@@ -52,7 +52,7 @@ public class DevController {
 //		
 //		Criteria.Fetch criteriaJoinable = (Criteria.Fetch) criteriaBuilder.get();
 //
-//		List<Map<String,Object>> list = Repositories.getInstance().list(criteriaJoinable);
+//		List<Map<String,Object>> list = SqlRepository.getInstance().list(criteriaJoinable);
 
 		return ViewEntity.ok(null);
 	}

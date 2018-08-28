@@ -31,7 +31,7 @@ import x7.repository.mapper.MySqlDialect;
 import x7.repository.mapper.OracleDialect;
 import x7.repository.pool.DataSourceFactory;
 import x7.repository.pool.DataSourcePool;
-import x7.repository.redis.CacheResolver;
+import x7.repository.redis.LevelTwoCacheResolver;
 import x7.repository.redis.JedisConnector_Persistence;
 
 import java.util.List;
@@ -90,7 +90,7 @@ public class RepositoryBooter {
 	
 	public static void generateId(){
 		System.out.println("\n" +"----------------------------------------");
-		List<IdGenerator> idGeneratorList = Repositories.getInstance().list(IdGenerator.class);
+		List<IdGenerator> idGeneratorList = SqlRepository.getInstance().list(IdGenerator.class);
 		for (IdGenerator generator : idGeneratorList) {
 			String name = generator.getClzName();
 			long maxId = generator.getMaxId();
@@ -143,8 +143,8 @@ public class RepositoryBooter {
 			DataSourcePool pool = DataSourceFactory.get(dataSourceType);
 			DaoInitializer.init(pool.get(), pool.getR());
 			DaoInitializer.init(pool.getDsMapW(), pool.getDsMapR());
-			Repositories.getInstance().setSyncDao(DaoWrapper.getInstance());
-			Repositories.getInstance().setShardingDao(ShardingDaoImpl.getInstance());
+			SqlRepository.getInstance().setSyncDao(DaoWrapper.getInstance());
+			SqlRepository.getInstance().setShardingDao(ShardingDaoImpl.getInstance());
 			break;
 		
 		}
@@ -152,7 +152,7 @@ public class RepositoryBooter {
 			
 		
 		if (Configs.isTrue(ConfigKey.IS_CACHEABLE)){
-			Repositories.getInstance().setCacheResolver(CacheResolver.getInstance());
+			SqlRepository.getInstance().setCacheResolver(LevelTwoCacheResolver.getInstance());
 		}
 	}
 	

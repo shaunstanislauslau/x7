@@ -193,7 +193,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 	@Override
 	public boolean createBatch(List<T> objList) {
-		return Repositories.getInstance().createBatch(objList);
+		return SqlRepository.getInstance().createBatch(objList);
 	}
 
 	@Override
@@ -203,7 +203,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		 */
 		System.out.println("BaesRepository.create: " + obj);
 
-		long id = Repositories.getInstance().create(obj);
+		long id = SqlRepository.getInstance().create(obj);
 
 		return id;
 
@@ -211,29 +211,29 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 	@Override
 	public boolean refresh(T obj) {
-		return Repositories.getInstance().refresh(obj);
+		return SqlRepository.getInstance().refresh(obj);
 	}
 
 	@Override
 	public boolean refresh(T obj, Map<String, Object> conditionMap) {
-		return Repositories.getInstance().refresh(obj, conditionMap);
+		return SqlRepository.getInstance().refresh(obj, conditionMap);
 	}
 
 	@Override
 	public void remove(T obj) {
-		Repositories.getInstance().remove(obj);
+		SqlRepository.getInstance().remove(obj);
 	}
 
 	@Override
 	public T get(long idOne) {
 
-		return Repositories.getInstance().get(clz, idOne);
+		return SqlRepository.getInstance().get(clz, idOne);
 	}
 
 	@Override
 	public List<T> list() {
 
-		return Repositories.getInstance().list(clz);
+		return SqlRepository.getInstance().list(clz);
 	}
 
 	@Override
@@ -241,39 +241,39 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 		if (conditionObj instanceof Criteria.Fetch) {
 			throw new RuntimeException(
-					"Exception supported, no pagination not to invoke Repositories.getInstance().list(criteriaJoinalbe);");
+					"Exception supported, no pagination not to invoke SqlRepository.getInstance().list(criteriaJoinalbe);");
 		}
 
-		return Repositories.getInstance().list(conditionObj);
+		return SqlRepository.getInstance().list(conditionObj);
 	}
 
 	@Override
 	public Pagination<Map<String, Object>> find(Criteria.Fetch criteria) {
 
-		return Repositories.getInstance().find(criteria);
+		return SqlRepository.getInstance().find(criteria);
 	}
 
 	@Override
 	public T getOne(T conditionObj, String orderBy, Direction sc) {
 
-		return Repositories.getInstance().getOne(conditionObj, orderBy, sc);
+		return SqlRepository.getInstance().getOne(conditionObj, orderBy, sc);
 	}
 
 	@Override
 	public T getOne(T conditionObj) {
 
-		T t = Repositories.getInstance().getOne(conditionObj);
+		T t = SqlRepository.getInstance().getOne(conditionObj);
 		return t;
 	}
 
 	@Override
 	public void refreshCache() {
-		Repositories.getInstance().refreshCache(clz);
+		SqlRepository.getInstance().refreshCache(clz);
 	}
 
 	@Override
 	public Object reduce(Criteria.ReduceType type,String reduceProperty, Criteria criteria) {
-		return Repositories.getInstance().reduce(type, reduceProperty, criteria);
+		return SqlRepository.getInstance().reduce(type, reduceProperty, criteria);
 	}
 
 
@@ -282,13 +282,13 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 		if (inList.isEmpty())
 			return new ArrayList<T>();
 
-		return Repositories.getInstance().in(clz, inProperty, inList);
+		return SqlRepository.getInstance().in(clz, inProperty, inList);
 	}
 
 	@Override
 	public Pagination<T> find(Criteria criteria) {
 
-		return Repositories.getInstance().find(criteria);
+		return SqlRepository.getInstance().find(criteria);
 	}
 
 	public static class HealthChecker {
@@ -322,7 +322,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 					if (DbType.value.equals(DbType.MYSQL)) {
 						System.out.println("________ table check: " + clz.getName());
-						Repositories.getInstance().execute(clz.newInstance(), sql);
+						SqlRepository.getInstance().execute(clz.newInstance(), sql);
 					}
 
 					Parsed parsed = Parser.get(clz);
@@ -332,11 +332,11 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 					final String name = clz.getName();
 					IdGenerator generator = new IdGenerator();
 					generator.setClzName(name);
-					List<IdGenerator> list = Repositories.getInstance().list(generator);
+					List<IdGenerator> list = SqlRepository.getInstance().list(generator);
 					if (list.isEmpty()) {
 						System.out.println("________ id init: " + generator.getClzName());
 						generator.setMaxId(0);
-						Repositories.getInstance().create(generator);
+						SqlRepository.getInstance().create(generator);
 					}
 
 				} catch (Exception e) {
