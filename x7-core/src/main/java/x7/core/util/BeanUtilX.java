@@ -756,7 +756,10 @@ public class BeanUtilX extends BeanUtil {
 			"boolean",
 			"bool",
 			"blob",
-			"now"
+			"now",
+			"function",
+			"procedure",
+			"trigger"
 	};
 
 	public static String filterSQLKeyword(String mapper){

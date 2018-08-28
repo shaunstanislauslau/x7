@@ -44,6 +44,7 @@ public class ConfigBuilder {
 			ZkBase.getInstance().init(remoteAddress);
 			ZkBase.getInstance().add(ConfigKeeper.getInstance());
 		}else{
+			Configs.localAddress = localAddress;
 			TextParser.getInstance().load(localAddress, configSpace);
 		}
 		

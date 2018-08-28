@@ -62,6 +62,8 @@ public class JsonX {
 	public static String toJson(Object obj){
 		if (obj == null)
 			return null;
+		if (obj instanceof String)
+			return obj.toString();
 		return JSON.toJSONString(obj);
 	}
 	

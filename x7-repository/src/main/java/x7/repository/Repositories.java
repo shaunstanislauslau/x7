@@ -25,6 +25,7 @@ import x7.core.repository.CacheException;
 import x7.core.repository.ICacheResolver;
 import x7.core.repository.Repository;
 import x7.core.repository.X;
+import x7.core.util.JsonX;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
 import x7.repository.dao.Dao;
@@ -198,6 +199,8 @@ public class Repositories implements Repository {
 		return sortedList;
 	}
 
+
+
 	@Override
 	public long create(Object obj) {
 		testAvailable();
@@ -336,9 +339,8 @@ public class Repositories implements Repository {
 
 		List<T> list = null;
 
-		String condition = conditionObj.toString();
 
-		List<String> keyList = cacheResolver.getResultKeyList(clz, condition);
+		List<String> keyList = cacheResolver.getResultKeyList(clz, conditionObj);
 
 		if (keyList == null || keyList.isEmpty()) {
 			if (parsed.isSharding()) {
@@ -354,7 +356,7 @@ public class Repositories implements Repository {
 				keyList.add(key);
 			}
 
-			cacheResolver.setResultKeyList(clz, condition, keyList);
+			cacheResolver.setResultKeyList(clz, conditionObj, keyList);
 
 			return list;
 		}
@@ -388,8 +390,7 @@ public class Repositories implements Repository {
 			}
 		}
 
-		String condition = conditionObj.toString();
-
+		String condition = JsonX.toJson(conditionObj);
 		T obj = cacheResolver.get(clz, condition);
 
 		if (obj == null) {
@@ -427,7 +428,7 @@ public class Repositories implements Repository {
 			}
 		}
 
-		String condition = conditionObj.toString() + orderBy + sc;
+		String condition = JsonX.toJson(conditionObj) + orderBy + sc;
 
 		T obj = cacheResolver.get(clz, condition);
 
@@ -465,9 +466,7 @@ public class Repositories implements Repository {
 
 		List<T> list = null;
 
-		String condition = criteria.toString();
-
-		Pagination<T> p = cacheResolver.getResultKeyListPaginated(clz, condition);// FIXME
+		Pagination<T> p = cacheResolver.getResultKeyListPaginated(clz, criteria);// FIXME
 
 		if (p == null) {
 			if (parsed.isSharding()) {
@@ -488,7 +487,7 @@ public class Repositories implements Repository {
 
 			p.setList(null);
 
-			cacheResolver.setResultKeyListPaginated(clz, condition, p, 10);
+			cacheResolver.setResultKeyListPaginated(clz, criteria, p, 10);
 
 			p.setKeyList(null);
 			p.setList(list);

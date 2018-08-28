@@ -403,30 +403,40 @@ public class ExcelParser {
 			
 			public void write(String filePath){
 				System.out.println("clz = " + clz);
-				System.out.println("dataList = " + clz);
-				System.out.println("裝逼的EXCEL導出 => " + filePath);
+				System.out.println("dataList = " + dataList);
+				System.out.println("装逼的EXCEL导出 => " + filePath);
 				
 				File file = new File(filePath);
 				WritableWorkbook workbook = null;
-				
-				List<KV> tagList = Templates.getSchema(clz);
+
 				
 				try {
 					workbook = Workbook.createWorkbook(file);
 					WritableSheet sheet = workbook.createSheet(clz.getSimpleName(), 0);
 					int r = 0, c = 0;
-					for (KV kv : tagList){
-						sheet.addCell(new Label(c++, r, kv.v.toString()));
+					List<KV> tagList = Templates.getSchema(clz);
+					if (Objects.nonNull(tagList)) {
+						for (KV kv : tagList) {
+							sheet.addCell(new Label(c++, r, kv.v.toString()));
+						}
 					}
 					
 					r++;
-					
+
 					for (ITemplateable template : dataList) {
 						c = 0;
-						for (KV kv : tagList){
-							Field f = clz.getDeclaredField(kv.k);
-							Object v = f.get(template);
-							sheet.addCell(new Label(c++, r, v.toString()));
+						if (Objects.nonNull(tagList)) {
+							for (KV kv : tagList) {
+								Field f = clz.getDeclaredField(kv.k);
+								Object v = f.get(template);
+								sheet.addCell(new Label(c++, r, v.toString()));
+							}
+						}else{
+							Field[] fArr = clz.getDeclaredFields();
+							for (Field f: fArr) {
+								Object v = f.get(template);
+								sheet.addCell(new Label(c++, r, v.toString()));
+							}
 						}
 						r++;
 					}
@@ -454,13 +464,11 @@ public class ExcelParser {
 			 */
 			public void write(String filePath, Headline headline, Footer footer){
 				System.out.println("clz = " + clz);
-				System.out.println("dataList = " + clz);
-				System.out.println("裝逼的EXCEL導出 => " + filePath);
+				System.out.println("dataList = " + dataList);
+				System.out.println("装逼的EXCEL导出 => " + filePath);
 				
 				File file = new File(filePath);
 				WritableWorkbook workbook = null;
-				
-				List<KV> tagList = Templates.getSchema(clz);
 				
 				try {
 					workbook = Workbook.createWorkbook(file);
@@ -470,19 +478,29 @@ public class ExcelParser {
 					if (headline != null){
 						r += headline.addTo(sheet);
 					}
-					
-					for (KV kv : tagList){
-						sheet.addCell(new Label(c++, r, kv.v.toString()));
+					List<KV> tagList = Templates.getSchema(clz);
+					if (Objects.nonNull(tagList)) {
+						for (KV kv : tagList) {
+							sheet.addCell(new Label(c++, r, kv.v.toString()));
+						}
 					}
 					
 					r++;
 					
 					for (ITemplateable template : dataList) {
 						c = 0;
-						for (KV kv : tagList){
-							Field f = clz.getDeclaredField(kv.k);
-							Object v = f.get(template);
-							sheet.addCell(new Label(c++, r, v.toString()));
+						if (Objects.nonNull(tagList)) {
+							for (KV kv : tagList) {
+								Field f = clz.getDeclaredField(kv.k);
+								Object v = f.get(template);
+								sheet.addCell(new Label(c++, r, v.toString()));
+							}
+						}else{
+							Field[] fArr = clz.getDeclaredFields();
+							for (Field f: fArr) {
+								Object v = f.get(template);
+								sheet.addCell(new Label(c++, r, v.toString()));
+							}
 						}
 						r++;
 					}

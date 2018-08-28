@@ -19,6 +19,7 @@ package x7.repository.redis;
 import x7.core.config.Configs;
 import x7.core.repository.CacheException;
 import x7.core.repository.ICacheResolver;
+import x7.core.util.JsonX;
 import x7.core.util.VerifyUtil;
 import x7.core.web.Pagination;
 import x7.repository.exception.PersistenceException;
@@ -117,7 +118,8 @@ public class CacheResolver implements ICacheResolver{
 	
 	
 	@SuppressWarnings("rawtypes")
-	private String getKey(Class clz, String condition){
+	private String getKey(Class clz, Object conditionObj){
+		String condition = JsonX.toJson(conditionObj);
 		long startTime = System.currentTimeMillis();
 		String key =  VerifyUtil.toMD5(getPrefix(clz) + condition);
 		long endTime = System.currentTimeMillis();
@@ -160,7 +162,7 @@ public class CacheResolver implements ICacheResolver{
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void setResultKeyList(Class clz, String condition, List<String> keyList) {
+	public void setResultKeyList(Class clz, Object condition, List<String> keyList) {
 		String key = getKey(clz, condition);
 		int validSecond = Configs.getIntValue("x7.cache.second");
 		try{
@@ -172,14 +174,14 @@ public class CacheResolver implements ICacheResolver{
 	
 	@SuppressWarnings("rawtypes")
 	@Override
-	public <T> void setResultKeyListPaginated(Class<T> clz, String condition, Pagination<T> pagination) {
+	public <T> void setResultKeyListPaginated(Class<T> clz, Object condition, Pagination<T> pagination) {
 		
 		int validSecond = Configs.getIntValue("x7.cache.second");
 		setResultKeyListPaginated(clz, condition, pagination, validSecond);
 	}
 	
 	@Override
-	public <T> void setResultKeyListPaginated(Class<T> clz, String condition, Pagination<T> pagination, int second) {
+	public <T> void setResultKeyListPaginated(Class<T> clz, Object condition, Pagination<T> pagination, int second) {
 		
 		String key = getKey(clz, condition);
 		try{
@@ -191,7 +193,7 @@ public class CacheResolver implements ICacheResolver{
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public List<String> getResultKeyList(Class clz, String condition) {
+	public List<String> getResultKeyList(Class clz, Object condition) {
 		String key = getKey(clz, condition);
 		System.out.println("get key: " + key);
 		long startTime = System.currentTimeMillis();
@@ -206,7 +208,7 @@ public class CacheResolver implements ICacheResolver{
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Pagination<String> getResultKeyListPaginated(Class clz, String condition) {
+	public Pagination<String> getResultKeyListPaginated(Class clz, Object condition) {
 		String key = getKey(clz, condition);
 		System.out.println("get key: " + key);
 		byte[] bytes = JedisConnector_Cache.getInstance().get(key.getBytes());

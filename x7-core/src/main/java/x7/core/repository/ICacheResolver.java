@@ -16,10 +16,12 @@
  */
 package x7.core.repository;
 
+import x7.core.util.JsonX;
 import x7.core.web.Pagination;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 
@@ -58,47 +60,47 @@ public interface ICacheResolver {
 	/**
 	 * 高效的缓存Key列表
 	 * @param clz
-	 * @param condition
+	 * @param conditionObj
 	 * @param keyList
 	 */
 	@SuppressWarnings("rawtypes")
-	void setResultKeyList(Class clz, String condition, List<String> keyList);
+	void setResultKeyList(Class clz, Object conditionObj, List<String> keyList);
 	
 	/**
 	 * 
 	 * @param clz
-	 * @param condition
+	 * @param conditionObj
 	 * @param pagination
 	 */
-	<T> void setResultKeyListPaginated(Class<T> clz, String condition, Pagination<T> pagination);
+	<T> void setResultKeyListPaginated(Class<T> clz, Object conditionObj, Pagination<T> pagination);
 
 	/**
 	 * 
 	 * @param clz
-	 * @param condition
+	 * @param conditionObj
 	 * @param pagination
 	 */
-	<T> void setResultKeyListPaginated(Class<T> clz, String condition, Pagination<T> pagination, int second);
+	<T> void setResultKeyListPaginated(Class<T> clz, Object conditionObj, Pagination<T> pagination, int second);
 	
 	/**
 	 * 高效的获取缓存对象Key列表<br>
 	 * 如果没有值则返回null, 表示需要更新缓存<br>
 	 * 返回的列表里没有元素, 为正常缓存数据<br>
 	 * @param clz
-	 * @param condition
+	 * @param conditionObj
 	 * @return obj
 	 */
 	@SuppressWarnings("rawtypes")
-	List<String> getResultKeyList(Class clz, String condition);
+	List<String> getResultKeyList(Class clz, Object conditionObj);
 	/**
 	 * 高效的获取缓存分页列表<br>
 	 * 如果没有值则返回null, 表示需要更新缓存<br>
 	 * 返回的列表里没有元素, 为正常缓存数据<br>
 	 * @param clz
-	 * @param condition
+	 * @param conditionObj
 	 * @return obj
 	 */
-	<T> Pagination<T> getResultKeyListPaginated(Class<T> clz, String condition);
+	<T> Pagination<T> getResultKeyListPaginated(Class<T> clz, Object conditionObj);
 	/**
 	 * 高效从缓存中查出符合条件的所以对象
 	 * @param clz
@@ -110,4 +112,10 @@ public interface ICacheResolver {
 	void setMapList(Class clz, String key, List<Map<String,Object>> mapList);
 	
 	List<Map<String,Object>> getMapList(Class clz, String key);
+
+	default String createCondition(Object obj){
+		if (Objects.isNull(obj))
+			return "null";
+		return JsonX.toJson(obj);
+	}
 }
