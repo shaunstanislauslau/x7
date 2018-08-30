@@ -17,64 +17,93 @@ public interface DataPermission {
 
     Object getDataPermissionValue();
 
-    static void filter(Criteria criteria) {
+    public class Filter {
 
-        final String key = criteria.getDataPermissionKey();
-        final Object value = criteria.getDataPermissionValue();
+        public static void beforeHandle(Object dataPermission, Object userDataPermissionValue) {
+            if (dataPermission instanceof DataPermission){
+                DataPermission dp = (DataPermission) dataPermission;
+                Object dataPermissionValue = dp.getDataPermissionValue();
+                if (Objects.nonNull(dataPermissionValue)){
 
-        if (Objects.isNull(value) || StringUtil.isNullOrEmpty(key))
-            return;
-
-        for (Criteria.X x : criteria.getListX()) {
-            if (x.getKey().endsWith(key)) {//if added, return
-                return;
+                    if (dataPermissionValue instanceof List){
+                        List<String> dpList = (List<String>)dataPermissionValue;
+                        if (Objects.nonNull(userDataPermissionValue)){
+                            dpList.addAll((List<String>)userDataPermissionValue);
+                        }
+                    }
+                }else{
+                    dp.setDataPermissionValue(userDataPermissionValue);
+                }
             }
         }
 
-        if (value instanceof String) {
-            criteria.add(new Criteria.X() {
+        public static void onBuild(Criteria criteria, Object obj) {
+            if (obj instanceof DataPermission) {
+                DataPermission dp = (DataPermission) obj;
+                criteria.setDataPermissionKey(dp.getDataPermissionKey());
+                criteria.setDataPermissionValue(dp.getDataPermissionValue());
+            }
+        }
 
-                @Override
-                public String getKey() {
-                    return (criteria instanceof Criteria.Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
-                }
+        public static void x(Criteria criteria) {
 
-                @Override
-                public Predicate getPredicate() {
-                    return Predicate.LIKE;
-                }
+            final String key = criteria.getDataPermissionKey();
+            final Object value = criteria.getDataPermissionValue();
 
-                @Override
-                public Object getValue() {
-                    return ((String) value).endsWith("%") ? value : value + "%";
-                }
-
-            });
-        } else if (value instanceof List) {
-
-            List<String> dpsList = (List<String>) value;
-            if (dpsList.isEmpty())
+            if (Objects.isNull(value) || StringUtil.isNullOrEmpty(key))
                 return;
 
-            criteria.add(new Criteria.X() {
-
-                @Override
-                public String getKey() {
-                    return (criteria instanceof Criteria.Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
+            for (Criteria.X x : criteria.getListX()) {
+                if (x.getKey().endsWith(key)) {//if added, return
+                    return;
                 }
+            }
 
-                @Override
-                public Predicate getPredicate() {
-                    return Predicate.IN;
-                }
+            if (value instanceof String) {
+                criteria.add(new Criteria.X() {
 
-                @Override
-                public Object getValue() {
-                    return dpsList;
-                }
+                    @Override
+                    public String getKey() {
+                        return (criteria instanceof Criteria.Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
+                    }
 
-            });
+                    @Override
+                    public Predicate getPredicate() {
+                        return Predicate.LIKE;
+                    }
 
+                    @Override
+                    public Object getValue() {
+                        return ((String) value).endsWith("%") ? value : value + "%";
+                    }
+
+                });
+            } else if (value instanceof List) {
+
+                List<String> dpsList = (List<String>) value;
+                if (dpsList.isEmpty())
+                    return;
+
+                criteria.add(new Criteria.X() {
+
+                    @Override
+                    public String getKey() {
+                        return (criteria instanceof Criteria.Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
+                    }
+
+                    @Override
+                    public Predicate getPredicate() {
+                        return Predicate.IN;
+                    }
+
+                    @Override
+                    public Object getValue() {
+                        return dpsList;
+                    }
+
+                });
+
+            }
         }
     }
 

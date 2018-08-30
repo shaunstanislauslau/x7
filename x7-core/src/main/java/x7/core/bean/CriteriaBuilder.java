@@ -439,11 +439,7 @@ public class CriteriaBuilder {
 
     public void paged(Paged paged) {
         criteria.paged(paged);
-        if (paged instanceof DataPermission) {
-            DataPermission dp = (DataPermission) paged;
-            criteria.setDataPermissionKey(dp.getDataPermissionKey());
-            criteria.setDataPermissionValue(dp.getDataPermissionValue());
-        }
+        DataPermission.Filter.onBuild(criteria,paged);
     }
 
     public Class<?> getClz() {
@@ -638,7 +634,7 @@ public class CriteriaBuilder {
 
     private static X x(StringBuilder sb, Criteria criteria) {
 
-        DataPermission.filter(criteria);
+        DataPermission.Filter.x(criteria);
 
         X xx = null;
         List<X> xList = criteria.getListX();
