@@ -441,7 +441,8 @@ public class CriteriaBuilder {
         criteria.paged(paged);
         if (paged instanceof DataPermission) {
             DataPermission dp = (DataPermission) paged;
-            criteria.setDataPermissionSn(dp.getDataPermissionSn());
+            criteria.setDataPermissionKey(dp.getDataPermissionKey());
+            criteria.setDataPermissionValue(dp.getDataPermissionValue());
         }
     }
 
@@ -573,38 +574,6 @@ public class CriteriaBuilder {
     }
 
 
-    private static void filterDataPermission(Criteria criteria) {
-        if (StringUtil.isNotNull(criteria.getDataPermissionSn())) {
-
-            final String key = DataPermission.KEY;
-
-            for (X x : criteria.getListX()) {
-                if (x.getKey().endsWith(key)) {
-                    return;
-                }
-            }
-
-            criteria.add(new X() {
-
-                @Override
-                public String getKey() {
-                    return (criteria instanceof Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
-                }
-
-                @Override
-                public Predicate getPredicate() {
-                    return Predicate.LIKE;
-                }
-
-                @Override
-                public Object getValue() {
-                    return criteria.getDataPermissionSn();
-                }
-
-            });
-        }
-    }
-
     private static void x(StringBuilder sb, List<X> xList, Criteria criteria, boolean isWhere) {
         for (X x : xList) {
 
@@ -669,7 +638,7 @@ public class CriteriaBuilder {
 
     private static X x(StringBuilder sb, Criteria criteria) {
 
-        filterDataPermission(criteria);
+        DataPermission.filter(criteria);
 
         X xx = null;
         List<X> xList = criteria.getListX();
@@ -946,10 +915,10 @@ public class CriteriaBuilder {
         }
 
         private void init(Class<?> clz) {
-            Criteria.Fetch cj = (Criteria.Fetch) super.criteria;
-            cj.setClz(clz);
+            Criteria.Fetch f = (Criteria.Fetch) super.criteria;
+            f.setClz(clz);
             Parsed parsed = Parser.get(clz);
-            cj.setParsed(parsed);
+            f.setParsed(parsed);
         }
 
         public Fetchable(Class<?> clz) {

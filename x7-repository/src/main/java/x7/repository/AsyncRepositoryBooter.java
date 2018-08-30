@@ -31,10 +31,6 @@ import x7.repository.pool.HikariPool;
 public class AsyncRepositoryBooter {
 	
 	private final static String MYSQL = "mysql";
-	
-	private final static String MongoDb = "mongodb";
-	
-	private final static String HBASE = "hbase";
 
 	private static AsyncRepositoryBooter instance = null;
 	

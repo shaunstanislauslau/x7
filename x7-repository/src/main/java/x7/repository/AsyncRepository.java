@@ -19,7 +19,7 @@ package x7.repository;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.repository.X;
-import x7.repository.dao.AsyncDaoWrapper;
+import x7.repository.dao.AsyncDaoImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,19 +36,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AsyncRepository {
 
 	public static void create(Object obj) {
-		AsyncDaoWrapper.getInstance().create(obj);
+		AsyncDaoImpl.getInstance().create(obj);
 	}
 
 	public static void refresh(Object obj) {
-		AsyncDaoWrapper.getInstance().refresh(obj);
+		AsyncDaoImpl.getInstance().refresh(obj);
 	}
 
 	public static void remove(Object obj) {
-		AsyncDaoWrapper.getInstance().remove(obj);
+		AsyncDaoImpl.getInstance().remove(obj);
 	}
 
 	public static <T> List<T> listSync(Class<T> clz) {
-		List<T> list = AsyncDaoWrapper.getInstance().listSync(clz);
+		List<T> list = AsyncDaoImpl.getInstance().listSync(clz);
 		CacheOne.put(clz, list);
 		return list;
 	}

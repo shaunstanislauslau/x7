@@ -308,7 +308,7 @@ public class BeanUtilX extends BeanUtil {
 		
 		if (obj instanceof DataPermission){
 			DataPermission dp = (DataPermission)obj;
-			dp.setDataPermissionSn(null);
+			dp.setDataPermissionValue(null);
 		}
 		
 		try {

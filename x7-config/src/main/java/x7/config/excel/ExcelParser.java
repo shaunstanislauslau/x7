@@ -428,14 +428,24 @@ public class ExcelParser {
 						if (Objects.nonNull(tagList)) {
 							for (KV kv : tagList) {
 								Field f = clz.getDeclaredField(kv.k);
+								f.setAccessible(true);
 								Object v = f.get(template);
-								sheet.addCell(new Label(c++, r, v.toString()));
+								if (Objects.isNull(v)){
+									c++;
+								}else {
+									sheet.addCell(new Label(c++, r, v.toString()));
+								}
 							}
 						}else{
 							Field[] fArr = clz.getDeclaredFields();
 							for (Field f: fArr) {
+								f.setAccessible(true);
 								Object v = f.get(template);
-								sheet.addCell(new Label(c++, r, v.toString()));
+								if (Objects.isNull(v)){
+									c++;
+								}else {
+									sheet.addCell(new Label(c++, r, v.toString()));
+								}
 							}
 						}
 						r++;
@@ -492,14 +502,24 @@ public class ExcelParser {
 						if (Objects.nonNull(tagList)) {
 							for (KV kv : tagList) {
 								Field f = clz.getDeclaredField(kv.k);
+								f.setAccessible(true);
 								Object v = f.get(template);
-								sheet.addCell(new Label(c++, r, v.toString()));
+								if (Objects.isNull(v)){
+									c++;
+								}else {
+									sheet.addCell(new Label(c++, r, v.toString()));
+								}
 							}
 						}else{
 							Field[] fArr = clz.getDeclaredFields();
 							for (Field f: fArr) {
+								f.setAccessible(true);
 								Object v = f.get(template);
-								sheet.addCell(new Label(c++, r, v.toString()));
+								if (Objects.isNull(v)){
+									c++;
+								}else {
+									sheet.addCell(new Label(c++, r, v.toString()));
+								}
 							}
 						}
 						r++;

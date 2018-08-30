@@ -19,6 +19,7 @@ package x7.core.bean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import x7.core.bean.CriteriaBuilder.FetchMapper;
 import x7.core.util.BeanUtil;
+import x7.core.util.JsonX;
 import x7.core.web.Direction;
 import x7.core.web.Paged;
 
@@ -33,7 +34,7 @@ import java.util.Map;
  * @author sim
  *
  */
-public class Criteria implements Paged, Serializable {
+public class Criteria implements Paged, DataPermission,Serializable {
 
 	private static final long serialVersionUID = 7088698915888081349L;
 
@@ -49,8 +50,9 @@ public class Criteria implements Paged, Serializable {
 	private List<Object> valueList = new ArrayList<Object>();
 	
 	private List<X> listX = new ArrayList<X>();
-	
-	private String dataPermissionSn;
+
+	private String dataPermissionKey;
+	private Object dataPermissionValue;//String,Or List<String>   LikeRight | In
 
 	private FetchMapper fetchMapper;
 
@@ -151,13 +153,22 @@ public class Criteria implements Paged, Serializable {
 		this.listX.add(x);
 	}
 
-	protected String getDataPermissionSn() {
-		return dataPermissionSn;
+	public String getDataPermissionKey(){
+		return this.dataPermissionKey;
 	}
 
-	protected void setDataPermissionSn(String dataPermissionSn) {
-		this.dataPermissionSn = dataPermissionSn;
+	public Object getDataPermissionValue() {
+		return dataPermissionValue;
 	}
+
+	public void setDataPermissionValue(Object dataPermissionValue) {
+		this.dataPermissionValue = dataPermissionValue;
+	}
+
+	public void setDataPermissionKey(String dataPermissionKey){
+		this.dataPermissionKey = dataPermissionKey;
+	}
+
 
 	public void paged(Paged paged) {
 		this.orderBy = paged.getOrderBy();
@@ -169,12 +180,22 @@ public class Criteria implements Paged, Serializable {
 
 	@Override
 	public String toString() {
-		return "Criteria [clz=" + clz + ", isScroll=" + isScroll 
-				+ ", page=" + page + ", rows=" + rows + ", orderBy="
-				+ orderBy + ", direction=" + direction + ", valueList="
-				+ valueList + ", listX=" + listX + ", fetchMapper=" + fetchMapper + "]";
+		return "Criteria{" +
+				"clz=" + clz +
+				", parsed=" + parsed +
+				", isScroll=" + isScroll +
+				", page=" + page +
+				", rows=" + rows +
+				", orderBy='" + orderBy + '\'' +
+				", direction=" + direction +
+				", valueList=" + valueList +
+				", listX=" + listX +
+				", dataPermissionKey='" + dataPermissionKey + '\'' +
+				", dataPermissionValue=" + dataPermissionValue +
+				", fetchMapper=" + fetchMapper +
+				", isWhere=" + isWhere +
+				'}';
 	}
-
 
 	/**
 	 * 可以连表的SQL拼接标准化, 不支持缓存<br>
@@ -367,6 +388,5 @@ public class Criteria implements Paged, Serializable {
 		MIN,
 		AVG
 	}
-
 
 }

@@ -23,7 +23,6 @@ import x7.core.config.Configs;
 import x7.repository.BaseRepository.HealthChecker;
 import x7.repository.dao.DaoImpl;
 import x7.repository.dao.DaoInitializer;
-import x7.repository.dao.DaoWrapper;
 import x7.repository.dao.ShardingDaoImpl;
 import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
@@ -31,20 +30,14 @@ import x7.repository.mapper.MySqlDialect;
 import x7.repository.mapper.OracleDialect;
 import x7.repository.pool.DataSourceFactory;
 import x7.repository.pool.DataSourcePool;
-import x7.repository.redis.LevelTwoCacheResolver;
 import x7.repository.redis.JedisConnector_Persistence;
+import x7.repository.redis.LevelTwoCacheResolver;
 
 import java.util.List;
 
 
 public class RepositoryBooter {
 
-	
-	private final static String MONGO_DB = "mongodb";
-	
-	private final static String TiDB = "tidb";
-	
-	private final static String LEVEL_DB = "leveldb";
 
 	private static RepositoryBooter instance = null;
 	
@@ -143,7 +136,7 @@ public class RepositoryBooter {
 			DataSourcePool pool = DataSourceFactory.get(dataSourceType);
 			DaoInitializer.init(pool.get(), pool.getR());
 			DaoInitializer.init(pool.getDsMapW(), pool.getDsMapR());
-			SqlRepository.getInstance().setSyncDao(DaoWrapper.getInstance());
+			SqlRepository.getInstance().setSyncDao(DaoImpl.getInstance());
 			SqlRepository.getInstance().setShardingDao(ShardingDaoImpl.getInstance());
 			break;
 		

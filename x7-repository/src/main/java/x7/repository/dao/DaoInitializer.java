@@ -24,11 +24,11 @@ public class DaoInitializer {
 	
 	public static void init(DataSource dsW, DataSource dsR){
 		AsyncDaoImpl.getInstance().setDataSource(dsW);
-		AsyncDaoWrapper.getInstance().setDao(AsyncDaoImpl.getInstance());;
+//		AsyncDaoWrapper.getInstance().setDao(AsyncDaoImpl.getInstance());;
 		
 		DaoImpl.getInstance().setDataSource(dsW);
 		DaoImpl.getInstance().setDataSource_R(dsR);
-		DaoWrapper.getInstance().setDao(DaoImpl.getInstance());
+//		DaoWrapper.getInstance().setDao(DaoImpl.getInstance());
 	}
 	
 	public static void init(Map<String,DataSource> dsWMap,Map<String,DataSource> dsRMap){
