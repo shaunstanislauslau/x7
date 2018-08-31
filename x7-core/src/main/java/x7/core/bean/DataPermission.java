@@ -26,9 +26,9 @@ public interface DataPermission {
                 if (Objects.nonNull(dataPermissionValue)){
 
                     if (dataPermissionValue instanceof List){
-                        List<String> dpList = (List<String>)dataPermissionValue;
+                        List<Object> dpList = (List<Object>)dataPermissionValue;
                         if (Objects.nonNull(userDataPermissionValue)){
-                            dpList.addAll((List<String>)userDataPermissionValue);
+                            dpList.addAll((List<Object>)userDataPermissionValue);
                         }
                     }
                 }else{
@@ -80,7 +80,7 @@ public interface DataPermission {
                 });
             } else if (value instanceof List) {
 
-                List<String> dpsList = (List<String>) value;
+                List<Object> dpsList = (List<Object>) value;
                 if (dpsList.isEmpty())
                     return;
 
@@ -106,5 +106,6 @@ public interface DataPermission {
             }
         }
     }
+
 
 }
