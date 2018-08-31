@@ -17,27 +17,25 @@ public interface DataPermission {
 
     Object getDataPermissionValue();
 
-    public class Filter {
+    public class Chain {
 
-        public static void beforeHandle(Object dataPermission, Object userDataPermissionValue) {
-            if (dataPermission instanceof DataPermission){
-                DataPermission dp = (DataPermission) dataPermission;
-                Object dataPermissionValue = dp.getDataPermissionValue();
-                if (Objects.nonNull(dataPermissionValue)){
+        public static void beforeHandle(DataPermission dataPermission, Object userDataPermissionValue) {
+            DataPermission dp = (DataPermission) dataPermission;
+            Object dataPermissionValue = dp.getDataPermissionValue();
+            if (Objects.nonNull(dataPermissionValue)) {
 
-                    if (dataPermissionValue instanceof List){
-                        List<Object> dpList = (List<Object>)dataPermissionValue;
-                        if (Objects.nonNull(userDataPermissionValue)){
-                            dpList.addAll((List<Object>)userDataPermissionValue);
-                        }
+                if (dataPermissionValue instanceof List) {
+                    List<Object> dpList = (List<Object>) dataPermissionValue;
+                    if (Objects.nonNull(userDataPermissionValue)) {
+                        dpList.addAll((List<Object>) userDataPermissionValue);
                     }
-                }else{
-                    dp.setDataPermissionValue(userDataPermissionValue);
                 }
+            } else {
+                dp.setDataPermissionValue(userDataPermissionValue);
             }
         }
 
-        public static void onBuild(Criteria criteria, Object obj) {
+        protected static void onBuild(Criteria criteria, Object obj) {
             if (obj instanceof DataPermission) {
                 DataPermission dp = (DataPermission) obj;
                 criteria.setDataPermissionKey(dp.getDataPermissionKey());
@@ -45,7 +43,7 @@ public interface DataPermission {
             }
         }
 
-        public static void x(Criteria criteria) {
+        protected static void x(Criteria criteria) {
 
             final String key = criteria.getDataPermissionKey();
             final Object value = criteria.getDataPermissionValue();
