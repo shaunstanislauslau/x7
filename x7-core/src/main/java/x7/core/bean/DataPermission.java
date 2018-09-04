@@ -37,73 +37,43 @@ public interface DataPermission {
 
         protected static void onBuild(Criteria criteria, Object obj) {
             if (obj instanceof DataPermission) {
+                if (Objects.isNull(obj))
+                    return;
                 DataPermission dp = (DataPermission) obj;
-                criteria.setDataPermissionKey(dp.getDataPermissionKey());
-                criteria.setDataPermissionValue(dp.getDataPermissionValue());
+                criteria.setDataPermission(dp);
             }
         }
 
-        protected static void x(Criteria criteria) {
+        protected static void befroeGetCriteria(CriteriaBuilder builder, Criteria criteria) {
 
-            final String key = criteria.getDataPermissionKey();
-            final Object value = criteria.getDataPermissionValue();
+            DataPermission dp = criteria.getDataPermission();
+            if (Objects.isNull(dp))
+                return;
+            final String key = dp.getDataPermissionKey();
+            final Object value = dp.getDataPermissionValue();
 
             if (Objects.isNull(value) || StringUtil.isNullOrEmpty(key))
                 return;
 
-            for (Criteria.X x : criteria.getListX()) {
-                if (x.getKey().endsWith(key)) {//if added, return
-                    return;
-                }
-            }
-
+            /*
+             * DataPermission
+             */
+            String property = (criteria instanceof Criteria.Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
             if (value instanceof String) {
-                criteria.add(new Criteria.X() {
+                String s = (String) value;
 
-                    @Override
-                    public String getKey() {
-                        return (criteria instanceof Criteria.Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
-                    }
+                String v = s.endsWith("%") ? s : s + "%";
+                builder.and().likeRight(property, v);
 
-                    @Override
-                    public Predicate getPredicate() {
-                        return Predicate.LIKE;
-                    }
-
-                    @Override
-                    public Object getValue() {
-                        return ((String) value).endsWith("%") ? value : value + "%";
-                    }
-
-                });
             } else if (value instanceof List) {
 
                 List<Object> dpsList = (List<Object>) value;
                 if (dpsList.isEmpty())
                     return;
-
-                criteria.add(new Criteria.X() {
-
-                    @Override
-                    public String getKey() {
-                        return (criteria instanceof Criteria.Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
-                    }
-
-                    @Override
-                    public Predicate getPredicate() {
-                        return Predicate.IN;
-                    }
-
-                    @Override
-                    public Object getValue() {
-                        return dpsList;
-                    }
-
-                });
+                builder.and().in(property,dpsList);
 
             }
         }
     }
-
 
 }

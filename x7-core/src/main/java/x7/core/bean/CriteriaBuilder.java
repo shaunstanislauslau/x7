@@ -634,8 +634,6 @@ public class CriteriaBuilder {
 
     private static X x(StringBuilder sb, Criteria criteria) {
 
-        DataPermission.Chain.x(criteria);
-
         X xx = null;
         List<X> xList = criteria.getListX();
 
@@ -887,6 +885,7 @@ public class CriteriaBuilder {
     }
 
     public Criteria get() {
+        DataPermission.Chain.befroeGetCriteria(this,this.criteria);
         Iterator<X> ite = this.criteria.getListX().iterator();
         while (ite.hasNext()) {
             X x = ite.next();
@@ -895,6 +894,7 @@ public class CriteriaBuilder {
         }
         return this.criteria;
     }
+
 
     public class Fetchable extends CriteriaBuilder {
 

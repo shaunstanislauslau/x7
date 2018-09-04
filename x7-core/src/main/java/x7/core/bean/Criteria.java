@@ -32,7 +32,7 @@ import java.util.List;
  * @author sim
  *
  */
-public class Criteria implements Paged, DataPermission,Serializable {
+public class Criteria implements Paged, Serializable {
 
 	private static final long serialVersionUID = 7088698915888081349L;
 
@@ -49,8 +49,7 @@ public class Criteria implements Paged, DataPermission,Serializable {
 	
 	private List<X> listX = new ArrayList<X>();
 
-	private String dataPermissionKey;
-	private Object dataPermissionValue;//String,Or List<String>   LikeRight | In
+	private transient DataPermission dataPermission;//String,Or List<String>   LikeRight | In
 
 	private FetchMapper fetchMapper;
 
@@ -151,22 +150,13 @@ public class Criteria implements Paged, DataPermission,Serializable {
 		this.listX.add(x);
 	}
 
-	public String getDataPermissionKey(){
-		return this.dataPermissionKey;
+	public DataPermission getDataPermission() {
+		return dataPermission;
 	}
 
-	public Object getDataPermissionValue() {
-		return dataPermissionValue;
+	public void setDataPermission(DataPermission dataPermission) {
+		this.dataPermission = dataPermission;
 	}
-
-	public void setDataPermissionValue(Object dataPermissionValue) {
-		this.dataPermissionValue = dataPermissionValue;
-	}
-
-	public void setDataPermissionKey(String dataPermissionKey){
-		this.dataPermissionKey = dataPermissionKey;
-	}
-
 
 	public void paged(Paged paged) {
 		this.orderBy = paged.getOrderBy();
@@ -188,8 +178,7 @@ public class Criteria implements Paged, DataPermission,Serializable {
 				", direction=" + direction +
 				", valueList=" + valueList +
 				", listX=" + listX +
-				", dataPermissionKey='" + dataPermissionKey + '\'' +
-				", dataPermissionValue=" + dataPermissionValue +
+				", dataPermission=" + dataPermission  +
 				", fetchMapper=" + fetchMapper +
 				", isWhere=" + isWhere +
 				'}';
