@@ -465,14 +465,12 @@ public class CriteriaBuilder {
 		 */
         X groupBy = x(sb, criteria);
 
-        String sql = sb.toString();
-
-
 		/*
 		 * sort
 		 */
         sort(sb, criteria);
 
+        String sql = sb.toString();
 
         String column = criteria.resultAllScript();
 
