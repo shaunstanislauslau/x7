@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package x7.core.keeper;
+package x7.core.distributed;
 
 import x7.core.type.DataEventType;
 
 import java.util.List;
 
-public interface IKeeper {
+public interface Keeper {
 	
 	String CONFIG_ROOT = "configRoot";
 	String SYSTEM_ROOT = "systemRoot";

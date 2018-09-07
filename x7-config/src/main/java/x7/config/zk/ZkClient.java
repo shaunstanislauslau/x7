@@ -21,7 +21,7 @@ import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.data.Stat;
 import x7.core.config.Configs;
-import x7.core.keeper.IKeeper;
+import x7.core.distributed.Keeper;
 import x7.core.type.DataEventType;
 import x7.core.util.JsonX;
 import x7.core.util.KeyUtil;
@@ -33,9 +33,9 @@ public class ZkClient {
 
 	private ZooKeeper zk = null;
 	
-	private Set<IKeeper> keeperSet = new HashSet<IKeeper>();
+	private Set<Keeper> keeperSet = new HashSet<Keeper>();
 	
-	public void add(IKeeper keeper) {
+	public void add(Keeper keeper) {
 		this.keeperSet.add(keeper);
 	}
 	
@@ -87,7 +87,7 @@ public class ZkClient {
 
 					System.out.println("------------ " + type);
 
-					for (IKeeper keeper : keeperSet) {
+					for (Keeper keeper : keeperSet) {
 						keeper.onChanged(deType, keyList, value);
 					}
 
@@ -106,7 +106,7 @@ public class ZkClient {
 
 	}
 
-	public ZkClient(IKeeper keeper) {
+	public ZkClient(Keeper keeper) {
 		
 		keeperSet.add(keeper);
 		
@@ -157,7 +157,7 @@ public class ZkClient {
 
 					System.out.println("------------ " + type);
 
-					for (IKeeper keeper : keeperSet) {
+					for (Keeper keeper : keeperSet) {
 						keeper.onChanged(deType, keyList, value);
 					}
 

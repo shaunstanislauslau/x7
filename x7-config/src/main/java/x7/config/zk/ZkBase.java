@@ -17,7 +17,7 @@
 package x7.config.zk;
 
 import org.apache.zookeeper.CreateMode;
-import x7.core.keeper.IKeeper;
+import x7.core.distributed.Keeper;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class ZkBase {
 		zkClient = new ZkClient(address);
 	}
 
-	public void add(IKeeper keeper) {
+	public void add(Keeper keeper) {
 		this.zkClient.add(keeper);
 	}
 	

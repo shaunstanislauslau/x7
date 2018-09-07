@@ -17,7 +17,7 @@
 package x7.config;
 
 import x7.core.config.Configs;
-import x7.core.keeper.IKeeper;
+import x7.core.distributed.Keeper;
 import x7.core.type.DataEventType;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class ConfigKeeper implements IKeeper{
+public class ConfigKeeper implements Keeper {
 
 	private  Map<String, Object> map = Configs.referMap(null);
 	
