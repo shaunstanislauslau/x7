@@ -19,6 +19,7 @@ package x7.core.bean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import x7.core.bean.CriteriaBuilder.FetchMapper;
 import x7.core.util.BeanUtil;
+import x7.core.util.JsonX;
 import x7.core.web.Direction;
 import x7.core.web.Paged;
 
@@ -45,6 +46,10 @@ public class Criteria implements Paged, Serializable {
 	private String orderBy;
 	private Direction direction = Direction.DESC;
 
+	private Distinct distinct;
+	private String groupBy;
+	private List<Reduce> reduceList = new ArrayList<>();
+
 	private List<Object> valueList = new ArrayList<Object>();
 	
 	private List<X> listX = new ArrayList<X>();
@@ -55,9 +60,7 @@ public class Criteria implements Paged, Serializable {
 
 	protected transient boolean isWhere = true;
 
-	public Criteria(){
-
-	}
+	public Criteria(){}
 
 	public List<Object> getValueList() {
 		return valueList;
@@ -74,7 +77,6 @@ public class Criteria implements Paged, Serializable {
 	public void setDirection(Direction sc) {
 		this.direction = sc;
 	}
-
 
 	public Class<?> getClz() {
 		return clz;
@@ -97,9 +99,21 @@ public class Criteria implements Paged, Serializable {
 		return false;
 	}
 
+	private transient String countDistinct = "COUNT(*) count";
+	protected void setCountDistinct(String str){
+		this.countDistinct = str;
+	}
+	protected String getCountDistinct(){
+		return this.countDistinct;
+	}
+
+	private transient String customedResultKey = "*";
+	protected void setCustomedResultKey(String str){
+		this.customedResultKey = str;
+	}
 
 	protected String resultAllScript() {
-		return "*";
+		return customedResultKey;
 	}
 
 	public FetchMapper getFetchMapper() {
@@ -142,6 +156,30 @@ public class Criteria implements Paged, Serializable {
 		this.rows = rows;
 	}
 
+	public Distinct getDistinct() {
+		return distinct;
+	}
+
+	public List<Reduce> getReduceList() {
+		return reduceList;
+	}
+
+	public String getGroupBy() {
+		return groupBy;
+	}
+
+	public void setGroupBy(String groupBy) {
+		this.groupBy = groupBy;
+	}
+
+	public void setReduceList(List<Reduce> reduceList) {
+		this.reduceList = reduceList;
+	}
+
+	public void setDistinct(Distinct distinct) {
+		this.distinct = distinct;
+	}
+
 	public List<X> getListX() {
 		return this.listX;
 	}
@@ -169,18 +207,22 @@ public class Criteria implements Paged, Serializable {
 	@Override
 	public String toString() {
 		return "Criteria{" +
-				"clz=" + clz +
-				", parsed=" + parsed +
-				", isScroll=" + isScroll +
+				"isScroll=" + isScroll +
 				", page=" + page +
 				", rows=" + rows +
 				", orderBy='" + orderBy + '\'' +
 				", direction=" + direction +
+				", distinct=" + distinct +
+				", groupBy='" + groupBy + '\'' +
+				", reduceList=" + reduceList +
 				", valueList=" + valueList +
 				", listX=" + listX +
-				", dataPermission=" + dataPermission  +
+				", dataPermission=" + dataPermission +
 				", fetchMapper=" + fetchMapper +
 				", isWhere=" + isWhere +
+				", countDistinct='" + countDistinct + '\'' +
+				", customedResultKey='" + customedResultKey + '\'' +
+				", clz=" + clz +
 				'}';
 	}
 
@@ -265,20 +307,25 @@ public class Criteria implements Paged, Serializable {
 
 		@Override
 		protected String resultAllScript() {
-			int size = 0;
-			String column = "";
-			if (resultList.isEmpty()) {
-				column += " * ";
-			} else {
-				size = resultList.size();
-				for (int i = 0; i < size; i++) {
-					column = column + " " + resultList.get(i);
-					if (i < size - 1) {
-						column += ",";
+			if (!super.customedResultKey.equals("*")){
+				return super.customedResultKey;
+			}else {
+				int size = 0;
+				String column = "";
+				if (resultList.isEmpty()) {
+					column += " * ";
+				} else {
+					size = resultList.size();
+					for (int i = 0; i < size; i++) {
+						column = column + " " + resultList.get(i);
+						if (i < size - 1) {
+							column += ",";
+						}
 					}
 				}
+				return column;
 			}
-			return column;
+
 		}
 
 		public List<String> listAllResultKey() {
@@ -375,5 +422,6 @@ public class Criteria implements Paged, Serializable {
 		MIN,
 		AVG
 	}
+
 
 }

@@ -22,6 +22,12 @@ public class RefreshCondition<T> {
     }
 
     public void setConditionMap(Map<String, Object> conditionMap) {
+        for (String key : conditionMap.keySet()){
+            Object value = conditionMap.get(key);
+            if (value.getClass().isEnum()){
+                conditionMap.put(key,value.toString());
+            }
+        }
         this.conditionMap = conditionMap;
     }
 

@@ -40,6 +40,54 @@ public class CriteriaBuilder {
 
     private CriteriaBuilder instance;
 
+
+    public CriteriaBuilder distinct(Object... objs) {
+        if (objs == null)
+            throw new RuntimeException("distinct non resultKey");
+        Distinct distinct = this.criteria.getDistinct();
+        if (Objects.isNull(distinct)) {
+            distinct = new Distinct();
+            this.criteria.setDistinct(distinct);
+        }
+        for (Object obj : objs) {
+            if (obj instanceof String) {
+                distinct.add(obj.toString());
+            } else if (obj instanceof Map) {
+                Map map = (Map) obj;
+                Set<Entry> set = map.entrySet();
+                for (Entry entry : set) {
+                    Object key = entry.getKey();
+                    Object value = entry.getValue();
+                    if (value instanceof Map) {
+                        Map vMap = (Map) value;
+                        for (Object k : vMap.keySet()) {
+                            distinct.add(key.toString() + "." + k.toString());
+                        }
+                    }
+                }
+
+            } else {
+                throw new RuntimeException("distinct param suggests String, or Map");
+            }
+        }
+        return this;
+    }
+
+    public CriteriaBuilder groupBy(String property){
+        this.criteria.setGroupBy(property);
+        return this;
+    }
+
+
+    public CriteriaBuilder reduce(Criteria.ReduceType type, String property) {
+        Reduce reduce = new Reduce();
+        reduce.setType(type);
+        reduce.setProperty(property);
+        this.criteria.getReduceList().add(reduce);
+        return this;
+    }
+
+
     public P and() {
 
         X x = new X();
@@ -47,7 +95,7 @@ public class CriteriaBuilder {
         x.setValue(Conjunction.AND);
 
         X current = p.getX();
-        if (current != null ) {
+        if (current != null) {
             X parent = current.getParent();
             if (parent != null) {
                 List<X> subList = parent.getSubList();
@@ -55,7 +103,7 @@ public class CriteriaBuilder {
                     subList.add(x);
                     x.setParent(parent);
                 }
-            }else{
+            } else {
                 this.criteria.add(x);
             }
         } else {
@@ -74,7 +122,7 @@ public class CriteriaBuilder {
         x.setValue(Conjunction.OR);
 
         X current = p.getX();
-        if (current != null ) {
+        if (current != null) {
             X parent = current.getParent();
             if (parent != null) {
                 List<X> subList = parent.getSubList();
@@ -82,7 +130,7 @@ public class CriteriaBuilder {
                     subList.add(x);
                     x.setParent(parent);
                 }
-            }else{
+            } else {
                 this.criteria.add(x);
             }
         } else {
@@ -439,7 +487,7 @@ public class CriteriaBuilder {
 
     public void paged(Paged paged) {
         criteria.paged(paged);
-        DataPermission.Chain.onBuild(criteria,paged);
+        DataPermission.Chain.onBuild(criteria, paged);
     }
 
     public Class<?> getClz() {
@@ -456,36 +504,33 @@ public class CriteriaBuilder {
         select(sb, criteria);
 
 		/*
-		 * from table
+         * from table
 		 */
         boolean hasSourceScript = criteria.sourceScript(sb);
 
 		/*
 		 * StringList
 		 */
-        X groupBy = x(sb, criteria);
+        x(sb, criteria);
 
-		/*
+        /*
+         * groupBy
+         */
+        groupBy(sb, criteria);
+
+        /*
 		 * sort
 		 */
         sort(sb, criteria);
 
         String sql = sb.toString();
 
-        String column = criteria.resultAllScript();
-
         String[] sqlArr = new String[3];
-        String str = sql.replace(Mapped.TAG, column);
-        sqlArr[1] = str;
-        if (groupBy != null) {
-            str = str.replaceAll(" +", " ");
-            str = str.replace(") count", ") _count").replace(")count", ") _count");
-            str = str.replace("count (", "count(");
-            str = str.replace(" count ", " _count ");
-            sqlArr[0] = "select count(tc." + groupBy.getKey() + ") count from (" + str + ") tc";
-        } else {
-            sqlArr[0] = sql.replace(Mapped.TAG, "COUNT(*) count");
+        if (!criteria.isScroll()) {
+            sqlArr[0] = sql.replace(Mapped.TAG, criteria.getCountDistinct());
+            System.out.println(sqlArr[0]);
         }
+        sqlArr[1] = sql.replace(Mapped.TAG, criteria.resultAllScript());
         sqlArr[2] = sql;
 
         if (hasSourceScript) {
@@ -555,7 +600,47 @@ public class CriteriaBuilder {
     }
 
     private static void select(StringBuilder sb, Criteria criteria) {
+
         sb.append("SELECT").append(SPACE).append(Mapped.TAG);
+        boolean flag = false;
+
+        StringBuilder column = new StringBuilder();
+        if (Objects.nonNull(criteria.getDistinct())) {
+            column.append(" DISTINCT ");
+            List<String> list = criteria.getDistinct().getList();
+            int size = list.size();
+            int i = 0;
+            for (String resultKey : list) {
+                column.append(resultKey);
+                i++;
+                if (i < size) {
+                    column.append(", ");
+                }
+            }
+            flag = true;
+            criteria.setCountDistinct("COUNT(" + column.toString() + ") count");
+        }
+
+        List<Reduce> reduceList = criteria.getReduceList();
+
+        int i = 0;
+        for (Reduce reduce : reduceList) {
+            if (flag) {
+                column.append(", ");
+            }
+            column.append(reduce.getType()).append("( ").append(reduce.getProperty()).append(" ) ")
+                    .append(reduce.getType().toString().toLowerCase() + "_" + i++);
+            flag = true;
+        }
+
+        if (column.capacity()>0)
+            criteria.setCustomedResultKey(column.toString());
+    }
+
+    private static void groupBy(StringBuilder sb, Criteria criteria) {
+        if (StringUtil.isNotNull(criteria.getGroupBy())) {
+            sb.append(Conjunction.GROUP_BY.sql()).append(criteria.getGroupBy());
+        }
     }
 
     private static void sort(StringBuilder sb, Criteria criteria) {
@@ -585,15 +670,15 @@ public class CriteriaBuilder {
                     x(xSb, subList, criteria, false);//sub concat
 
                     String script = xSb.toString();
-                    if (StringUtil.isNotNull(script)){
+                    if (StringUtil.isNotNull(script)) {
                         final String and = Conjunction.AND.sql();
                         final String or = Conjunction.OR.sql();
-                        if (script.startsWith(and)){
-                            script = script.replaceFirst(and,"");
-                        }else if (script.startsWith(or)){
-                            script = script.replaceFirst(or,"");
+                        if (script.startsWith(and)) {
+                            script = script.replaceFirst(and, "");
+                        } else if (script.startsWith(or)) {
+                            script = script.replaceFirst(or, "");
                         }
-                        x.setScript(Predicate.SUB_BEGIN.sql()+script+Predicate.SUB_END.sql());
+                        x.setScript(Predicate.SUB_BEGIN.sql() + script + Predicate.SUB_END.sql());
                     }
                 }
 
@@ -605,23 +690,18 @@ public class CriteriaBuilder {
                 continue;
             }
 
-//			if (x.getConjunction() == Conjunction.GROUP_BY) {
-//
-//				xx = x;
-//				return xx;
-//			}
 
             if (StringUtil.isNotNull(x.getKey())) {
                 if (x.getKey().equals(Predicate.SUB.sql())) {
                     if (Objects.nonNull(x.getScript())) {
 
-                        appendConjunction(sb,x,criteria,isWhere);
+                        appendConjunction(sb, x, criteria, isWhere);
                         sb.append(x.getScript());
                     }
                     continue;
                 }
             }
-            x(x, criteria,isWhere);
+            x(x, criteria, isWhere);
 
             if (Objects.nonNull(x.getScript())) {
                 sb.append(x.getScript());
@@ -630,29 +710,27 @@ public class CriteriaBuilder {
 
     }
 
-    private static X x(StringBuilder sb, Criteria criteria) {
+    private static void x(StringBuilder sb, Criteria criteria) {
 
-        X xx = null;
         List<X> xList = criteria.getListX();
 
-        x(sb, xList, criteria,true);
+        x(sb, xList, criteria, true);
 
-        return xx;
     }
 
 
-    private static void appendConjunction(StringBuilder sb, X x, Criteria criteria,boolean isWhere){
+    private static void appendConjunction(StringBuilder sb, X x, Criteria criteria, boolean isWhere) {
         if (Objects.isNull(x.getConjunction()))
             return;
-        if (isWhere && criteria.isWhere){
+        if (isWhere && criteria.isWhere) {
             criteria.isWhere = false;
             sb.append(Conjunction.WHERE.sql());
-        }else {
+        } else {
             sb.append(x.getConjunction().sql());
         }
     }
 
-    private static void x(X x, Criteria criteria,boolean isWhere) {
+    private static void x(X x, Criteria criteria, boolean isWhere) {
 
         StringBuilder sb = new StringBuilder();
         Predicate p = x.getPredicate();
@@ -660,14 +738,14 @@ public class CriteriaBuilder {
 
         if (p == Predicate.IN || p == Predicate.NOT_IN) {
 
-            appendConjunction(sb,x,criteria,isWhere);
+            appendConjunction(sb, x, criteria, isWhere);
 
             sb.append(x.getKey()).append(p.sql());
             List<Object> inList = (List<Object>) v;
             in(sb, inList);
         } else if (p == Predicate.BETWEEN) {
 
-            appendConjunction(sb,x,criteria,isWhere);
+            appendConjunction(sb, x, criteria, isWhere);
 
             sb.append(x.getKey()).append(p.sql());
             between(sb);
@@ -679,7 +757,7 @@ public class CriteriaBuilder {
 
         } else if (p == Predicate.IS_NOT_NULL || p == Predicate.IS_NULL) {
 
-            appendConjunction(sb,x,criteria,isWhere);
+            appendConjunction(sb, x, criteria, isWhere);
 
             sb.append(v).append(p.sql());
 
@@ -687,7 +765,7 @@ public class CriteriaBuilder {
             if (StringUtil.isNullOrEmpty(x.getKey()))
                 return;
 
-            appendConjunction(sb,x,criteria,isWhere);
+            appendConjunction(sb, x, criteria, isWhere);
 
             Class clz = v.getClass();
             sb.append(x.getKey()).append(x.getPredicate().sql());
@@ -861,17 +939,29 @@ public class CriteriaBuilder {
     public interface P {
 
         CriteriaBuilder eq(String property, Object value);
+
         CriteriaBuilder lt(String property, Object value);
+
         CriteriaBuilder lte(String property, Object value);
+
         CriteriaBuilder gt(String property, Object value);
+
         CriteriaBuilder gte(String property, Object value);
+
         CriteriaBuilder ne(String property, Object value);
+
         CriteriaBuilder like(String property, String value);
+
         CriteriaBuilder likeRight(String property, String value);
+
         CriteriaBuilder between(String property, Object min, Object max);
+
         CriteriaBuilder in(String property, List<Object> list);
+
         CriteriaBuilder nin(String property, List<Object> list);
+
         CriteriaBuilder isNotNull(String property);
+
         CriteriaBuilder isNull(String property);
 
         void under(X x);
@@ -883,7 +973,7 @@ public class CriteriaBuilder {
     }
 
     public Criteria get() {
-        DataPermission.Chain.befroeGetCriteria(this,this.criteria);
+        DataPermission.Chain.befroeGetCriteria(this, this.criteria);
         Iterator<X> ite = this.criteria.getListX().iterator();
         while (ite.hasNext()) {
             X x = ite.next();
