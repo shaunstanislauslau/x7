@@ -5,7 +5,6 @@ public enum Conjunction implements SqlScript{
 	AND(" AND "),
 	OR(" OR "),
 	ORDER_BY(" ORDER BY "),
-	GROUP_BY(" GROUP BY "),
 	HAVING(" HAVING "),
 	WHERE(" WHERE "),
 	;

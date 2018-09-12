@@ -16,7 +16,7 @@
  */
 package x7.core.bean;
 
-import x7.core.bean.Criteria.Fetch;
+import x7.core.bean.Criteria.ResultMapped;
 import x7.core.bean.Criteria.X;
 import x7.core.repository.Mapped;
 import x7.core.util.*;
@@ -418,9 +418,9 @@ public class CriteriaBuilder {
         return builder;
     }
 
-    public static Fetchable buildFetchable(Class<?> clz, Fetched ro) {
+    public static ResultMapable buildResultMapable(Class<?> clz, Fetched ro) {
         CriteriaBuilder b = new CriteriaBuilder();
-        Fetchable builder = b.new Fetchable(clz, ro);
+        ResultMapable builder = b.new ResultMapable(clz, ro);
 
         if (ro != null) {
 
@@ -429,6 +429,13 @@ public class CriteriaBuilder {
             }
 
         }
+
+        return builder;
+    }
+
+    public static ResultMapable buildResultMapable(Class<?> clz) {
+        CriteriaBuilder b = new CriteriaBuilder();
+        ResultMapable builder = b.new ResultMapable(clz);
 
         return builder;
     }
@@ -451,20 +458,14 @@ public class CriteriaBuilder {
 		 */
         select(sb, criteria);
 
-		/*
+        /*
          * from table
 		 */
-        boolean hasSourceScript = criteria.sourceScript(sb);
-
+        criteria.sourceScript(sb);
 		/*
          * StringList
 		 */
         x(sb, criteria);
-
-        /*
-         * groupBy
-         */
-        groupBy(sb, (Fetch)criteria);
 
         /*
 		 * sort
@@ -481,8 +482,10 @@ public class CriteriaBuilder {
         sqlArr[1] = sql.replace(Mapped.TAG, criteria.resultAllScript());
         sqlArr[2] = sql;
 
-        if (hasSourceScript) {
+        boolean isResultMap = (criteria instanceof ResultMapped);
+        if (isResultMap) {
             // sqlArr[1]: core sql
+            ResultMapped resultMapped = (ResultMapped) criteria;
             Map<String, List<String>> map = new HashMap<>();
             {
                 String[] arr = sqlArr[1].split(SqlScript.SPACE);
@@ -501,10 +504,10 @@ public class CriteriaBuilder {
                 }
             }
 
-            FetchMapper fetchMapper = criteria.getFetchMapper();//
-            if (Objects.isNull(fetchMapper)){
-                fetchMapper = new FetchMapper();
-                criteria.setFetchMapper(fetchMapper);
+            Criteria.MapMapper mapMapper = resultMapped.getMapMapper();//
+            if (Objects.isNull(mapMapper)){
+                mapMapper = new Criteria.MapMapper();
+                resultMapped.setMapMapper(mapMapper);
             }
             Map<String, String> clzTableMapper = new HashMap<String, String>();
             {
@@ -522,15 +525,15 @@ public class CriteriaBuilder {
                         if (StringUtil.isNullOrEmpty(mapper)) {
                             mapper = property;// dynamic
                         }
-                        fetchMapper.put(key + SqlScript.POINT + property, tableName + SqlScript.POINT + mapper);
+                        mapMapper.put(key + SqlScript.POINT + property, tableName + SqlScript.POINT + mapper);
                     }
                 }
             }
 
             for (int i = 0; i < 3; i++) {
                 String temp = sqlArr[i];
-                for (String property : fetchMapper.getPropertyMapperMap().keySet()) {
-                    temp = temp.replace(property, fetchMapper.mapper(property));
+                for (String property : mapMapper.getPropertyMapperMap().keySet()) {
+                    temp = temp.replace(property, mapMapper.mapper(property));
                 }
                 for (String clzName : clzTableMapper.keySet()) {
                     String tableName = clzTableMapper.get(clzName);
@@ -555,25 +558,25 @@ public class CriteriaBuilder {
 
         sb.append(SqlScript.SELECT).append(SqlScript.SPACE).append(Mapped.TAG);
 
-        if (! (criteria instanceof Fetch))
+        if (! (criteria instanceof Criteria.ResultMapped))
             return;
 
         boolean flag = false;
 
-        Fetch fetch = (Fetch)criteria;
+        ResultMapped resultMapped = (Criteria.ResultMapped)criteria;
         StringBuilder column = new StringBuilder();
 
-        if (Objects.nonNull(fetch.getDistinct())) {
+        if (Objects.nonNull(resultMapped.getDistinct())) {
 
-            if (!flag)fetch.getResultList().clear();//去掉构造方法里设置的返回key
+            if (!flag) resultMapped.getResultList().clear();//去掉构造方法里设置的返回key
 
             column.append(SqlScript.DISTINCT);
-            List<String> list = fetch.getDistinct().getList();
+            List<String> list = resultMapped.getDistinct().getList();
             int size = list.size();
             int i = 0;
             for (String resultKey : list) {
                 column.append(resultKey);
-                fetch.getResultList().add(resultKey);
+                resultMapped.getResultList().add(resultKey);
                 i++;
                 if (i < size) {
                     column.append(", ");
@@ -583,16 +586,16 @@ public class CriteriaBuilder {
             flag = true;
         }
 
-        List<Reduce> reduceList = fetch.getReduceList();
+        List<Reduce> reduceList = resultMapped.getReduceList();
 
         if (!reduceList.isEmpty()) {
 
-            if (!flag)fetch.getResultList().clear();//去掉构造方法里设置的返回key
+            if (!flag) resultMapped.getResultList().clear();//去掉构造方法里设置的返回key
 
-            FetchMapper fetchMapper = criteria.getFetchMapper();
-            if (Objects.isNull(fetchMapper)) {
-                fetchMapper = new FetchMapper();
-                criteria.setFetchMapper(fetchMapper);
+            Criteria.MapMapper mapMapper = resultMapped.getMapMapper();
+            if (Objects.isNull(mapMapper)) {
+                mapMapper = new Criteria.MapMapper();
+                resultMapped.setMapMapper(mapMapper);
             }
 
             for (Reduce reduce : reduceList) {
@@ -605,20 +608,14 @@ public class CriteriaBuilder {
                         .append(alianName);
 
                 String alainProperty = reduce.getProperty() + BeanUtil.getByFirstUpper(reduce.getType().toString().toLowerCase());
-                fetchMapper.put(alainProperty, alianName);//REDUCE ALIAN NAME
-                fetch.getResultList().add(alainProperty);
+                mapMapper.put(alainProperty, alianName);//REDUCE ALIAN NAME
+                resultMapped.getResultList().add(alainProperty);
                 flag = true;
             }
         }
 
         if (column.capacity() > 0)
             criteria.setCustomedResultKey(column.toString());
-    }
-
-    private static void groupBy(StringBuilder sb, Fetch fetch) {
-        if (StringUtil.isNotNull(fetch.getGroupBy())) {
-            sb.append(Conjunction.GROUP_BY.sql()).append(fetch.getGroupBy());
-        }
     }
 
     private static void sort(StringBuilder sb, Criteria criteria) {
@@ -814,15 +811,12 @@ public class CriteriaBuilder {
 
     }
 
-    protected static void fetchSql(StringBuilder sb, Criteria criteria) {
-
-    }
 
     private BeanElement getBeanElement(String property) {
 
         String str = null;
-        if (property.contains(" ")) {
-            String[] arr = property.split(" ");
+        if (property.contains(SqlScript.SPACE)) {
+            String[] arr = property.split(SqlScript.SPACE);
             str = arr[0];
         } else {
             str = property;
@@ -961,33 +955,33 @@ public class CriteriaBuilder {
     }
 
 
-    public class Fetchable extends CriteriaBuilder {
+    public class ResultMapable extends CriteriaBuilder {
 
         @Override
-        public Fetch get() {
-            return (Fetch) super.get();
+        public Criteria.ResultMapped get() {
+            return (ResultMapped) super.get();
         }
 
         private void init() {
             super.instance = this;
             Criteria c = new Criteria();
-            Criteria.Fetch join = c.new Fetch();
-            super.criteria = join;
+            Criteria.ResultMapped resultMapped = c.new ResultMapped();
+            super.criteria = resultMapped;
         }
 
         private void init(Class<?> clz) {
-            Criteria.Fetch f = (Criteria.Fetch) super.criteria;
+            ResultMapped f = (Criteria.ResultMapped) super.criteria;
             f.setClz(clz);
             Parsed parsed = Parser.get(clz);
             f.setParsed(parsed);
         }
 
-        public Fetchable(Class<?> clz) {
+        public ResultMapable(Class<?> clz) {
             init();
             init(clz);
         }
 
-        public Fetchable(Class<?> clz, Fetched fetchResult) {
+        public ResultMapable(Class<?> clz, Fetched fetchResult) {
 
             init();
             init(clz);
@@ -996,9 +990,6 @@ public class CriteriaBuilder {
 
         }
 
-//        private Criteria.Fetch getCriteriaFetch() {
-//            return (Criteria.Fetch) super.criteria;
-//        }
 
         private void xAddResultKey(List<String> xExpressionList) {
             for (String xExpression : xExpressionList) {
@@ -1006,10 +997,10 @@ public class CriteriaBuilder {
             }
         }
 
-        private void xAddResultKey(Fetched fetchResutl) {
-            if (fetchResutl == null)
+        private void xAddResultKey(Fetched fetchResult) {
+            if (fetchResult == null)
                 return;
-            Map<String, Object> resultObjMap = fetchResutl.getResultKeyMap();
+            Map<String, Object> resultObjMap = fetchResult.getResultKeyMap();
             if (resultObjMap == null || resultObjMap.isEmpty())
                 return;
             List<String> xExpressionList = BeanMapUtil.toStringKeyList(resultObjMap);
@@ -1018,14 +1009,14 @@ public class CriteriaBuilder {
 
 
 
-        public Fetchable distinct(Object... objs) {
+        public ResultMapable distinct(Object... objs) {
             if (objs == null)
                 throw new RuntimeException("distinct non resultKey");
-            Fetch fetch = get();
-            Distinct distinct = fetch.getDistinct();
+            ResultMapped resultMapped = get();
+            Distinct distinct = resultMapped.getDistinct();
             if (Objects.isNull(distinct)) {
                 distinct = new Distinct();
-                fetch.setDistinct(distinct);
+                resultMapped.setDistinct(distinct);
             }
             for (Object obj : objs) {
                 if (obj instanceof String) {
@@ -1051,13 +1042,13 @@ public class CriteriaBuilder {
             return this;
         }
 
-        public Fetchable groupBy(String property) {
+        public ResultMapable groupBy(String property) {
             get().setGroupBy(property);
             return this;
         }
 
 
-        public Fetchable reduce(Criteria.ReduceType type, String property) {
+        public ResultMapable reduce(Criteria.ReduceType type, String property) {
             Reduce reduce = new Reduce();
             reduce.setType(type);
             reduce.setProperty(property);
@@ -1068,41 +1059,5 @@ public class CriteriaBuilder {
 
     }
 
-    ///////////////////////////////////////////////////////////////////// <BR>
-    /////////////////////////// REPOSITORY DEV WEB IO//////////////////// <BR>
-    ///////////////////////////////////////////////////////////////////// <BR>
-    ///////////////////////////////////////////////////////////////////// <BR>
-
-    public static class FetchMapper {
-        private Map<String, String> propertyMapperMap = new HashMap<String, String>();
-        private Map<String, String> mapperPropertyMap = new HashMap<String, String>();
-
-        public Map<String, String> getPropertyMapperMap() {
-            return propertyMapperMap;
-        }
-
-        public Map<String, String> getMapperPropertyMap() {
-            return mapperPropertyMap;
-        }
-
-        public void put(String property, String mapper) {
-            this.propertyMapperMap.put(property, mapper);
-            this.mapperPropertyMap.put(mapper, property);
-        }
-
-        public String mapper(String property) {
-            return this.propertyMapperMap.get(property);
-        }
-
-        public String property(String mapper) {
-            return this.mapperPropertyMap.get(mapper);
-        }
-
-        @Override
-        public String toString() {
-            return "FetchMapper [propertyMapperMap=" + propertyMapperMap + ", mapperPropertyMap=" + mapperPropertyMap
-                    + "]";
-        }
-    }
 
 }

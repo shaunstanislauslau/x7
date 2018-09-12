@@ -17,7 +17,6 @@
 package x7.repository.dao;
 
 import x7.core.bean.Criteria;
-import x7.core.bean.Criteria.Fetch;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.config.Configs;
@@ -521,7 +520,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		return pagination;
 	}
 
-	private Pagination<Map<String, Object>> find(Fetch criterionJoinable, 
+	private Pagination<Map<String, Object>> find(Criteria.ResultMapped criterionJoinable,
 			String key) {
 		Connection conn = null;
 		try {
@@ -535,12 +534,12 @@ public class ShardingDaoImpl implements ShardingDao {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> find(Fetch fetch) {
+	public Pagination<Map<String, Object>> find(Criteria.ResultMapped resultMapped) {
 
-		String key = getKey(fetch);
+		String key = getKey(resultMapped);
 
 		if (StringUtil.isNotNull(key)) {
-			return find(fetch, key);
+			return find(resultMapped, key);
 		}
 
 		String policy = Configs.getString("x7.db.sharding.policy");
@@ -551,11 +550,11 @@ public class ShardingDaoImpl implements ShardingDao {
 		/*
 		 * map script
 		 */
-		final int page = fetch.getPage();
-		final int rows = fetch.getRows();
+		final int page = resultMapped.getPage();
+		final int rows = resultMapped.getRows();
 		Pagination<Map<String, Object>> pagination = new Pagination<>();
-		pagination.setOrderBy(fetch.getOrderBy());
-		pagination.setDirection(fetch.getDirection());
+		pagination.setOrderBy(resultMapped.getOrderBy());
+		pagination.setDirection(resultMapped.getDirection());
 		Map<String, Future<Pagination<Map<String, Object>>>> futureMap = new HashMap<>();
 
 		for (String k : keyArr) {
@@ -567,9 +566,9 @@ public class ShardingDaoImpl implements ShardingDao {
 
 					Pagination<Map<String, Object>> p = null;
 					try {
-						fetch.setRows(rows * page);
-						fetch.setPage(1);
-						p = find(fetch, k);
+						resultMapped.setRows(rows * page);
+						resultMapped.setPage(1);
+						p = find(resultMapped, k);
 					} catch (Exception e) {
 						for (Future<Pagination<Map<String, Object>>> f : futureMap.values()) {
 							f.cancel(true);
@@ -613,10 +612,10 @@ public class ShardingDaoImpl implements ShardingDao {
 			totalRows += p.getTotalRows();
 		}
 
-		String orderBy = fetch.getOrderBy();
-		Direction direction = fetch.getDirection();
+		String orderBy = resultMapped.getOrderBy();
+		Direction direction = resultMapped.getDirection();
 		if (StringUtil.isNullOrEmpty(orderBy)) {
-			Parsed parsed = Parser.get(fetch.getClz());
+			Parsed parsed = Parser.get(resultMapped.getClz());
 			orderBy = parsed.getKey(X.KEY_ONE);
 			if (Objects.isNull(orderBy))
 				throw new PersistenceException("No setting of PrimaryKey by @X.Key");

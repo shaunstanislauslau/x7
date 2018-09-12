@@ -54,6 +54,6 @@ public interface ShardingDao {
 	
 	<T> Pagination<T> find(Criteria criteria);
 	
-	Pagination<Map<String,Object>> find(Criteria.Fetch fetch);
+	Pagination<Map<String,Object>> find(Criteria.ResultMapped resultMapped);
 
 }

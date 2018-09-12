@@ -48,9 +48,9 @@ public class DevController {
 		}
 		
 		
-//		CriteriaBuilder.Fetchable criteriaBuilder = CriteriaBuilder.buildFetchable(isDev, map);
+//		CriteriaBuilder.ResultMapable criteriaBuilder = CriteriaBuilder.buildFetchable(isDev, map);
 //		
-//		Criteria.Fetch criteriaJoinable = (Criteria.Fetch) criteriaBuilder.get();
+//		Criteria.ResultMapped criteriaJoinable = (Criteria.ResultMapped) criteriaBuilder.get();
 //
 //		List<Map<String,Object>> list = SqlRepository.getInstance().list(criteriaJoinable);
 

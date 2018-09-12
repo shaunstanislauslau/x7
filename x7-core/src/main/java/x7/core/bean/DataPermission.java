@@ -58,11 +58,11 @@ public interface DataPermission {
             /*
              * DataPermission
              */
-            String property = (criteria instanceof Criteria.Fetch) ? (criteria.getClz().getSimpleName() + "." + key) : key;
+            String property = (criteria instanceof Criteria.ResultMapped) ? (criteria.getClz().getSimpleName() + "." + key) : key;
             if (value instanceof String) {
                 String s = (String) value;
 
-                String v = s.endsWith("%") ? s : s + "%";
+                String v = s.endsWith(SqlScript.LIKE_HOLDER) ? s : s + SqlScript.LIKE_HOLDER;
                 builder.and().likeRight(property, v);
 
             } else if (value instanceof List) {

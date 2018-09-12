@@ -135,18 +135,18 @@ public interface Repository {
 	 * 连表查询，标准化拼接
 	 * 尽量避免在互联网业务系统中使用<br>
 	 * 不支持缓存<br>
-	 * @param fetch
+	 * @param resultMapped
 	 * 
 	 */
-	Pagination<Map<String,Object>> find(Criteria.Fetch fetch);
+	Pagination<Map<String,Object>> find(Criteria.ResultMapped resultMapped);
 	
 	/**
 	 * 
 	 * 不要通过WEB传来的参数调用此接口, 因为没有分页限制
-	 * @param fetch
+	 * @param resultMapped
 	 * 
 	 */
-	List<Map<String,Object>> list(Criteria.Fetch fetch);
+	List<Map<String,Object>> list(Criteria.ResultMapped resultMapped);
 
 	boolean createBatch(List<? extends Object> objList);
 }

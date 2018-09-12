@@ -858,7 +858,7 @@ public class DaoImpl implements Dao {
 		sql = sql.replace(Mapped.TAG, script);
 		if (StringUtil.isNotNull(property)) {
 			property = parsed.getMapper(property);
-			sql = sql.replace("*", property);
+			sql = sql.replace(SqlScript.STAR, property);
 		}
 
 		System.out.println(sql);
@@ -944,7 +944,7 @@ public class DaoImpl implements Dao {
 		sql = sql.replace(Mapped.TAG, "COUNT(*) count");
 		if (StringUtil.isNotNull(property)) {
 			property = parsed.getMapper(property);
-			sql = sql.replace("*", property);
+			sql = sql.replace(SqlScript.STAR, property);
 		}
 
 		System.out.println(sql);
@@ -1259,7 +1259,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> find(Criteria.Fetch criteriaFetch) {
+	public Pagination<Map<String, Object>> find(Criteria.ResultMapped criteriaResultMapped) {
 
 		Connection conn = null;
 		try {
@@ -1268,31 +1268,31 @@ public class DaoImpl implements Dao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 
-		return this.find(criteriaFetch, conn);
+		return this.find(criteriaResultMapped, conn);
 	}
 
-	protected Pagination<Map<String, Object>> find(Criteria.Fetch criteriaFetch, Connection conn) {
+	protected Pagination<Map<String, Object>> find(Criteria.ResultMapped criteriaResultMapped, Connection conn) {
 
-		Class clz = criteriaFetch.getClz();
+		Class clz = criteriaResultMapped.getClz();
 
-		List<Object> valueList = criteriaFetch.getValueList();
+		List<Object> valueList = criteriaResultMapped.getValueList();
 
-		String[] sqlArr = CriteriaBuilder.parse(criteriaFetch);
+		String[] sqlArr = CriteriaBuilder.parse(criteriaResultMapped);
 
 		String sqlCount = sqlArr[0];
 		String sql = sqlArr[1];
 
-		int page = criteriaFetch.getPage();
-		int rows = criteriaFetch.getRows();
+		int page = criteriaResultMapped.getPage();
+		int rows = criteriaResultMapped.getRows();
 
 		Pagination<Map<String, Object>> pagination = new Pagination<Map<String, Object>>();
 		pagination.setPage(page);
 		pagination.setRows(rows);
-		pagination.setOrderBy(criteriaFetch.getOrderBy());
-		pagination.setDirection(criteriaFetch.getDirection());
+		pagination.setOrderBy(criteriaResultMapped.getOrderBy());
+		pagination.setDirection(criteriaResultMapped.getDirection());
 
 		long count = 0;
-		if (!criteriaFetch.isScroll()) {
+		if (!criteriaResultMapped.isScroll()) {
 			count = getCount(sqlCount, valueList);
 		}
 		pagination.setTotalRows(count);
@@ -1301,7 +1301,7 @@ public class DaoImpl implements Dao {
 
 		sql = dialect.match(sql, start, rows);
 
-		sql = sql.replace("*", criteriaFetch.getResultScript());
+		sql = sql.replace(SqlScript.STAR, criteriaResultMapped.getResultScript());
 
 		System.out.println(sql);
 
@@ -1315,9 +1315,9 @@ public class DaoImpl implements Dao {
 				pstmt.setObject(i++, obj);
 			}
 
-			List<String> resultKeyList = criteriaFetch.getResultList();
+			List<String> resultKeyList = criteriaResultMapped.getResultList();
 			if (resultKeyList.isEmpty()) {
-				resultKeyList = criteriaFetch.listAllResultKey();
+				resultKeyList = criteriaResultMapped.listAllResultKey();
 			}
 
 			ResultSet rs = pstmt.executeQuery();
@@ -1328,7 +1328,7 @@ public class DaoImpl implements Dao {
 					pagination.getList().add(mapR);
 
 					for (String property : resultKeyList) {
-						String mapper = criteriaFetch.getFetchMapper().mapper(property);
+						String mapper = criteriaResultMapped.getMapMapper().mapper(property);
 						mapR.put(property, rs.getObject(mapper));
 					}
 				}
@@ -1351,22 +1351,22 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public List<Map<String, Object>> list(Criteria.Fetch fetch) {
+	public List<Map<String, Object>> list(Criteria.ResultMapped resultMapped) {
 
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
-		Class clz = fetch.getClz();
+		Class clz = resultMapped.getClz();
 
-		List<Object> valueList = fetch.getValueList();
+		List<Object> valueList = resultMapped.getValueList();
 
-		String[] sqlArr = CriteriaBuilder.parse(fetch);
+		String[] sqlArr = CriteriaBuilder.parse(resultMapped);
 
 		String sql = sqlArr[1];
 
-		sql = sql.replace("*", fetch.getResultScript());
+		sql = sql.replace(SqlScript.STAR, resultMapped.getResultScript());
 
-		int page = fetch.getPage();
-		int rows = fetch.getRows();
+		int page = resultMapped.getPage();
+		int rows = resultMapped.getRows();
 		int start = (page - 1) * rows;
 
 		sql = dialect.match(sql, start, rows);
@@ -1385,9 +1385,9 @@ public class DaoImpl implements Dao {
 				pstmt.setObject(i++, obj);
 			}
 
-			List<String> columnList = fetch.getResultList();
+			List<String> columnList = resultMapped.getResultList();
 			if (columnList.isEmpty()) {
-				columnList = fetch.listAllResultKey();// FIXME ALLWAYS BUG
+				columnList = resultMapped.listAllResultKey();// FIXME ALLWAYS BUG
 			}
 
 			ResultSet rs = pstmt.executeQuery();
@@ -1398,7 +1398,7 @@ public class DaoImpl implements Dao {
 					list.add(mapR);
 
 					for (String property : columnList) {
-						String mapper = fetch.getFetchMapper().mapper(property);
+						String mapper = resultMapped.getMapMapper().mapper(property);
 						mapR.put(property, rs.getObject(mapper));
 					}
 
@@ -1413,8 +1413,8 @@ public class DaoImpl implements Dao {
 		}
 
 		if (!list.isEmpty()) {
-			List<Map<String, Object>> jsonableMapList = BeanMapUtil.toJsonableMapList(list);
-			return jsonableMapList;
+			List<Map<String, Object>> mapList = BeanMapUtil.toJsonableMapList(list);
+			return mapList;
 		}
 
 		return list;

@@ -8,6 +8,8 @@ public interface SqlScript {
 	String PLACE_HOLDER = "?";
 	String LIKE_HOLDER = "%";
 	String POINT = ".";
+	String STAR = "*";
+	String FROM = "FROM";
 
 	String sql();
 }

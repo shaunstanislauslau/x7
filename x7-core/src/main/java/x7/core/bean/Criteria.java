@@ -17,15 +17,15 @@
 package x7.core.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import x7.core.bean.CriteriaBuilder.FetchMapper;
 import x7.core.util.BeanUtil;
-import x7.core.util.JsonX;
 import x7.core.web.Direction;
 import x7.core.web.Paged;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 简单的SQL拼接标准化
@@ -51,8 +51,6 @@ public class Criteria implements Paged, Serializable {
 	private List<X> listX = new ArrayList<X>();
 
 	private transient DataPermission dataPermission;//String,Or List<String>   LikeRight | In
-
-	private FetchMapper fetchMapper;
 
 	protected transient boolean isWhere = true;
 
@@ -91,7 +89,7 @@ public class Criteria implements Paged, Serializable {
 	}
 
 	protected boolean sourceScript(StringBuilder sb) {
-		sb.append(" ").append(" FROM ").append(BeanUtil.getByFirstLower(getClz().getSimpleName()));
+		sb.append(SqlScript.SPACE).append(SqlScript.FROM).append(SqlScript.SPACE).append(BeanUtil.getByFirstLower(getClz().getSimpleName()));
 		return false;
 	}
 
@@ -103,21 +101,13 @@ public class Criteria implements Paged, Serializable {
 		return this.countDistinct;
 	}
 
-	private transient String customedResultKey = "*";
+	private transient String customedResultKey = SqlScript.STAR;
 	protected void setCustomedResultKey(String str){
 		this.customedResultKey = str;
 	}
 
 	protected String resultAllScript() {
 		return customedResultKey;
-	}
-
-	public FetchMapper getFetchMapper() {
-		return fetchMapper;
-	}
-
-	public void setFetchMapper(FetchMapper fetchMapper) {
-		this.fetchMapper = fetchMapper;
 	}
 
 	public String getOrderBy() {
@@ -188,7 +178,6 @@ public class Criteria implements Paged, Serializable {
 				", valueList=" + valueList +
 				", listX=" + listX +
 				", dataPermission=" + dataPermission +
-				", fetchMapper=" + fetchMapper +
 				", isWhere=" + isWhere +
 				", countDistinct='" + countDistinct + '\'' +
 				", customedResultKey='" + customedResultKey + '\'' +
@@ -220,14 +209,14 @@ public class Criteria implements Paged, Serializable {
 	 * 
 	 * @author Sim
 	 */
-	public class Fetch extends Criteria {
+	public class ResultMapped extends Criteria {
 
 		private List<String> resultList = new ArrayList<String>();
 		private String sourceScript;
 		private Distinct distinct;
 		private String groupBy;
 		private List<Reduce> reduceList = new ArrayList<>();
-
+		private MapMapper mapMapper;
 
 		public Distinct getDistinct() {
 			return distinct;
@@ -253,15 +242,23 @@ public class Criteria implements Paged, Serializable {
 			this.distinct = distinct;
 		}
 
+		public MapMapper getMapMapper() {
+			return this.mapMapper;
+		}
+
+		public void setMapMapper(MapMapper mapMapper) {
+			this.mapMapper = mapMapper;
+		}
+
 		public String getResultScript() {
 			if (resultList.isEmpty()){
-				return "*";
+				return SqlScript.STAR;
 			}else{
 				StringBuilder sb = new StringBuilder();
 				int i = 0;
 				int size = resultList.size() - 1;
 				for (String str : resultList){
-					String mapper = getFetchMapper().mapper(str);
+					String mapper = getMapMapper().mapper(str);
 					sb.append(mapper);
 					if (i < size){
 						sb.append(",");
@@ -289,14 +286,14 @@ public class Criteria implements Paged, Serializable {
 		@Override
 		protected boolean sourceScript(StringBuilder sb) {
 			if (sourceScript == null) {
-				sb.append(" ").append(" FROM ").append(BeanUtil.getByFirstLower(getClz().getSimpleName()));
+				sb.append(SqlScript.SPACE).append(SqlScript.FROM).append(SqlScript.SPACE).append(BeanUtil.getByFirstLower(getClz().getSimpleName()));
 				return false;
 			} else {
 				String temp = sourceScript.trim();
-				if (temp.startsWith("FROM") || temp.startsWith("from")) {
+				if (temp.startsWith(SqlScript.FROM) || temp.startsWith(SqlScript.FROM.toLowerCase())) {
 					sb.append(sourceScript);
 				} else {
-					sb.append(" ").append(" FROM ").append(sourceScript);
+					sb.append(SqlScript.SPACE).append(SqlScript.FROM).append(SqlScript.SPACE).append(sourceScript);
 				}
 				return true;
 			}
@@ -305,17 +302,17 @@ public class Criteria implements Paged, Serializable {
 
 		@Override
 		protected String resultAllScript() {
-			if (!super.customedResultKey.equals("*")){
+			if (!super.customedResultKey.equals(SqlScript.STAR)){
 				return super.customedResultKey;
 			}else {
 				int size = 0;
 				String column = "";
 				if (resultList.isEmpty()) {
-					column += " * ";
+					column += (SqlScript.SPACE + SqlScript.STAR + SqlScript.SPACE);
 				} else {
 					size = resultList.size();
 					for (int i = 0; i < size; i++) {
-						column = column + " " + resultList.get(i);
+						column = column + SqlScript.SPACE + resultList.get(i);
 						if (i < size - 1) {
 							column += ",";
 						}
@@ -338,7 +335,7 @@ public class Criteria implements Paged, Serializable {
 
 		@Override
 		public String toString() {
-			return "Fetch{" +
+			return "ResultMapped{" +
 					"resultList=" + resultList +
 					", sourceScript='" + sourceScript + '\'' +
 					", criteria='" + super.toString() + '\'' +
@@ -421,5 +418,36 @@ public class Criteria implements Paged, Serializable {
 		AVG
 	}
 
+	public static class MapMapper {
+		private Map<String, String> propertyMapperMap = new HashMap<String, String>();
+		private Map<String, String> mapperPropertyMap = new HashMap<String, String>();
+
+		public Map<String, String> getPropertyMapperMap() {
+			return propertyMapperMap;
+		}
+
+		public Map<String, String> getMapperPropertyMap() {
+			return mapperPropertyMap;
+		}
+
+		public void put(String property, String mapper) {
+			this.propertyMapperMap.put(property, mapper);
+			this.mapperPropertyMap.put(mapper, property);
+		}
+
+		public String mapper(String property) {
+			return this.propertyMapperMap.get(property);
+		}
+
+		public String property(String mapper) {
+			return this.mapperPropertyMap.get(mapper);
+		}
+
+		@Override
+		public String toString() {
+			return "MapMapper [propertyMapperMap=" + propertyMapperMap + ", mapperPropertyMap=" + mapperPropertyMap
+					+ "]";
+		}
+	}
 
 }

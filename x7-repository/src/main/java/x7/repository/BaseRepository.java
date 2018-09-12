@@ -239,7 +239,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	@Override
 	public List<T> list(T conditionObj) {
 
-		if (conditionObj instanceof Criteria.Fetch) {
+		if (conditionObj instanceof Criteria.ResultMapped) {
 			throw new RuntimeException(
 					"Exception supported, no pagination not to invoke SqlRepository.getInstance().list(criteriaJoinalbe);");
 		}
@@ -248,7 +248,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> find(Criteria.Fetch criteria) {
+	public Pagination<Map<String, Object>> find(Criteria.ResultMapped criteria) {
 
 		return SqlRepository.getInstance().find(criteria);
 	}

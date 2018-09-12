@@ -116,7 +116,7 @@ public interface X7Repository<T> {
 	 * 
 	 * @param criteria
 	 */
-	Pagination<Map<String, Object>> find(Criteria.Fetch criteria);
+	Pagination<Map<String, Object>> find(Criteria.ResultMapped criteria);
 
 	Object reduce(Criteria.ReduceType type, String property, Criteria criteria);
 }

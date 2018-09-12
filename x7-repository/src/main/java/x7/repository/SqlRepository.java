@@ -629,29 +629,29 @@ public class SqlRepository implements Repository {
 	}
 
 	@Override
-	public Pagination<Map<String, Object>> find(Criteria.Fetch fetch) {
+	public Pagination<Map<String, Object>> find(Criteria.ResultMapped resultMapped) {
 		testAvailable();
-		Class clz = fetch.getClz();
+		Class clz = resultMapped.getClz();
 		Parsed parsed = Parser.get(clz);
 		
 		if (parsed.isSharding()) {
-			return shardingDao.find(fetch);
+			return shardingDao.find(resultMapped);
 		} else {
-			return syncDao.find(fetch);
+			return syncDao.find(resultMapped);
 		}
 	}
 
 	@Override
-	public List<Map<String, Object>> list(Criteria.Fetch fetch) {
+	public List<Map<String, Object>> list(Criteria.ResultMapped resultMapped) {
 		testAvailable();
-		Class clz = fetch.getClz();
+		Class clz = resultMapped.getClz();
 		Parsed parsed = Parser.get(clz);
 
 		if (parsed.isSharding()) {
 			throw new ShardingException(
-					"Sharding not supported: List<Map<String, Object>> list(Criteria.Fetch fetch)");
+					"Sharding not supported: List<Map<String, Object>> list(Criteria.ResultMapped resultMapped)");
 		} else {
-			return syncDao.list(fetch);
+			return syncDao.list(resultMapped);
 		}
 	}
 
