@@ -33,10 +33,8 @@ import java.util.Map.Entry;
  */
 public class CriteriaBuilder {
 
-
     private Criteria criteria;
     private CriteriaBuilder instance;
-
 
     public P and() {
 
