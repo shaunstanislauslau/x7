@@ -991,7 +991,7 @@ public class DaoImpl implements Dao {
 
 		String mapper = BeanUtilX.getMapper(orderBy);
 		StringBuilder sb = new StringBuilder();
-		sb.append(" order by ").append(mapper).append(" ").append(sc.toString()).append(" limit 1");
+		sb.append(Conjunction.ORDER_BY.sql()).append(mapper).append(" ").append(sc.toString()).append(SqlScript.LIMIT).append("1");
 
 		sql += sb.toString();
 
@@ -1193,7 +1193,7 @@ public class DaoImpl implements Dao {
 
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(sql).append(" WHERE ").append(mapper);
+		sb.append(sql).append(SqlScript.WHERE).append(mapper);
 		sb.append(" in (");
 
 		boolean isNumber = (keyType == long.class || keyType == int.class || keyType == Long.class

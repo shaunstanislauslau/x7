@@ -1,6 +1,7 @@
 package x7.repository.mapper;
 
 import x7.core.bean.BeanElement;
+import x7.core.bean.SqlScript;
 import x7.core.util.JsonX;
 import x7.core.util.StringUtil;
 import x7.repository.exception.SqlTypeException;
@@ -36,7 +37,7 @@ public class MySqlDialect implements Mapper.Dialect {
 	public String match(String sql, long start, long rows) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(sql).append(" LIMIT ").append(start).append(",").append(rows);
+		sb.append(sql).append(SqlScript.LIMIT).append(start).append(",").append(rows);
 		return sb.toString();
 
 	}

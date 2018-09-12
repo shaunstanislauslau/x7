@@ -468,6 +468,10 @@ public class CriteriaBuilder {
         x(sb, criteria);
 
         /*
+         * group by
+         */
+        groupBy(sb,criteria);
+        /*
 		 * sort
 		 */
         sort(sb, criteria);
@@ -616,6 +620,15 @@ public class CriteriaBuilder {
 
         if (column.capacity() > 0)
             criteria.setCustomedResultKey(column.toString());
+    }
+
+    private static void groupBy(StringBuilder sb, Criteria criteria){
+        if (criteria instanceof  ResultMapped){
+            ResultMapped rm = (ResultMapped)criteria;
+            if (StringUtil.isNotNull(rm.getGroupBy())) {
+                sb.append(Conjunction.GROUP_BY.sql()).append(rm.getGroupBy());
+            }
+        }
     }
 
     private static void sort(StringBuilder sb, Criteria criteria) {
