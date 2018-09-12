@@ -930,51 +930,6 @@ public class DaoImpl implements Dao {
 		return count;
 	}
 
-	protected long getCount(String property, Criteria criteria, Connection conn) {
-
-		Class<?> clz = criteria.getClz();
-		Parsed parsed = Parser.get(clz);
-
-		List<Object> valueList = criteria.getValueList();
-
-		String[] sqlArr = CriteriaBuilder.parse(criteria);
-
-		String sql = sqlArr[2];
-
-		sql = sql.replace(Mapped.TAG, "COUNT(*) count");
-		if (StringUtil.isNotNull(property)) {
-			property = parsed.getMapper(property);
-			sql = sql.replace(SqlScript.STAR, property);
-		}
-
-		System.out.println(sql);
-
-		long count = 0;
-		PreparedStatement pstmt = null;
-		try {
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			int i = 1;
-			for (Object o : valueList) {
-				pstmt.setObject(i++, o);
-			}
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				count = rs.getLong("count");
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return count;
-	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
