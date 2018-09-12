@@ -691,7 +691,6 @@ public class CriteriaBuilder {
     private static void x(StringBuilder sb, Criteria criteria) {
 
         List<X> xList = criteria.getListX();
-
         x(sb, xList, criteria, true);
 
     }
