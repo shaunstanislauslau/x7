@@ -665,7 +665,6 @@ public class CriteriaBuilder {
                 continue;
             }
 
-
             if (StringUtil.isNotNull(x.getKey())) {
                 if (x.getKey().equals(Predicate.SUB.sql())) {
                     if (Objects.nonNull(x.getScript())) {
