@@ -489,7 +489,7 @@ public class CriteriaBuilder {
             {
                 String[] arr = sqlArr[1].split(SqlScript.SPACE);
                 for (String ele : arr) {
-                    if (ele.contains(".")) {
+                    if (ele.contains(SqlScript.POINT)) {
                         ele = ele.replace(",", "");
                         ele = ele.trim();
                         String[] tc = ele.split("\\.");
@@ -524,7 +524,7 @@ public class CriteriaBuilder {
                         if (StringUtil.isNullOrEmpty(mapper)) {
                             mapper = property;// dynamic
                         }
-                        fetchMapper.put(key + "." + property, tableName + "." + mapper);
+                        fetchMapper.put(key + SqlScript.POINT + property, tableName + SqlScript.POINT + mapper);
                     }
                 }
             }
@@ -602,7 +602,7 @@ public class CriteriaBuilder {
                     column.append(", ");
                 }
                 String alianName = reduce.getProperty()+"_"+reduce.getType().toString().toLowerCase();//property_count
-                alianName = alianName.replace(".","_");
+                alianName = alianName.replace(SqlScript.POINT,"_");
                 column.append(reduce.getType()).append("( ").append(reduce.getProperty()).append(" ) ")
                         .append(alianName);
 
@@ -829,7 +829,7 @@ public class CriteriaBuilder {
         } else {
             str = property;
         }
-        if (str.contains(".")) {
+        if (str.contains(SqlScript.POINT)) {
             String[] xxx = str.split("\\.");
             if (xxx.length == 1)
                 property = xxx[0];
@@ -858,7 +858,7 @@ public class CriteriaBuilder {
             boolean isNumeric = NumberUtil.isNumeric(s);
             if (isNumeric) {
 
-                if (s.contains(".")) {
+                if (s.contains(SqlScript.POINT)) {
                     return Double.valueOf(s) == 0;
                 }
                 return Long.valueOf(s) == 0;
@@ -871,14 +871,14 @@ public class CriteriaBuilder {
         String s = v.toString();
 
         if (vType == int.class) {
-            if (s.contains(".")) {
-                s = s.substring(0, s.indexOf("."));
+            if (s.contains(SqlScript.POINT)) {
+                s = s.substring(0, s.indexOf(SqlScript.POINT));
             }
             return Integer.valueOf(s) == 0;
         }
         if (vType == long.class) {
-            if (s.contains(".")) {
-                s = s.substring(0, s.indexOf("."));
+            if (s.contains(SqlScript.POINT)) {
+                s = s.substring(0, s.indexOf(SqlScript.POINT));
             }
             return Long.valueOf(s) == 0;
         }
@@ -895,8 +895,8 @@ public class CriteriaBuilder {
             return Byte.valueOf(s) == 0;
         }
         if (vType == boolean.class) {
-            if (s.contains(".")) {
-                s = s.substring(0, s.indexOf("."));
+            if (s.contains(SqlScript.POINT)) {
+                s = s.substring(0, s.indexOf(SqlScript.POINT));
             }
             return Integer.valueOf(s) == 0;
         }
@@ -1041,7 +1041,7 @@ public class CriteriaBuilder {
                         if (value instanceof Map) {
                             Map vMap = (Map) value;
                             for (Object k : vMap.keySet()) {
-                                distinct.add(key.toString() + "." + k.toString());
+                                distinct.add(key.toString() + SqlScript.POINT + k.toString());
                             }
                         }
                     }

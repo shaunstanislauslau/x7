@@ -7,6 +7,7 @@ public interface SqlScript {
 	String SPACE = " ";
 	String PLACE_HOLDER = "?";
 	String LIKE_HOLDER = "%";
+	String POINT = ".";
 
 	String sql();
 }
