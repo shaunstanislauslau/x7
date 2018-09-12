@@ -33,11 +33,8 @@ import java.util.Map.Entry;
  */
 public class CriteriaBuilder {
 
-    public final static String SPACE = " ";
-    public final static String PLACE_HOLDER = "?";
 
     private Criteria criteria;
-
     private CriteriaBuilder instance;
 
 
@@ -243,7 +240,7 @@ public class CriteriaBuilder {
 
             x.setPredicate(Predicate.LIKE);
             x.setKey(property);
-            x.setValue("%" + value + "%");
+            x.setValue(SqlScript.LIKE_HOLDER + value + SqlScript.LIKE_HOLDER);
 
             return instance;
         }
@@ -256,7 +253,7 @@ public class CriteriaBuilder {
 
             x.setPredicate(Predicate.LIKE);
             x.setKey(property);
-            x.setValue(value + "%");
+            x.setValue(value + SqlScript.LIKE_HOLDER);
 
             return instance;
         }
@@ -490,7 +487,7 @@ public class CriteriaBuilder {
             // sqlArr[1]: core sql
             Map<String, List<String>> map = new HashMap<>();
             {
-                String[] arr = sqlArr[1].split(SPACE);
+                String[] arr = sqlArr[1].split(SqlScript.SPACE);
                 for (String ele : arr) {
                     if (ele.contains(".")) {
                         ele = ele.replace(",", "");
@@ -558,17 +555,21 @@ public class CriteriaBuilder {
 
     private static void select(StringBuilder sb, Criteria criteria) {
 
-        sb.append("SELECT").append(SPACE).append(Mapped.TAG);
+        sb.append(SqlScript.SELECT).append(SqlScript.SPACE).append(Mapped.TAG);
 
         if (! (criteria instanceof Fetch))
             return;
-        Fetch fetch = (Fetch)criteria;
+
         boolean flag = false;
+
+        Fetch fetch = (Fetch)criteria;
         StringBuilder column = new StringBuilder();
 
         if (Objects.nonNull(fetch.getDistinct())) {
 
-            column.append(" DISTINCT ");
+            if (!flag)fetch.getResultList().clear();//去掉构造方法里设置的返回key
+
+            column.append(SqlScript.DISTINCT);
             List<String> list = fetch.getDistinct().getList();
             int size = list.size();
             int i = 0;
@@ -580,14 +581,15 @@ public class CriteriaBuilder {
                     column.append(", ");
                 }
             }
-            flag = true;
             criteria.setCountDistinct("COUNT(" + column.toString() + ") count");
+            flag = true;
         }
 
         List<Reduce> reduceList = fetch.getReduceList();
 
-        int i = 0;
         if (!reduceList.isEmpty()) {
+
+            if (!flag)fetch.getResultList().clear();//去掉构造方法里设置的返回key
 
             FetchMapper fetchMapper = criteria.getFetchMapper();
             if (Objects.isNull(fetchMapper)) {
@@ -624,7 +626,7 @@ public class CriteriaBuilder {
     private static void sort(StringBuilder sb, Criteria criteria) {
 
         if (StringUtil.isNotNull(criteria.getOrderBy())) {
-            sb.append(Conjunction.ORDER_BY.sql()).append(criteria.getOrderBy()).append(SPACE)
+            sb.append(Conjunction.ORDER_BY.sql()).append(criteria.getOrderBy()).append(SqlScript.SPACE)
                     .append(criteria.getDirection());
         }
 
@@ -753,10 +755,10 @@ public class CriteriaBuilder {
                     sb.append(str);
                     return;
                 } else {
-                    sb.append(PLACE_HOLDER);
+                    sb.append(SqlScript.PLACE_HOLDER);
                 }
             } else {
-                sb.append(PLACE_HOLDER);
+                sb.append(SqlScript.PLACE_HOLDER);
             }
 
             if (clz.getSuperclass().isEnum() || clz.isEnum()) {
@@ -770,7 +772,7 @@ public class CriteriaBuilder {
 
     private static void between(StringBuilder sb) {
 
-        sb.append(PLACE_HOLDER).append(Conjunction.AND.sql()).append(PLACE_HOLDER);
+        sb.append(SqlScript.PLACE_HOLDER).append(Conjunction.AND.sql()).append(SqlScript.PLACE_HOLDER);
 
     }
 
@@ -996,13 +998,13 @@ public class CriteriaBuilder {
 
         }
 
-        private Criteria.Fetch getCriteriaFetch() {
-            return (Criteria.Fetch) super.criteria;
-        }
+//        private Criteria.Fetch getCriteriaFetch() {
+//            return (Criteria.Fetch) super.criteria;
+//        }
 
         private void xAddResultKey(List<String> xExpressionList) {
             for (String xExpression : xExpressionList) {
-                getCriteriaFetch().getResultList().add(xExpression);
+               get().getResultList().add(xExpression);
             }
         }
 
