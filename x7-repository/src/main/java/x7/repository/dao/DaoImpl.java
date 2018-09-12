@@ -1331,7 +1331,6 @@ public class DaoImpl implements Dao {
 						String mapper = criteriaFetch.getFetchMapper().mapper(property);
 						mapR.put(property, rs.getObject(mapper));
 					}
-
 				}
 			}
 

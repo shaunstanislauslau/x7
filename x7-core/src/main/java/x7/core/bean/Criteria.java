@@ -46,10 +46,6 @@ public class Criteria implements Paged, Serializable {
 	private String orderBy;
 	private Direction direction = Direction.DESC;
 
-	private Distinct distinct;
-	private String groupBy;
-	private List<Reduce> reduceList = new ArrayList<>();
-
 	private List<Object> valueList = new ArrayList<Object>();
 	
 	private List<X> listX = new ArrayList<X>();
@@ -156,29 +152,6 @@ public class Criteria implements Paged, Serializable {
 		this.rows = rows;
 	}
 
-	public Distinct getDistinct() {
-		return distinct;
-	}
-
-	public List<Reduce> getReduceList() {
-		return reduceList;
-	}
-
-	public String getGroupBy() {
-		return groupBy;
-	}
-
-	public void setGroupBy(String groupBy) {
-		this.groupBy = groupBy;
-	}
-
-	public void setReduceList(List<Reduce> reduceList) {
-		this.reduceList = reduceList;
-	}
-
-	public void setDistinct(Distinct distinct) {
-		this.distinct = distinct;
-	}
 
 	public List<X> getListX() {
 		return this.listX;
@@ -212,9 +185,6 @@ public class Criteria implements Paged, Serializable {
 				", rows=" + rows +
 				", orderBy='" + orderBy + '\'' +
 				", direction=" + direction +
-				", distinct=" + distinct +
-				", groupBy='" + groupBy + '\'' +
-				", reduceList=" + reduceList +
 				", valueList=" + valueList +
 				", listX=" + listX +
 				", dataPermission=" + dataPermission +
@@ -254,6 +224,34 @@ public class Criteria implements Paged, Serializable {
 
 		private List<String> resultList = new ArrayList<String>();
 		private String sourceScript;
+		private Distinct distinct;
+		private String groupBy;
+		private List<Reduce> reduceList = new ArrayList<>();
+
+
+		public Distinct getDistinct() {
+			return distinct;
+		}
+
+		public List<Reduce> getReduceList() {
+			return reduceList;
+		}
+
+		public String getGroupBy() {
+			return groupBy;
+		}
+
+		public void setGroupBy(String groupBy) {
+			this.groupBy = groupBy;
+		}
+
+		public void setReduceList(List<Reduce> reduceList) {
+			this.reduceList = reduceList;
+		}
+
+		public void setDistinct(Distinct distinct) {
+			this.distinct = distinct;
+		}
 
 		public String getResultScript() {
 			if (resultList.isEmpty()){

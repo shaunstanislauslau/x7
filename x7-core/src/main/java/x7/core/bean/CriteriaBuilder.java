@@ -41,53 +41,6 @@ public class CriteriaBuilder {
     private CriteriaBuilder instance;
 
 
-    public CriteriaBuilder distinct(Object... objs) {
-        if (objs == null)
-            throw new RuntimeException("distinct non resultKey");
-        Distinct distinct = this.criteria.getDistinct();
-        if (Objects.isNull(distinct)) {
-            distinct = new Distinct();
-            this.criteria.setDistinct(distinct);
-        }
-        for (Object obj : objs) {
-            if (obj instanceof String) {
-                distinct.add(obj.toString());
-            } else if (obj instanceof Map) {
-                Map map = (Map) obj;
-                Set<Entry> set = map.entrySet();
-                for (Entry entry : set) {
-                    Object key = entry.getKey();
-                    Object value = entry.getValue();
-                    if (value instanceof Map) {
-                        Map vMap = (Map) value;
-                        for (Object k : vMap.keySet()) {
-                            distinct.add(key.toString() + "." + k.toString());
-                        }
-                    }
-                }
-
-            } else {
-                throw new RuntimeException("distinct param suggests String, or Map");
-            }
-        }
-        return this;
-    }
-
-    public CriteriaBuilder groupBy(String property){
-        this.criteria.setGroupBy(property);
-        return this;
-    }
-
-
-    public CriteriaBuilder reduce(Criteria.ReduceType type, String property) {
-        Reduce reduce = new Reduce();
-        reduce.setType(type);
-        reduce.setProperty(property);
-        this.criteria.getReduceList().add(reduce);
-        return this;
-    }
-
-
     public P and() {
 
         X x = new X();
@@ -509,14 +462,14 @@ public class CriteriaBuilder {
         boolean hasSourceScript = criteria.sourceScript(sb);
 
 		/*
-		 * StringList
+         * StringList
 		 */
         x(sb, criteria);
 
         /*
          * groupBy
          */
-        groupBy(sb, criteria);
+        groupBy(sb, (Fetch)criteria);
 
         /*
 		 * sort
@@ -552,8 +505,12 @@ public class CriteriaBuilder {
                     }
                 }
             }
-            FetchMapper fetchMapper = new FetchMapper();
-            criteria.setFetchMapper(fetchMapper);
+
+            FetchMapper fetchMapper = criteria.getFetchMapper();//
+            if (Objects.isNull(fetchMapper)){
+                fetchMapper = new FetchMapper();
+                criteria.setFetchMapper(fetchMapper);
+            }
             Map<String, String> clzTableMapper = new HashMap<String, String>();
             {
                 Set<Entry<String, List<String>>> set = map.entrySet();
@@ -602,16 +559,22 @@ public class CriteriaBuilder {
     private static void select(StringBuilder sb, Criteria criteria) {
 
         sb.append("SELECT").append(SPACE).append(Mapped.TAG);
-        boolean flag = false;
 
+        if (! (criteria instanceof Fetch))
+            return;
+        Fetch fetch = (Fetch)criteria;
+        boolean flag = false;
         StringBuilder column = new StringBuilder();
-        if (Objects.nonNull(criteria.getDistinct())) {
+
+        if (Objects.nonNull(fetch.getDistinct())) {
+
             column.append(" DISTINCT ");
-            List<String> list = criteria.getDistinct().getList();
+            List<String> list = fetch.getDistinct().getList();
             int size = list.size();
             int i = 0;
             for (String resultKey : list) {
                 column.append(resultKey);
+                fetch.getResultList().add(resultKey);
                 i++;
                 if (i < size) {
                     column.append(", ");
@@ -621,25 +584,40 @@ public class CriteriaBuilder {
             criteria.setCountDistinct("COUNT(" + column.toString() + ") count");
         }
 
-        List<Reduce> reduceList = criteria.getReduceList();
+        List<Reduce> reduceList = fetch.getReduceList();
 
         int i = 0;
-        for (Reduce reduce : reduceList) {
-            if (flag) {
-                column.append(", ");
+        if (!reduceList.isEmpty()) {
+
+            FetchMapper fetchMapper = criteria.getFetchMapper();
+            if (Objects.isNull(fetchMapper)) {
+                fetchMapper = new FetchMapper();
+                criteria.setFetchMapper(fetchMapper);
             }
-            column.append(reduce.getType()).append("( ").append(reduce.getProperty()).append(" ) ")
-                    .append(reduce.getType().toString().toLowerCase() + "_" + i++);
-            flag = true;
+
+            for (Reduce reduce : reduceList) {
+                if (flag) {
+                    column.append(", ");
+                }
+                String alianName = reduce.getProperty()+"_"+reduce.getType().toString().toLowerCase();//property_count
+                alianName = alianName.replace(".","_");
+                column.append(reduce.getType()).append("( ").append(reduce.getProperty()).append(" ) ")
+                        .append(alianName);
+
+                String alainProperty = reduce.getProperty() + BeanUtil.getByFirstUpper(reduce.getType().toString().toLowerCase());
+                fetchMapper.put(alainProperty, alianName);//REDUCE ALIAN NAME
+                fetch.getResultList().add(alainProperty);
+                flag = true;
+            }
         }
 
-        if (column.capacity()>0)
+        if (column.capacity() > 0)
             criteria.setCustomedResultKey(column.toString());
     }
 
-    private static void groupBy(StringBuilder sb, Criteria criteria) {
-        if (StringUtil.isNotNull(criteria.getGroupBy())) {
-            sb.append(Conjunction.GROUP_BY.sql()).append(criteria.getGroupBy());
+    private static void groupBy(StringBuilder sb, Fetch fetch) {
+        if (StringUtil.isNotNull(fetch.getGroupBy())) {
+            sb.append(Conjunction.GROUP_BY.sql()).append(fetch.getGroupBy());
         }
     }
 
@@ -1038,6 +1016,56 @@ public class CriteriaBuilder {
             List<String> xExpressionList = BeanMapUtil.toStringKeyList(resultObjMap);
             xAddResultKey(xExpressionList);
         }
+
+
+
+        public Fetchable distinct(Object... objs) {
+            if (objs == null)
+                throw new RuntimeException("distinct non resultKey");
+            Fetch fetch = get();
+            Distinct distinct = fetch.getDistinct();
+            if (Objects.isNull(distinct)) {
+                distinct = new Distinct();
+                fetch.setDistinct(distinct);
+            }
+            for (Object obj : objs) {
+                if (obj instanceof String) {
+                    distinct.add(obj.toString());
+                } else if (obj instanceof Map) {
+                    Map map = (Map) obj;
+                    Set<Entry> set = map.entrySet();
+                    for (Entry entry : set) {
+                        Object key = entry.getKey();
+                        Object value = entry.getValue();
+                        if (value instanceof Map) {
+                            Map vMap = (Map) value;
+                            for (Object k : vMap.keySet()) {
+                                distinct.add(key.toString() + "." + k.toString());
+                            }
+                        }
+                    }
+
+                } else {
+                    throw new RuntimeException("distinct param suggests String, or Map");
+                }
+            }
+            return this;
+        }
+
+        public Fetchable groupBy(String property) {
+            get().setGroupBy(property);
+            return this;
+        }
+
+
+        public Fetchable reduce(Criteria.ReduceType type, String property) {
+            Reduce reduce = new Reduce();
+            reduce.setType(type);
+            reduce.setProperty(property);
+            get().getReduceList().add(reduce);
+            return this;
+        }
+
 
     }
 

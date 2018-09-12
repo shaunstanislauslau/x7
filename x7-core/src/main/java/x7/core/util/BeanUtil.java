@@ -74,16 +74,16 @@ public class BeanUtil {
 		return "set" + a.toUpperCase() + rest;
 	}
 
-	public static String getByFirstLower(String clzName) {
-		String a = clzName.substring(0, 1);
-		String rest = clzName.substring(1);
+	public static String getByFirstLower(String str) {
+		String a = str.substring(0, 1);
+		String rest = str.substring(1);
 		String result = a.toLowerCase() + rest;
 		return result;
 	}
 
-	public static String getByFirstUpper(String clzName) {
-		String a = clzName.substring(0, 1);
-		String rest = clzName.substring(1);
+	public static String getByFirstUpper(String str) {
+		String a = str.substring(0, 1);
+		String rest = str.substring(1);
 		String result = a.toUpperCase() + rest;
 		return result;
 	}
