@@ -448,7 +448,7 @@ public class SqlRepository implements Repository {
 
 			p.setList(null);
 
-			cacheResolver.setResultKeyListPaginated(clz, criteria, p, 10);
+			cacheResolver.setResultKeyListPaginated(clz, criteria, p, 120);
 
 			p.setKeyList(null);
 			p.setList(list);

@@ -48,7 +48,7 @@ public class DevController {
 		}
 		
 		
-//		CriteriaBuilder.ResultMapable criteriaBuilder = CriteriaBuilder.buildFetchable(isDev, map);
+//		CriteriaBuilder.ResultMappedBuilder criteriaBuilder = CriteriaBuilder.buildFetchable(isDev, map);
 //		
 //		Criteria.ResultMapped criteriaJoinable = (Criteria.ResultMapped) criteriaBuilder.get();
 //

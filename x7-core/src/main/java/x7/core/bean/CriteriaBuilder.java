@@ -418,9 +418,9 @@ public class CriteriaBuilder {
         return builder;
     }
 
-    public static ResultMapable buildResultMapable(Class<?> clz, Fetched ro) {
+    public static ResultMappedBuilder buildResultMapped (Class<?> clz, Fetched ro) {
         CriteriaBuilder b = new CriteriaBuilder();
-        ResultMapable builder = b.new ResultMapable(clz, ro);
+        ResultMappedBuilder builder = b.new ResultMappedBuilder(clz, ro);
 
         if (ro != null) {
 
@@ -433,9 +433,9 @@ public class CriteriaBuilder {
         return builder;
     }
 
-    public static ResultMapable buildResultMapable(Class<?> clz) {
+    public static ResultMappedBuilder buildResultMapped (Class<?> clz) {
         CriteriaBuilder b = new CriteriaBuilder();
-        ResultMapable builder = b.new ResultMapable(clz);
+        ResultMappedBuilder builder = b.new ResultMappedBuilder(clz);
 
         return builder;
     }
@@ -967,7 +967,7 @@ public class CriteriaBuilder {
     }
 
 
-    public class ResultMapable extends CriteriaBuilder {
+    public class ResultMappedBuilder extends CriteriaBuilder {
 
         @Override
         public Criteria.ResultMapped get() {
@@ -988,12 +988,12 @@ public class CriteriaBuilder {
             f.setParsed(parsed);
         }
 
-        public ResultMapable(Class<?> clz) {
+        public ResultMappedBuilder(Class<?> clz) {
             init();
             init(clz);
         }
 
-        public ResultMapable(Class<?> clz, Fetched fetchResult) {
+        public ResultMappedBuilder(Class<?> clz, Fetched fetchResult) {
 
             init();
             init(clz);
@@ -1021,7 +1021,7 @@ public class CriteriaBuilder {
 
 
 
-        public ResultMapable distinct(Object... objs) {
+        public ResultMappedBuilder distinct(Object... objs) {
             if (objs == null)
                 throw new RuntimeException("distinct non resultKey");
             ResultMapped resultMapped = get();
@@ -1054,13 +1054,13 @@ public class CriteriaBuilder {
             return this;
         }
 
-        public ResultMapable groupBy(String property) {
+        public ResultMappedBuilder groupBy(String property) {
             get().setGroupBy(property);
             return this;
         }
 
 
-        public ResultMapable reduce(Criteria.ReduceType type, String property) {
+        public ResultMappedBuilder reduce(Criteria.ReduceType type, String property) {
             Reduce reduce = new Reduce();
             reduce.setType(type);
             reduce.setProperty(property);

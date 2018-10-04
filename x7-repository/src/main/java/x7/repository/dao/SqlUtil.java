@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Objects;
 
 public class SqlUtil {
 
@@ -163,7 +164,11 @@ public class SqlUtil {
 
 		if (conditionMap != null) {
 			for (Object v : conditionMap.values()) {
-				pstmt.setObject(i++, v);
+				if(Objects.nonNull(v) && v.getClass().isEnum()){
+					pstmt.setObject(i++, v.toString());
+				}else {
+					pstmt.setObject(i++, v);
+				}
 			}
 		}
 	}

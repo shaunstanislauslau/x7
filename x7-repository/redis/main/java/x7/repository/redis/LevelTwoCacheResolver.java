@@ -157,7 +157,7 @@ public class LevelTwoCacheResolver implements CacheResolver {
 
 	
 	private int getValidSecondAdjusted(){
-		return  Configs.getIntValue("x7.cache.second") * 700;
+		return  Configs.getIntValue("x7.cache.second") * 120;
 	}
 
 	@SuppressWarnings("rawtypes")
