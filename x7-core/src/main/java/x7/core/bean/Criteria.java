@@ -19,13 +19,11 @@ package x7.core.bean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import x7.core.util.BeanUtil;
 import x7.core.web.Direction;
+import x7.core.web.Fetched;
 import x7.core.web.Paged;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 简单的SQL拼接标准化
@@ -302,7 +300,7 @@ public class Criteria implements Paged, Serializable {
 
 		@Override
 		protected String resultAllScript() {
-			if (!super.customedResultKey.equals(SqlScript.STAR)){
+			if (Objects.nonNull(super.customedResultKey)&&!super.customedResultKey.equals(SqlScript.STAR)){
 				return super.customedResultKey;
 			}else {
 				int size = 0;

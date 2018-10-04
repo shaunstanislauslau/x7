@@ -418,7 +418,7 @@ public class CriteriaBuilder {
         return builder;
     }
 
-    public static ResultMappedBuilder buildResultMapped (Class<?> clz, Fetched ro) {
+    public static ResultMappedBuilder buildResultMapped(Class<?> clz, Fetched ro) {
         CriteriaBuilder b = new CriteriaBuilder();
         ResultMappedBuilder builder = b.new ResultMappedBuilder(clz, ro);
 
@@ -433,7 +433,7 @@ public class CriteriaBuilder {
         return builder;
     }
 
-    public static ResultMappedBuilder buildResultMapped (Class<?> clz) {
+    public static ResultMappedBuilder buildResultMapped(Class<?> clz) {
         CriteriaBuilder b = new CriteriaBuilder();
         ResultMappedBuilder builder = b.new ResultMappedBuilder(clz);
 
@@ -462,7 +462,7 @@ public class CriteriaBuilder {
          * from table
 		 */
         criteria.sourceScript(sb);
-		/*
+        /*
          * StringList
 		 */
         x(sb, criteria);
@@ -470,7 +470,7 @@ public class CriteriaBuilder {
         /*
          * group by
          */
-        groupBy(sb,criteria);
+        groupBy(sb, criteria);
         /*
 		 * sort
 		 */
@@ -483,6 +483,7 @@ public class CriteriaBuilder {
             sqlArr[0] = sql.replace(Mapped.TAG, criteria.getCountDistinct());
             System.out.println(sqlArr[0]);
         }
+
         sqlArr[1] = sql.replace(Mapped.TAG, criteria.resultAllScript());
         sqlArr[2] = sql;
 
@@ -509,7 +510,7 @@ public class CriteriaBuilder {
             }
 
             Criteria.MapMapper mapMapper = resultMapped.getMapMapper();//
-            if (Objects.isNull(mapMapper)){
+            if (Objects.isNull(mapMapper)) {
                 mapMapper = new Criteria.MapMapper();
                 resultMapped.setMapMapper(mapMapper);
             }
@@ -562,12 +563,12 @@ public class CriteriaBuilder {
 
         sb.append(SqlScript.SELECT).append(SqlScript.SPACE).append(Mapped.TAG);
 
-        if (! (criteria instanceof Criteria.ResultMapped))
+        if (!(criteria instanceof Criteria.ResultMapped))
             return;
 
         boolean flag = false;
 
-        ResultMapped resultMapped = (Criteria.ResultMapped)criteria;
+        ResultMapped resultMapped = (Criteria.ResultMapped) criteria;
         StringBuilder column = new StringBuilder();
 
         if (Objects.nonNull(resultMapped.getDistinct())) {
@@ -606,8 +607,8 @@ public class CriteriaBuilder {
                 if (flag) {
                     column.append(", ");
                 }
-                String alianName = reduce.getProperty()+"_"+reduce.getType().toString().toLowerCase();//property_count
-                alianName = alianName.replace(SqlScript.POINT,"_");
+                String alianName = reduce.getProperty() + "_" + reduce.getType().toString().toLowerCase();//property_count
+                alianName = alianName.replace(SqlScript.POINT, "_");
                 column.append(reduce.getType()).append("( ").append(reduce.getProperty()).append(" ) ")
                         .append(alianName);
 
@@ -618,13 +619,19 @@ public class CriteriaBuilder {
             }
         }
 
-        if (column.capacity() > 0)
+
+        String cs = column.toString();
+        if (StringUtil.isNullOrEmpty(cs)) {
+            criteria.setCustomedResultKey(null);
+        } else {
             criteria.setCustomedResultKey(column.toString());
+        }
+
     }
 
-    private static void groupBy(StringBuilder sb, Criteria criteria){
-        if (criteria instanceof  ResultMapped){
-            ResultMapped rm = (ResultMapped)criteria;
+    private static void groupBy(StringBuilder sb, Criteria criteria) {
+        if (criteria instanceof ResultMapped) {
+            ResultMapped rm = (ResultMapped) criteria;
             if (StringUtil.isNotNull(rm.getGroupBy())) {
                 sb.append(Conjunction.GROUP_BY.sql()).append(rm.getGroupBy());
             }
@@ -1005,7 +1012,7 @@ public class CriteriaBuilder {
 
         private void xAddResultKey(List<String> xExpressionList) {
             for (String xExpression : xExpressionList) {
-               get().getResultList().add(xExpression);
+                get().getResultList().add(xExpression);
             }
         }
 
@@ -1019,7 +1026,14 @@ public class CriteriaBuilder {
             xAddResultKey(xExpressionList);
         }
 
-
+        @Override
+        public void paged(Paged paged) {
+            super.criteria.paged(paged);
+            if (paged instanceof Fetched) {
+                xAddResultKey((Fetched) paged);
+            }
+            DataPermission.Chain.onBuild(super.criteria, paged);
+        }
 
         public ResultMappedBuilder distinct(Object... objs) {
             if (objs == null)
