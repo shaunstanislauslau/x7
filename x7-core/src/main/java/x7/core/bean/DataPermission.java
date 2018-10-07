@@ -1,5 +1,6 @@
 package x7.core.bean;
 
+import x7.core.util.BeanUtil;
 import x7.core.util.StringUtil;
 
 import java.util.List;
@@ -58,7 +59,7 @@ public interface DataPermission {
             /*
              * DataPermission
              */
-            String property = (criteria instanceof Criteria.ResultMapped) ? (criteria.getClz().getSimpleName() + "." + key) : key;
+            String property = (criteria instanceof Criteria.ResultMapped) ? (BeanUtil.getByFirstLower(criteria.getClz().getSimpleName()) + "." + key) : key;
             if (value instanceof String) {
                 String s = (String) value;
 
