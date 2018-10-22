@@ -124,8 +124,5 @@ public class MySqlDialect implements Mapper.Dialect {
 
 	}
 
-	@Override
-	public String getTableName(String name) {
-		return name;
-	}
+
 }

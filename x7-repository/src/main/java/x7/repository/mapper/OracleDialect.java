@@ -144,8 +144,4 @@ public class OracleDialect implements Mapper.Dialect {
 		
 	}
 
-	@Override
-	public String getTableName(String name) {
-		return name;
-	}
 }

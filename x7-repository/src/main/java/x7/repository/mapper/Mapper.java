@@ -32,7 +32,6 @@ public interface Mapper {
 	String LOAD = "LOAD";
 	String TAG = "TAG";
 	String CREATE_TABLE = "CREATE_TABLE";
-	String INDEX = "INDEX";
 	
 
 	interface Interpreter {
@@ -98,7 +97,5 @@ public interface Mapper {
 		String match(String sql, String sqlType);
 		
 		<T> void initObj(T obj, ResultSet rs, BeanElement tempEle, List<BeanElement> eles);
-		
-		String getTableName(String name);
 	}
 }

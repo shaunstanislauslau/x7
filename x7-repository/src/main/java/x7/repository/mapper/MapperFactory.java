@@ -325,13 +325,8 @@ public class MapperFactory implements Mapper {
 				if (sqlType.equals(Dialect.BIG)) {
 					sb.append(" DEFAULT 0.00 ");
 				} else if (sqlType.equals(Dialect.DATE)) {
-//					if (bet.property.equals("createTime")) {
-//						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP");
-//					} else if (bet.property.equals("refreshTime")) {
-//						sb.append(" NULL DEFAULT CURRENT_TIMESTAMP");
-//					} else {
 					sb.append(" NULL");
-//					}
+
 				}else if (bet.clz.isEnum()) {
 					sb.append("(").append(bet.length).append(") NOT NULL");
 				} else if (sqlType.equals(Dialect.STRING)) {
@@ -396,8 +391,4 @@ public class MapperFactory implements Mapper {
 		return parsed.getTableName();
 	}
 
-	public static String getTableName(Parsed parsed) {
-
-		return parsed.getTableName();
-	}
 }

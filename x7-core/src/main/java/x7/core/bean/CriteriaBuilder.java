@@ -420,7 +420,7 @@ public class CriteriaBuilder {
 
     public static ResultMappedBuilder buildResultMapped(Class<?> clz, Fetched ro) {
         CriteriaBuilder b = new CriteriaBuilder();
-        ResultMappedBuilder builder = b.new ResultMappedBuilder(clz, ro);
+        ResultMappedBuilder builder = b.new ResultMappedBuilder(clz);
 
         if (ro != null) {
 
@@ -1003,15 +1003,15 @@ public class CriteriaBuilder {
             init();
             init(clz);
         }
-
-        public ResultMappedBuilder(Class<?> clz, Fetched fetchResult) {
-
-            init();
-            init(clz);
-
-            xAddResultKey(fetchResult);
-
-        }
+//
+//        public ResultMappedBuilder(Class<?> clz, Fetched fetchResult) {
+//
+//            init();
+//            init(clz);
+//
+//            paged(fetchResult);
+//
+//        }
 
 
         private void xAddResultKey(List<String> xExpressionList) {
