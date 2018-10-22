@@ -30,8 +30,6 @@ public interface Mapper {
 	String REMOVE = "REMOVE";
 	String QUERY = "QUERY";
 	String LOAD = "LOAD";
-	String MAX_ID = "MAX_ID";
-	String COUNT = "COUNT";
 	String TAG = "TAG";
 	String CREATE_TABLE = "CREATE_TABLE";
 	String INDEX = "INDEX";
@@ -47,13 +45,9 @@ public interface Mapper {
 
 		String getLoadSql(Class clz);
 
-		String getMaxIdSql(Class clz);
-
 		String getCreateSql(Class clz);
 
 		String getTagSql(Class clz);
-
-		String getCount(Class clz);
 	}
 	
 	public static String getSqlTypeRegX(BeanElement be){
@@ -105,6 +99,6 @@ public interface Mapper {
 		
 		<T> void initObj(T obj, ResultSet rs, BeanElement tempEle, List<BeanElement> eles);
 		
-		
+		String getTableName(String name);
 	}
 }

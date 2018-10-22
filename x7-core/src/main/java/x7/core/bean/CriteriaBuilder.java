@@ -481,7 +481,6 @@ public class CriteriaBuilder {
         String[] sqlArr = new String[3];
         if (!criteria.isScroll()) {
             sqlArr[0] = sql.replace(Mapped.TAG, criteria.getCountDistinct());
-            System.out.println(sqlArr[0]);
         }
 
         sqlArr[1] = sql.replace(Mapped.TAG, criteria.resultAllScript());
@@ -537,6 +536,8 @@ public class CriteriaBuilder {
 
             for (int i = 0; i < 3; i++) {
                 String temp = sqlArr[i];
+                if (StringUtil.isNullOrEmpty(temp))
+                    continue;
                 for (String property : mapMapper.getPropertyMapperMap().keySet()) {
                     temp = temp.replace(property, mapMapper.mapper(property));
                 }
@@ -550,10 +551,13 @@ public class CriteriaBuilder {
         } else {
             Parsed parsed = Parser.get(criteria.getClz());
             for (int i = 0; i < 3; i++) {
+                if (StringUtil.isNullOrEmpty(sqlArr[i]))
+                    continue;
                 sqlArr[i] = BeanUtilX.mapper(sqlArr[i], parsed);
             }
         }
 
+        System.out.println(sqlArr[0]);
         System.out.println(sqlArr[1]);
 
         return sqlArr;

@@ -96,10 +96,8 @@ public class MapperFactory implements Mapper {
 			sql.getRemoveSql(clz);
 			sql.getQuerySql(clz);
 			sql.getLoadSql(clz);
-			sql.getMaxIdSql(clz);
 			sql.getCreateSql(clz);
 			sql.getTagSql(clz);
-			sql.getCount(clz);
 			return;
 		}
 
@@ -227,28 +225,7 @@ public class MapperFactory implements Mapper {
 
 		}
 
-		public String getMaxIdSql(Class clz) {
 
-			Parsed parsed = Parser.get(clz);
-
-			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT MAX(");
-
-			sb.append(parsed.getKey(X.KEY_ONE));
-
-			sb.append(") maxId FROM ");
-			sb.append(BeanUtil.getByFirstLower(parsed.getClzName()));
-
-			String sql = sb.toString();
-
-			sql = BeanUtilX.mapper(sql, parsed);
-
-			sqlsMap.get(clz).put(MAX_ID, sql);
-
-			System.out.println(sql);
-
-			return sql;
-		}
 
 		public String getCreateSql(Class clz) {
 
@@ -314,7 +291,7 @@ public class MapperFactory implements Mapper {
 			}
 			Parsed parsed = Parser.get(clz);
 
-			String keyOne = parsed.getKey(X.KEY_ONE);
+			final String keyOne = parsed.getKey(X.KEY_ONE);
 
 			StringBuilder sb = new StringBuilder();
 			sb.append("CREATE TABLE IF NOT EXISTS ").append(BeanUtil.getByFirstLower(parsed.getClzName())).append(" (")
@@ -375,7 +352,7 @@ public class MapperFactory implements Mapper {
 				sb.append("   ").append(bet.property).append(" ").append(sqlType).append(",").append("\n");
 			}
 
-			sb.append("   PRIMARY KEY (").append(keyOne).append(")");
+			sb.append("   PRIMARY KEY ( ").append(keyOne).append(" )");
 
 			sb.append("\n");
 			sb.append(") ").append(Dialect.ENGINE).append(";");
@@ -410,27 +387,6 @@ public class MapperFactory implements Mapper {
 
 		}
 
-		public String getCount(Class clz) {
-
-			Parsed parsed = Parser.get(clz);
-
-			StringBuilder sb = new StringBuilder();
-			sb.append("SELECT COUNT(");
-			
-			sb.append(parsed.getKey(X.KEY_ONE));
-			
-			sb.append(") count FROM ");
-			sb.append(BeanUtil.getByFirstLower(parsed.getClzName()));
-
-			String sql = sb.toString();
-			sql = BeanUtilX.mapper(sql, parsed);
-			sqlsMap.get(clz).put(COUNT, sql);
-
-			System.out.println(sql);
-
-			return sql;
-
-		}
 
 	}
 

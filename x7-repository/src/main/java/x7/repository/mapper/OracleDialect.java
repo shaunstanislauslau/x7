@@ -72,6 +72,10 @@ public class OracleDialect implements Mapper.Dialect {
 				Method method = ele.setMethod;
 				String mapper = ele.getMapper();
 
+				if (mapper.contains("`")){
+					mapper = mapper.replace("`","");
+				}
+
 				if ( ele.clz == Boolean.class) {
 					int ib = rs.getInt(mapper);
 					value = ib;
@@ -138,5 +142,10 @@ public class OracleDialect implements Mapper.Dialect {
 			throw new SqlTypeException("clz:" + obj.getClass() + ", property: " + tempEle.getProperty() + ", type:" + tempEle.geneType + ", value; " + value );
 		}
 		
+	}
+
+	@Override
+	public String getTableName(String name) {
+		return name;
 	}
 }

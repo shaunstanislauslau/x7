@@ -322,6 +322,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 					if (DbType.value.equals(DbType.MYSQL)) {
 						System.out.println("________ table check: " + clz.getName());
+						System.out.println("________ SQL   check: " + sql);
 						SqlRepository.getInstance().execute(clz.newInstance(), sql);
 					}
 

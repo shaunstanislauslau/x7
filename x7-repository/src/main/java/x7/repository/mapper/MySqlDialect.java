@@ -71,6 +71,10 @@ public class MySqlDialect implements Mapper.Dialect {
 				Method method = ele.setMethod;
 				String mapper = ele.getMapper();
 
+				if (mapper.contains("`")){
+					mapper = mapper.replace("`","");
+				}
+
 				if (ele.clz.isEnum()) {
 					value = rs.getObject(mapper);
 					if (Objects.isNull(value))
@@ -118,5 +122,10 @@ public class MySqlDialect implements Mapper.Dialect {
 					+ tempEle.geneType + ", value; " + value);
 		}
 
+	}
+
+	@Override
+	public String getTableName(String name) {
+		return name;
 	}
 }
