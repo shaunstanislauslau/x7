@@ -349,6 +349,10 @@ public class ShardingDaoImpl implements ShardingDao {
 
 	@Override
 	public boolean execute(Object obj, String sql) {
+
+		Parsed parsed = Parser.get(obj.getClass());
+		sql = BeanUtilX.mapper(sql, parsed);
+
 		tryToParse(obj.getClass());
 		String key = getKey(obj);
 

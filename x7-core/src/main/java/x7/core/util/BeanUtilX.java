@@ -644,13 +644,19 @@ public class BeanUtilX extends BeanUtil {
 		
 		if (parsed.isNoSpec())
 			return sql;
-		
+
 		sql = mapperName(sql, parsed);
-		
+
+		boolean flag = sql.contains("`");
 		for (String property : parsed.getPropertyMapperMap().keySet()){
 			String key = " "+property+" ";
 			String value = " "+parsed.getMapper(property)+" ";
 			sql = sql.replaceAll(key, value);
+			if (flag){
+				key = "`"+property+"`";
+				value = "`"+parsed.getMapper(property)+"`";
+				sql = sql.replace(key,value);
+			}
 		}
 		return sql;
 	}
@@ -670,6 +676,9 @@ public class BeanUtilX extends BeanUtil {
 			sql += " ";
 		}
 		sql = sql.replace(" " +clzName+" ", " "+tableName+" ");
+		if (sql.contains("`")) {
+			sql = sql.replace("`" +clzName+"`", "`"+tableName+"`");
+		}
 		
 		return sql;
 	}

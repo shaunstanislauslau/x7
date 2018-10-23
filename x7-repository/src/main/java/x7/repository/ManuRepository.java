@@ -16,6 +16,10 @@
  */
 package x7.repository;
 
+import x7.core.bean.Parsed;
+import x7.core.bean.Parser;
+import x7.core.util.BeanUtilX;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +27,6 @@ import java.util.Map;
 public class ManuRepository {
 
 	public static <T> boolean execute(Object obj, String sql){
-		
 		return SqlRepository.getInstance().execute(obj, sql);
 		
 	}

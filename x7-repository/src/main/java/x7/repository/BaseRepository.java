@@ -21,6 +21,7 @@ import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
 import x7.core.bean.*;
 import x7.core.repository.X;
+import x7.core.util.BeanUtilX;
 import x7.core.util.StringUtil;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -161,10 +162,12 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 				generator.setMaxId(id);
 				StringBuilder sb = new StringBuilder();
 				sb.append("update idGenerator set maxId = ").append(id).append(" where clzName = '").append(name)
-						.append("' and ").append(id).append(" > maxId;");
+						.append("' and ").append(id).append(" > maxId ;");//sss
 
 				try {
-					ManuRepository.execute(generator, sb.toString());
+					Parsed parsed = Parser.get(IdGenerator.class);
+					String sql = sb.toString();
+					ManuRepository.execute(generator, sql);
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -297,13 +300,15 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 		protected static void onStarted() {
 
-			String idGeneratorSql = "CREATE TABLE IF NOT EXISTS `idGenerator` ( " 
+			Parsed parsed = Parser.get(IdGenerator.class);
+
+			String sql = "CREATE TABLE IF NOT EXISTS `idGenerator` ( "
 			+ "`clzName` varchar(120) NOT NULL, "
-					+ "`maxId` bigint(13) DEFAULT NULL, " 
+					+ "`maxId` bigint(13) DEFAULT NULL, "
 			+ "PRIMARY KEY (`clzName`) "
 					+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8 ";
 			
-			ManuRepository.execute(IdGenerator.class, idGeneratorSql);
+			ManuRepository.execute(IdGenerator.class, sql);
 
 			System.out.println("-------------------------------------------------");
 
@@ -313,7 +318,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 				try {
 					Class clz = repository.getClz();
-					String sql = MapperFactory.tryToCreate(clz);
+					String createSql = MapperFactory.tryToCreate(clz);
 					String test = MapperFactory.getSql(clz, Mapper.CREATE);
 					if (StringUtil.isNullOrEmpty(test)) {
 						System.out.println("FAILED TO START X7-REPOSITORY, check Bean: " + clz);
@@ -322,12 +327,12 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 
 					if (DbType.value.equals(DbType.MYSQL)) {
 						System.out.println("________ table check: " + clz.getName());
-						System.out.println("________ SQL   check: " + sql);
-						SqlRepository.getInstance().execute(clz.newInstance(), sql);
+						System.out.println("________ SQL   check: " + createSql);
+						SqlRepository.getInstance().execute(clz.newInstance(), createSql);
 					}
 
-					Parsed parsed = Parser.get(clz);
-					Field f = parsed.getKeyField(X.KEY_ONE);
+					Parsed clzParsed = Parser.get(clz);
+					Field f = clzParsed.getKeyField(X.KEY_ONE);
 					if (f.getType() == String.class)
 						continue;
 					final String name = clz.getName();

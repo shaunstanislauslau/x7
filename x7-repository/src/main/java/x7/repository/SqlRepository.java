@@ -24,6 +24,7 @@ import x7.core.bean.Parser;
 import x7.core.repository.CacheResolver;
 import x7.core.repository.Repository;
 import x7.core.repository.X;
+import x7.core.util.BeanUtilX;
 import x7.core.util.JsonX;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -670,7 +671,6 @@ public class SqlRepository implements Repository {
 	protected List<Map<String, Object>> list(Class clz, String sql, List<Object> conditionList) {
 		
 		Parsed parsed = Parser.get(clz);
-
 		if (cacheResolver == null || parsed.isNoCache()) {
 			if (parsed.isSharding()) {
 				throw new ShardingException(
