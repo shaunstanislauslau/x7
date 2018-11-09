@@ -539,7 +539,9 @@ public class CriteriaBuilder {
                 if (StringUtil.isNullOrEmpty(temp))
                     continue;
                 for (String property : mapMapper.getPropertyMapperMap().keySet()) {
-                    temp = temp.replace(property, mapMapper.mapper(property));
+                    String key = SqlScript.SPACE + property + SqlScript.SPACE;
+                    String value = SqlScript.SPACE + mapMapper.mapper(property) + SqlScript.SPACE;
+                    temp = temp.replace(key,value);
                 }
                 for (String clzName : clzTableMapper.keySet()) {
                     String tableName = clzTableMapper.get(clzName);
