@@ -16,10 +16,6 @@
  */
 package x7.repository;
 
-import x7.core.bean.Parsed;
-import x7.core.bean.Parser;
-import x7.core.util.BeanUtilX;
-
 import java.util.List;
 import java.util.Map;
 

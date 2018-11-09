@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * 简单的SQL拼接标准化
  * 
  * @author sim
  *
@@ -183,30 +182,6 @@ public class Criteria implements Paged, Serializable {
 				'}';
 	}
 
-	/**
-	 * 可以连表的SQL拼接标准化, 不支持缓存<br>
-	 * 业务系统尽量避免使用连表查询<br>
-	 * 互联网业务系统中后期开发必须避免<br>
-	 * 适合简单的报表和记录查询<br>
-	 * <br>
-	 * <br>
-	 * xAddKey(String x)<br>
-	 * <hr>
-	 * <br>
-	 * <li>Sample:</li><br>
-	 * CriteriaFetchable builder = new
-	 * CriteriaFetchable(Cat.class,null);<br>
-	 * builder.xAddKey("t->id");<br>
-	 * builder.xAddKey("t->name.as.catName");<br>
-	 * builder.xAddKey("dog->age.as.dogAge");<br>
-	 * builder.orderBy("t->id");<br>
-	 * <br>
-	 * List<Map<String,Object>> list =
-	 * Repositories.getInstance().list(criteria);<br>
-	 * <br>
-	 * 
-	 * @author Sim
-	 */
 	public class ResultMapped extends Criteria {
 
 		private List<String> resultList = new ArrayList<String>();
@@ -259,7 +234,7 @@ public class Criteria implements Paged, Serializable {
 					String mapper = getMapMapper().mapper(str);
 					sb.append(mapper);
 					if (i < size){
-						sb.append(",");
+						sb.append(SqlScript.COMMA);
 					}
 					i++;
 				}
@@ -312,7 +287,7 @@ public class Criteria implements Paged, Serializable {
 					for (int i = 0; i < size; i++) {
 						column = column + SqlScript.SPACE + resultList.get(i);
 						if (i < size - 1) {
-							column += ",";
+							column += SqlScript.COMMA;
 						}
 					}
 				}

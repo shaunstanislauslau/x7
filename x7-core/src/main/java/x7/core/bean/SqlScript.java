@@ -9,6 +9,7 @@ public interface SqlScript {
 	String PLACE_HOLDER = "?";
 	String LIKE_HOLDER = "%";
 	String POINT = ".";
+	String COMMA = " ,";
 	String STAR = "*";
 	String FROM = "FROM";
 	String LIMIT = " LIMIT ";

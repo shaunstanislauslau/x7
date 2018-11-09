@@ -321,12 +321,16 @@ public class ExcelParser {
 
 		Field[] fieldArr = bean.getClass().getDeclaredFields();
 
+		int rows = rowArr.length;
 		try {
 			for (Field field : fieldArr) {
 
 				Integer index = propertyMap.get(field.getName());
 				if (index == null)
 					continue;
+
+				if (index >= rows)
+					break;
 
 				String str = rowArr[index].getContents();
 				if (str == null || str.trim().equals(""))
