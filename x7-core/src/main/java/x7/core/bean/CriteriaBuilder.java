@@ -339,7 +339,7 @@ public class CriteriaBuilder {
         }
 
         @Override
-        public CriteriaBuilder isNotNull(String property) {
+        public CriteriaBuilder nonNull(String property) {
 
             if (StringUtil.isNullOrEmpty(property))
                 return instance;
@@ -964,7 +964,7 @@ public class CriteriaBuilder {
 
         CriteriaBuilder nin(String property, List<Object> list);
 
-        CriteriaBuilder isNotNull(String property);
+        CriteriaBuilder nonNull(String property);
 
         CriteriaBuilder isNull(String property);
 
