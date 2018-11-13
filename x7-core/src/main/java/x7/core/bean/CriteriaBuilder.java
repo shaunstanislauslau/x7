@@ -295,8 +295,12 @@ public class CriteriaBuilder {
                 }
             }
 
-            if (list.isEmpty())
+            if (tempList.isEmpty())
                 return instance;
+
+            if (tempList.size() == 1){
+                return eq(property,tempList.get(0));
+            }
 
             x.setPredicate(Predicate.IN);
             x.setKey(property);
@@ -320,8 +324,12 @@ public class CriteriaBuilder {
                 }
             }
 
-            if (list.isEmpty())
+            if (tempList.isEmpty())
                 return instance;
+
+            if (tempList.size() == 1){
+                return ne(property,tempList.get(0));
+            }
 
             x.setPredicate(Predicate.NOT_IN);
             x.setKey(property);

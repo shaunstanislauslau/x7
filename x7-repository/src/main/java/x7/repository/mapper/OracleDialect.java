@@ -8,10 +8,8 @@ import x7.repository.exception.SqlTypeException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.sql.Timestamp;
+import java.util.*;
 
 public class OracleDialect implements Mapper.Dialect {
 
@@ -75,8 +73,14 @@ public class OracleDialect implements Mapper.Dialect {
 				if (mapper.contains("`")){
 					mapper = mapper.replace("`","");
 				}
-
-				if ( ele.clz == Boolean.class) {
+				if (ele.clz == Date.class){
+					if (Objects.isNull(value))
+						continue;
+					if (value instanceof Timestamp){
+						Date d = new Date(((Timestamp) value).getTime());
+						method.invoke(obj,d);
+					}
+				}if ( ele.clz == Boolean.class) {
 					int ib = rs.getInt(mapper);
 					value = ib;
 					method.invoke(obj, ib == 1 ? true : false);
