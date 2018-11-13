@@ -7,12 +7,15 @@ public interface SqlScript {
 	String WHERE = " WHERE ";
 	String SPACE = " ";
 	String PLACE_HOLDER = "?";
+	String EQ_PLACE_HOLDER = " = ?";
 	String LIKE_HOLDER = "%";
 	String POINT = ".";
 	String COMMA = " ,";
 	String STAR = "*";
 	String FROM = "FROM";
 	String LIMIT = " LIMIT ";
+	String SET = " SET ";
+	String UPDATE = "UPDATE";
 
 	String sql();
 }

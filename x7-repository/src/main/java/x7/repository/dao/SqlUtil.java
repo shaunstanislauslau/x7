@@ -16,7 +16,9 @@
  */
 package x7.repository.dao;
 
+import x7.core.bean.Conjunction;
 import x7.core.bean.Parsed;
+import x7.core.bean.SqlScript;
 import x7.core.repository.X;
 import x7.core.util.BeanUtil;
 
@@ -66,15 +68,15 @@ public class SqlUtil {
 		
 		StringBuilder sb = new StringBuilder();
 
-		boolean flag = (sql.contains("WHERE") || sql.contains("where"));
+		boolean flag = (sql.contains(SqlScript.WHERE) || sql.contains(SqlScript.WHERE.toLowerCase()));
 
 		for (String key : queryMap.keySet()) {
 
 			String mapper = parsed.getMapper(key);
 			if (flag) {
-				sb.append(" AND " ).append(mapper).append(" = ?");
+				sb.append(Conjunction.AND.sql()).append(mapper).append(SqlScript.EQ_PLACE_HOLDER);
 			}else{
-				sb.append(" WHERE " ).append(mapper).append(" = ?");
+				sb.append(SqlScript.WHERE).append(mapper).append(SqlScript.EQ_PLACE_HOLDER);
 				flag = true;
 			}
 
@@ -93,25 +95,25 @@ public class SqlUtil {
 	 */
 	protected static String concatRefresh(StringBuilder sb, Parsed parsed, Map<String, Object> queryMap) {
 
-		sb.append(" SET ");
+		sb.append(SqlScript.SET);
 		int size = queryMap.size();
 		int i = 0;
 		for (String key : queryMap.keySet()) {
 
 			String mapper = parsed.getMapper(key);
 			sb.append(mapper);
-			sb.append(" = ?");
+			sb.append(SqlScript.EQ_PLACE_HOLDER);
 			if (i < size - 1) {
-				sb.append(",");
+				sb.append(SqlScript.COMMA);
 			}
 
 			i++;
 		}
 
-		sb.append(" WHERE ");
+		sb.append(Conjunction.AND.sql());
 		String keyOne = parsed.getKey(X.KEY_ONE);
 		String mapper = parsed.getMapper(keyOne);
-		sb.append(mapper).append(" = ?");
+		sb.append(mapper).append(SqlScript.EQ_PLACE_HOLDER);
 
 		return sb.toString();
 	}
@@ -123,30 +125,30 @@ public class SqlUtil {
 	protected static String concatRefresh(StringBuilder sb, Parsed parsed, Map<String, Object> queryMap,
 			Map<String, Object> conditionMap) {
 
-		sb.append(" SET ");
+		sb.append(SqlScript.SET);
 		int size = queryMap.size();
 		int i = 0;
 		for (String key : queryMap.keySet()) {
 
 			String mapper = parsed.getMapper(key);
 			sb.append(mapper);
-			sb.append(" = ?");
+			sb.append(SqlScript.EQ_PLACE_HOLDER);
 			if (i < size - 1) {
-				sb.append(",");
+				sb.append(SqlScript.COMMA);
 			}
 
 			i++;
 		}
 
-		sb.append(" WHERE ");
+		sb.append(SqlScript.WHERE);
 		String keyOne = parsed.getKey(X.KEY_ONE);
 		String mapper = parsed.getMapper(keyOne);
-		sb.append(mapper).append(" = ?");
+		sb.append(mapper).append(SqlScript.EQ_PLACE_HOLDER);
 
 		if (conditionMap != null) {
 			for (String key : conditionMap.keySet()) {
 				mapper = parsed.getMapper(key);
-				sb.append(" AND ").append(mapper).append(" = ?");
+				sb.append(Conjunction.AND.sql()).append(mapper).append(SqlScript.EQ_PLACE_HOLDER);
 			}
 		}
 
