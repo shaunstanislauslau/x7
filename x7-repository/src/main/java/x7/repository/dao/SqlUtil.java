@@ -182,7 +182,6 @@ public class SqlUtil {
 			x.setKey(keyOne);
 			x.setValue(keyOneValue);
 			xList.add(0, x);
-			condition.getValueList().add(0,keyOneValue);
 		}
 
 		String conditionSql = CriteriaBuilder.parseCondition(condition);
@@ -199,11 +198,6 @@ public class SqlUtil {
 	protected static void adpterRefreshCondition(PreparedStatement pstmt, Field keyOneF, Object obj,
 			int i, CriteriaCondition condition) throws SQLException, NoSuchMethodException, SecurityException,
 					IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		/*
-		 * 处理KEY
-		 */
-		Object value = keyOneF.get(obj);
-		pstmt.setObject(i++, value);
 
 		if (Objects.nonNull(condition)) {
 			for (Object v : condition.getValueList()) {

@@ -1046,7 +1046,7 @@ public class DaoImpl implements Dao {
 		String sql = SqlUtil.concatRefresh(sb, parsed, queryMap, condition);
 		sql = BeanUtilX.mapperName(sql, parsed);
 
-		// System.out.println("refreshOptionally: " + sql);
+		System.out.println("________SQL: refreshByCondition: " + sql);
 
 		boolean isNoBizTx = false;
 		boolean flag = false;
