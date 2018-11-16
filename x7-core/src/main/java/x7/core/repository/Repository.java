@@ -17,6 +17,7 @@
 package x7.core.repository;
 
 import x7.core.bean.Criteria;
+import x7.core.bean.CriteriaCondition;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
@@ -54,10 +55,10 @@ public interface Repository {
 	/**
 	 * 带条件支持局部更新
 	 * @param obj
-	 * @param conditionMap
+	 * @param condition
 	 * @return
 	 */
-	boolean refresh(Object obj, Map<String, Object> conditionMap);
+	boolean refresh(Object obj, CriteriaCondition condition);
 
 	/**
 	 * 删除

@@ -218,8 +218,8 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
 	}
 
 	@Override
-	public boolean refresh(T obj, Map<String, Object> conditionMap) {
-		return SqlRepository.getInstance().refresh(obj, conditionMap);
+	public boolean refresh(T obj, CriteriaCondition condition) {
+		return SqlRepository.getInstance().refresh(obj, condition);
 	}
 
 	@Override

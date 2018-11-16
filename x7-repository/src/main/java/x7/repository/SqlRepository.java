@@ -17,10 +17,7 @@
 package x7.repository;
 
 import org.apache.log4j.Logger;
-import x7.core.bean.Criteria;
-import x7.core.bean.CriteriaBuilder;
-import x7.core.bean.Parsed;
-import x7.core.bean.Parser;
+import x7.core.bean.*;
 import x7.core.repository.CacheResolver;
 import x7.core.repository.Repository;
 import x7.core.repository.X;
@@ -202,16 +199,16 @@ public class SqlRepository implements Repository {
 	}
 
 	@Override
-	public boolean refresh(Object obj, Map<String, Object> conditionMap) {
+	public boolean refresh(Object obj, CriteriaCondition condition) {
 		testAvailable();
 		boolean flag = false;
 		Class clz = obj.getClass();
 		Parsed parsed = Parser.get(clz);
 		String key = getCacheKey(obj, parsed);
 		if (parsed.isSharding()) {
-			flag = shardingDao.refresh(obj, conditionMap);
+			flag = shardingDao.refresh(obj, condition);
 		} else {
-			flag = syncDao.refresh(obj, conditionMap);
+			flag = syncDao.refresh(obj, condition);
 		}
 		if (cacheResolver != null && !parsed.isNoCache()) {
 			if (key != null)

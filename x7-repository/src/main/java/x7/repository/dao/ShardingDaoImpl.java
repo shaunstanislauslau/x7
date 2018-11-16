@@ -17,6 +17,7 @@
 package x7.repository.dao;
 
 import x7.core.bean.Criteria;
+import x7.core.bean.CriteriaCondition;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
 import x7.core.config.Configs;
@@ -306,7 +307,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		return refresh(obj, key);
 	}
 
-	private boolean refresh(Object obj, Map<String, Object> conditionMap, String key) {
+	private boolean refresh(Object obj, CriteriaCondition condition, String key) {
 
 		Connection conn = null;
 		try {
@@ -315,16 +316,16 @@ public class ShardingDaoImpl implements ShardingDao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 
-		boolean flag = DaoImpl.getInstance().refresh(obj, conditionMap, conn);
+		boolean flag = DaoImpl.getInstance().refresh(obj, condition, conn);
 		return flag;
 
 	}
 
 	@Override
-	public boolean refresh(Object obj, Map<String, Object> conditionMap) {
+	public boolean refresh(Object obj, CriteriaCondition condition) {
 		tryToParse(obj.getClass());
 		String key = getKey(obj);
-		return refresh(obj, conditionMap, key);
+		return refresh(obj, condition, key);
 	}
 
 	private boolean remove(Object obj, String key) {

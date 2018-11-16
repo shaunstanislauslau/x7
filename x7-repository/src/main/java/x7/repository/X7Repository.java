@@ -17,6 +17,7 @@
 package x7.repository;
 
 import x7.core.bean.Criteria;
+import x7.core.bean.CriteriaCondition;
 import x7.core.bean.IQuantity;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -64,10 +65,10 @@ public interface X7Repository<T> {
 
 	/**
 	 * @param obj
-	 * @param conditionMap
+	 * @param condition
 	 * @return true | false
 	 */
-	boolean refresh(T obj, Map<String, Object> conditionMap);
+	boolean refresh(T obj, CriteriaCondition condition);
 
 	/**
 	 * @param obj

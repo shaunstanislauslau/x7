@@ -1,13 +1,13 @@
 package x7.core.bean.condition;
 
-import java.util.Map;
+import x7.core.bean.CriteriaCondition;
 
 /**
  * Created by Sim on 2018/8/20.
  */
 public class RefreshCondition<T> {
     private T obj;
-    private Map<String, Object> conditionMap;
+    private CriteriaCondition condition;
 
     public T getObj() {
         return obj;
@@ -17,25 +17,11 @@ public class RefreshCondition<T> {
         this.obj = obj;
     }
 
-    public Map<String, Object> getConditionMap() {
-        return conditionMap;
+    public CriteriaCondition getCondition() {
+        return condition;
     }
 
-    public void setConditionMap(Map<String, Object> conditionMap) {
-        for (String key : conditionMap.keySet()){
-            Object value = conditionMap.get(key);
-            if (value.getClass().isEnum()){
-                conditionMap.put(key,value.toString());
-            }
-        }
-        this.conditionMap = conditionMap;
-    }
-
-    @Override
-    public String toString() {
-        return "RefreshCondition{" +
-                "obj=" + obj +
-                ", conditionMap=" + conditionMap +
-                '}';
+    public void setCondition(CriteriaCondition condition) {
+        this.condition = condition;
     }
 }

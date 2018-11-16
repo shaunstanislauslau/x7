@@ -1031,7 +1031,7 @@ public class DaoImpl implements Dao {
 		return b;
 	}
 
-	protected boolean refresh(Object obj, Map<String, Object> conditionMap, Connection conn) {
+	protected boolean refresh(Object obj, CriteriaCondition condition, Connection conn) {
 
 		@SuppressWarnings("rawtypes")
 		Class clz = obj.getClass();
@@ -1042,8 +1042,8 @@ public class DaoImpl implements Dao {
 
 		String simpleName = BeanUtil.getByFirstLower(clz.getSimpleName());
 		StringBuilder sb = new StringBuilder();
-		sb.append("UPDATE ").append(simpleName).append(" ");
-		String sql = SqlUtil.concatRefresh(sb, parsed, queryMap, conditionMap);
+		sb.append(SqlScript.UPDATE).append(SqlScript.SPACE).append(simpleName).append(SqlScript.SPACE);
+		String sql = SqlUtil.concatRefresh(sb, parsed, queryMap, condition);
 		sql = BeanUtilX.mapperName(sql, parsed);
 
 		// System.out.println("refreshOptionally: " + sql);
@@ -1078,7 +1078,7 @@ public class DaoImpl implements Dao {
 			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
 			if (Objects.isNull(keyOneField))
 				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
-			SqlUtil.adpterRefreshCondition(pstmt, keyOneField, obj, i, conditionMap);
+			SqlUtil.adpterRefreshCondition(pstmt, keyOneField, obj, i, condition);
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -1111,7 +1111,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public boolean refresh(Object obj, Map<String, Object> conditionMap) {
+	public boolean refresh(Object obj, CriteriaCondition condition) {
 
 		Connection conn = null;
 		try {
@@ -1119,7 +1119,7 @@ public class DaoImpl implements Dao {
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return refresh(obj, conditionMap, conn);
+		return refresh(obj, condition, conn);
 	}
 
 	@Override

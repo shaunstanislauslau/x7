@@ -16,17 +16,19 @@
  */
 package x7.repository.dao;
 
-import x7.core.bean.Conjunction;
-import x7.core.bean.Parsed;
-import x7.core.bean.SqlScript;
+import x7.core.bean.*;
 import x7.core.repository.X;
 import x7.core.util.BeanUtil;
+import x7.core.util.BeanUtilX;
+import x7.core.util.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -123,7 +125,30 @@ public class SqlUtil {
 	 *
 	 */
 	protected static String concatRefresh(StringBuilder sb, Parsed parsed, Map<String, Object> queryMap,
-			Map<String, Object> conditionMap) {
+										  CriteriaCondition condition) {
+
+
+		String keyOne = parsed.getKey(X.KEY_ONE);
+		Object keyOneValue = queryMap.get(keyOne);
+
+		queryMap.remove(keyOne);
+
+		if(Objects.nonNull(keyOneValue)){
+			String valueStr = keyOneValue.toString();
+			if(StringUtil.isNullOrEmpty(valueStr)){
+				keyOneValue = null;
+			}else{
+				try{
+					long id = Long.valueOf(valueStr);
+					if (id == 0){
+						keyOneValue = null;
+					}
+				}catch (Exception e){
+
+				}
+			}
+
+		}
 
 		sb.append(SqlScript.SET);
 		int size = queryMap.size();
@@ -140,23 +165,39 @@ public class SqlUtil {
 			i++;
 		}
 
-		sb.append(SqlScript.WHERE);
-		String keyOne = parsed.getKey(X.KEY_ONE);
-		String mapper = parsed.getMapper(keyOne);
-		sb.append(mapper).append(SqlScript.EQ_PLACE_HOLDER);
+		List<Criteria.X> xList = condition.getListX();
 
-		if (conditionMap != null) {
-			for (String key : conditionMap.keySet()) {
-				mapper = parsed.getMapper(key);
-				sb.append(Conjunction.AND.sql()).append(mapper).append(SqlScript.EQ_PLACE_HOLDER);
+		boolean flag = true;
+		for (Criteria.X x : xList){
+			if (x.getKey().equals(keyOne)){//allready
+				flag = false;
+				break;
 			}
 		}
+
+		if (flag && Objects.nonNull(keyOneValue)){
+			Criteria.X x = new Criteria.X();
+			x.setConjunction(Conjunction.AND);
+			x.setPredicate(Predicate.EQ);
+			x.setKey(keyOne);
+			x.setValue(keyOneValue);
+			xList.add(0, x);
+			condition.getValueList().add(0,keyOneValue);
+		}
+
+		String conditionSql = CriteriaBuilder.parseCondition(condition);
+
+		conditionSql = BeanUtilX.mapper(conditionSql,parsed);
+
+		conditionSql.replaceFirst(Conjunction.AND.sql(),SqlScript.WHERE);
+
+		sb.append(conditionSql);
 
 		return sb.toString();
 	}
 
 	protected static void adpterRefreshCondition(PreparedStatement pstmt, Field keyOneF, Object obj,
-			int i, Map<String, Object> conditionMap) throws SQLException, NoSuchMethodException, SecurityException,
+			int i, CriteriaCondition condition) throws SQLException, NoSuchMethodException, SecurityException,
 					IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		/*
 		 * 处理KEY
@@ -164,8 +205,8 @@ public class SqlUtil {
 		Object value = keyOneF.get(obj);
 		pstmt.setObject(i++, value);
 
-		if (conditionMap != null) {
-			for (Object v : conditionMap.values()) {
+		if (Objects.nonNull(condition)) {
+			for (Object v : condition.getValueList()) {
 				if(Objects.nonNull(v) && v.getClass().isEnum()){
 					pstmt.setObject(i++, v.toString());
 				}else {

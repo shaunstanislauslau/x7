@@ -36,13 +36,13 @@ public class CriteriaBuilder {
     private Criteria criteria;
     private CriteriaBuilder instance;
 
-    public P and() {
+    public ConditionBuilder and() {
 
         X x = new X();
         x.setConjunction(Conjunction.AND);
         x.setValue(Conjunction.AND);
 
-        X current = p.getX();
+        X current = conditionBuilder.getX();
         if (current != null) {
             X parent = current.getParent();
             if (parent != null) {
@@ -58,18 +58,18 @@ public class CriteriaBuilder {
             this.criteria.add(x);
         }
 
-        p.under(x);
+        conditionBuilder.under(x);
 
-        return p;
+        return conditionBuilder;
     }
 
-    public P or() {
+    public ConditionBuilder or() {
 
         X x = new X();
         x.setConjunction(Conjunction.OR);
         x.setValue(Conjunction.OR);
 
-        X current = p.getX();
+        X current = conditionBuilder.getX();
         if (current != null) {
             X parent = current.getParent();
             if (parent != null) {
@@ -85,9 +85,9 @@ public class CriteriaBuilder {
             this.criteria.add(x);
         }
 
-        p.under(x);
+        conditionBuilder.under(x);
 
-        return p;
+        return conditionBuilder;
     }
 
     public CriteriaBuilder endSub() {
@@ -96,7 +96,7 @@ public class CriteriaBuilder {
         x.setPredicate(Predicate.SUB_END);
         x.setValue(Predicate.SUB_END);
 
-        X current = p.getX();
+        X current = conditionBuilder.getX();
         X parent = current.getParent();
         if (parent != null) {
             List<X> subList = parent.getSubList();
@@ -104,14 +104,14 @@ public class CriteriaBuilder {
                 subList.add(x);
             }
 
-            this.p.under(parent);
+            this.conditionBuilder.under(parent);
         }
 
         return instance;
     }
 
 
-    private P p = new P() {
+    private ConditionBuilder conditionBuilder = new ConditionBuilder() {
 
         private X x = null;
 
@@ -257,6 +257,19 @@ public class CriteriaBuilder {
         }
 
         @Override
+        public CriteriaBuilder notLike(String property, String value) {
+
+            if (StringUtil.isNullOrEmpty(value))
+                return instance;
+
+            x.setPredicate(Predicate.NOT_LIKE);
+            x.setKey(property);
+            x.setValue(SqlScript.LIKE_HOLDER + value + SqlScript.LIKE_HOLDER);
+
+            return instance;
+        }
+
+        @Override
         public CriteriaBuilder between(String property, Object min, Object max) {
 
             if (min == null || max == null)
@@ -363,7 +376,19 @@ public class CriteriaBuilder {
         }
 
         @Override
-        public P beginSub() {
+        public CriteriaBuilder x(String sql) {
+
+            if (StringUtil.isNullOrEmpty(sql))
+                return instance;
+
+            x.setPredicate(Predicate.X);
+            x.setValue(sql);
+
+            return instance;
+        }
+
+        @Override
+        public ConditionBuilder beginSub() {
 
             x.setKey(Predicate.SUB.sql());// special treat FIXME
             x.setValue(Predicate.SUB);
@@ -380,9 +405,9 @@ public class CriteriaBuilder {
             X xx = new X();//?
             subList.add(xx);//?
             xx.setParent(x);
-            p.under(xx);
+            conditionBuilder.under(xx);
 
-            return p;
+            return conditionBuilder;
         }
 
     };
@@ -394,6 +419,12 @@ public class CriteriaBuilder {
     private CriteriaBuilder(Criteria criteria) {
         this.criteria = criteria;
         this.instance = this;
+    }
+
+    public static CriteriaBuilder buildCondition(){
+        Criteria criteria = new Criteria();
+        CriteriaBuilder builder = new CriteriaBuilder(criteria);
+        return builder;
     }
 
     public static CriteriaBuilder build(Class<?> clz) {
@@ -455,6 +486,14 @@ public class CriteriaBuilder {
 
     public Class<?> getClz() {
         return this.criteria.getClz();
+    }
+
+
+    public static String parseCondition(CriteriaCondition criteriaCondition){
+        StringBuilder sb = new StringBuilder();
+        List<X> xList = criteriaCondition.getListX();
+        x(sb, xList, criteriaCondition, true);
+        return sb.toString();
     }
 
     public static String[] parse(Criteria criteria) {
@@ -594,7 +633,7 @@ public class CriteriaBuilder {
             int size = list.size();
             int i = 0;
             for (String resultKey : list) {
-                column.append(resultKey);
+                column.append(resultKey).append(SqlScript.SPACE);
                 resultMapped.getResultList().add(resultKey);
                 i++;
                 if (i < size) {
@@ -662,13 +701,18 @@ public class CriteriaBuilder {
     }
 
 
-    private static void x(StringBuilder sb, List<X> xList, Criteria criteria, boolean isWhere) {
+    private static void x(StringBuilder sb, List<X> xList, CriteriaCondition criteria, boolean isWhere) {
         for (X x : xList) {
 
             Object v = x.getValue();
             if (Objects.isNull(v))
                 continue;
 
+            if(x.getPredicate() == Predicate.X){
+                appendConjunction(sb, x, criteria, isWhere);
+                sb.append(x.getValue());
+                continue;
+            }
 
             if (Objects.nonNull(x.getConjunction())) {
 
@@ -726,18 +770,23 @@ public class CriteriaBuilder {
     }
 
 
-    private static void appendConjunction(StringBuilder sb, X x, Criteria criteria, boolean isWhere) {
+    private static void appendConjunction(StringBuilder sb, X x, CriteriaCondition criteriaBuilder, boolean isWhere) {
         if (Objects.isNull(x.getConjunction()))
             return;
-        if (isWhere && criteria.isWhere) {
-            criteria.isWhere = false;
-            sb.append(Conjunction.WHERE.sql());
-        } else {
+        if (criteriaBuilder instanceof Criteria) {
+            Criteria criteria = (Criteria) criteriaBuilder;
+            if (isWhere && criteria.isWhere) {
+                criteria.isWhere = false;
+                sb.append(Conjunction.WHERE.sql());
+            } else {
+                sb.append(x.getConjunction().sql());
+            }
+        }else{
             sb.append(x.getConjunction().sql());
         }
     }
 
-    private static void x(X x, Criteria criteria, boolean isWhere) {
+    private static void x(X x, CriteriaCondition criteria, boolean isWhere) {
 
         StringBuilder sb = new StringBuilder();
         Predicate p = x.getPredicate();
@@ -940,7 +989,7 @@ public class CriteriaBuilder {
         return false;
     }
 
-    public interface P {
+    public interface ConditionBuilder {
 
         CriteriaBuilder eq(String property, Object value);
 
@@ -958,6 +1007,8 @@ public class CriteriaBuilder {
 
         CriteriaBuilder likeRight(String property, String value);
 
+        CriteriaBuilder notLike(String property, String value);
+
         CriteriaBuilder between(String property, Object min, Object max);
 
         CriteriaBuilder in(String property, List<Object> list);
@@ -968,11 +1019,13 @@ public class CriteriaBuilder {
 
         CriteriaBuilder isNull(String property);
 
+        CriteriaBuilder x(String sql);
+
         void under(X x);
 
         X getX();
 
-        P beginSub();
+        ConditionBuilder beginSub();
 
     }
 

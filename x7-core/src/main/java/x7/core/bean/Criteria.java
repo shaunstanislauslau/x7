@@ -19,7 +19,6 @@ package x7.core.bean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import x7.core.util.BeanUtil;
 import x7.core.web.Direction;
-import x7.core.web.Fetched;
 import x7.core.web.Paged;
 
 import java.io.Serializable;
@@ -30,7 +29,7 @@ import java.util.*;
  * @author sim
  *
  */
-public class Criteria implements Paged, Serializable {
+public class Criteria implements CriteriaCondition, Paged, Serializable {
 
 	private static final long serialVersionUID = 7088698915888081349L;
 
@@ -53,6 +52,7 @@ public class Criteria implements Paged, Serializable {
 
 	public Criteria(){}
 
+	@Override
 	public List<Object> getValueList() {
 		return valueList;
 	}
@@ -139,7 +139,7 @@ public class Criteria implements Paged, Serializable {
 		this.rows = rows;
 	}
 
-
+	@Override
 	public List<X> getListX() {
 		return this.listX;
 	}
@@ -316,6 +316,7 @@ public class Criteria implements Paged, Serializable {
 		}
 
 	}
+
 	
 	public static class X {
 		private static final long serialVersionUID = 7088698915888083256L;

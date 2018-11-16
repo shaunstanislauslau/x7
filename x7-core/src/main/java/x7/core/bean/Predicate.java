@@ -9,6 +9,7 @@ public enum Predicate implements SqlScript{
 	GTE(" >= "),
 	NE(" <> "),
 	LIKE(" LIKE "),
+	NOT_LIKE(" NOT LIKE "),
 	IN(" IN "),
 	NOT_IN(" NOT IN "),
 	IS_NOT_NULL(" IS NOT NULL "),
@@ -16,7 +17,8 @@ public enum Predicate implements SqlScript{
 	BETWEEN(" BETWEEN "),
 	SUB_BEGIN("( "),
 	SUB_END(" )"),
-	SUB(" SUB ");
+	SUB(" SUB "),
+	X("X");
 
 	private String sqlOper;
 	private Predicate(String sqlOper){

@@ -17,6 +17,7 @@
 package x7.repository.dao;
 
 import x7.core.bean.Criteria;
+import x7.core.bean.CriteriaCondition;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
@@ -37,7 +38,7 @@ public interface Dao {
 
 	boolean refresh(Object obj);
 	
-	boolean refresh(Object obj, Map<String,Object> conditionMap);
+	boolean refresh(Object obj, CriteriaCondition condition);
 
 	boolean remove(Object obj);
 	
