@@ -596,6 +596,7 @@ public class DaoImpl implements Dao {
 		Parsed parsed = Parser.get(clz);
 
 		sql = BeanUtilX.mapper(sql, parsed);
+		sql = BeanUtilX.mapperForManu(sql, parsed);
 
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 

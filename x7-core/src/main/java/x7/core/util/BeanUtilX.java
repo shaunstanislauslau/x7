@@ -638,10 +638,26 @@ public class BeanUtilX extends BeanUtil {
 		}
 		
 	}
+
+	public static String mapperForManu(String sql, Parsed parsed) {
+
+		if (parsed.isNoSpec())
+			return sql;
+
+		if (!sql.contains(","))
+			return sql;
+
+		for (String property : parsed.getPropertyMapperMap().keySet()){
+			String key = " "+property+",";
+			String value = " "+parsed.getMapper(property)+",";
+			sql = sql.replaceAll(key, value);
+		}
+		return sql;
+	}
 	
 	
 	public static String mapper(String sql, Parsed parsed) {
-		
+
 		if (parsed.isNoSpec())
 			return sql;
 
