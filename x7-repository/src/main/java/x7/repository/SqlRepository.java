@@ -203,6 +203,10 @@ public class SqlRepository implements Repository {
 		testAvailable();
 		boolean flag = false;
 		Class clz = obj.getClass();
+		if (condition instanceof Criteria){
+			Criteria criteria = (Criteria)condition;
+			criteria.setClz(clz);
+		}
 		Parsed parsed = Parser.get(clz);
 		String key = getCacheKey(obj, parsed);
 		if (parsed.isSharding()) {

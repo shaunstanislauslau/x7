@@ -188,8 +188,6 @@ public class SqlUtil {
 
 		conditionSql = BeanUtilX.mapper(conditionSql,parsed);
 
-		conditionSql.replaceFirst(Conjunction.AND.sql(),SqlScript.WHERE);
-
 		sb.append(conditionSql);
 
 		return sb.toString();
