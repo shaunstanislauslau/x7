@@ -95,12 +95,15 @@ public class SqlUtil {
 	 * 拼接SQL
 	 *
 	 */
-	protected static String concatRefresh(StringBuilder sb, Parsed parsed, Map<String, Object> queryMap) {
+	protected static String concatRefresh(StringBuilder sb, Parsed parsed, Map<String, Object> refreshMap) {
+
+		String keyOne = parsed.getKey(X.KEY_ONE);
+		refreshMap.remove(keyOne);
 
 		sb.append(SqlScript.SET);
-		int size = queryMap.size();
+		int size = refreshMap.size();
 		int i = 0;
-		for (String key : queryMap.keySet()) {
+		for (String key : refreshMap.keySet()) {
 
 			String mapper = parsed.getMapper(key);
 			sb.append(mapper);
@@ -112,8 +115,8 @@ public class SqlUtil {
 			i++;
 		}
 
-		sb.append(Conjunction.AND.sql());
-		String keyOne = parsed.getKey(X.KEY_ONE);
+
+		sb.append(SqlScript.WHERE);
 		String mapper = parsed.getMapper(keyOne);
 		sb.append(mapper).append(SqlScript.EQ_PLACE_HOLDER);
 
@@ -124,14 +127,14 @@ public class SqlUtil {
 	 * 拼接SQL
 	 *
 	 */
-	protected static String concatRefresh(StringBuilder sb, Parsed parsed, Map<String, Object> queryMap,
+	protected static String concatRefresh(StringBuilder sb, Parsed parsed, Map<String, Object> refreshMap,
 										  CriteriaCondition condition) {
 
 
 		String keyOne = parsed.getKey(X.KEY_ONE);
-		Object keyOneValue = queryMap.get(keyOne);
+		Object keyOneValue = refreshMap.get(keyOne);
 
-		queryMap.remove(keyOne);
+		refreshMap.remove(keyOne);
 
 		if(Objects.nonNull(keyOneValue)){
 			String valueStr = keyOneValue.toString();
@@ -151,9 +154,9 @@ public class SqlUtil {
 		}
 
 		sb.append(SqlScript.SET);
-		int size = queryMap.size();
+		int size = refreshMap.size();
 		int i = 0;
-		for (String key : queryMap.keySet()) {
+		for (String key : refreshMap.keySet()) {
 
 			String mapper = parsed.getMapper(key);
 			sb.append(mapper);

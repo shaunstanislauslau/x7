@@ -430,14 +430,15 @@ public class DaoImpl implements Dao {
 
 		Parsed parsed = Parser.get(clz);
 
-		Map<String, Object> queryMap = BeanUtilX.getRefreshMap(parsed, obj);
+		Map<String, Object> refreshMap = BeanUtilX.getRefreshMap(parsed, obj);
 
 		String tableName = MapperFactory.getTableName(clz);
 		StringBuilder sb = new StringBuilder();
 		sb.append("UPDATE ").append(tableName).append(" ");
-		String sql = SqlUtil.concatRefresh(sb, parsed, queryMap);
+		String sql = SqlUtil.concatRefresh(sb, parsed, refreshMap);
 
-		// System.out.println("refreshOptionally: " + sql);
+		System.out.println("queryMap: " + refreshMap);
+		System.out.println("refresh normally: " + sql);
 
 		boolean flag = false;
 		boolean isNoBizTx = false;
@@ -452,7 +453,7 @@ public class DaoImpl implements Dao {
 			}
 
 			int i = 1;
-			for (Object value : queryMap.values()) {
+			for (Object value : refreshMap.values()) {
 				value = SqlUtil.filter(value);
 				if ( value instanceof Boolean && DbType.ORACLE.equals(DbType.value)) {
 					Boolean b = (Boolean) value;
