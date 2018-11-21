@@ -20,6 +20,8 @@ import org.apache.log4j.Logger;
 import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
 import x7.core.bean.*;
+import x7.core.bean.condition.InCondition;
+import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
 import x7.core.repository.X;
 import x7.core.util.StringUtil;
@@ -336,17 +338,20 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
     }
 
     @Override
-    public Object reduce(Criteria.ReduceType type, String reduceProperty, Criteria criteria) {
-        return SqlRepository.getInstance().reduce(type, reduceProperty, criteria);
+    public Object reduce(ReduceCondition<T> reduceCondition) {
+        reduceCondition.setClz(this.clz);
+        return SqlRepository.getInstance().reduce(reduceCondition);
     }
 
 
     @Override
-    public List<T> in(String inProperty, List<? extends Object> inList) {
-        if (inList.isEmpty())
+    public List<T> in(InCondition inCondition) {
+        if (inCondition.getInList().isEmpty())
             return new ArrayList<T>();
 
-        return SqlRepository.getInstance().in(clz, inProperty, inList);
+        inCondition.setClz(this.clz);
+
+        return SqlRepository.getInstance().in(inCondition);
     }
 
     @Override

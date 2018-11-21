@@ -18,6 +18,7 @@ package x7.repository.dao;
 
 import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
+import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
 import x7.core.web.Pagination;
 
@@ -52,7 +53,7 @@ public interface ShardingDao {
 
 	<T> T get(Class<T> clz, long idOne);
 	<T> T getOne(T conditionObj);
-	Object reduce(Criteria.ReduceType type, String property, Criteria criteria);
+	<T> Object reduce(ReduceCondition<T> refreshCondition);
 	
 	<T> Pagination<T> find(Criteria criteria);
 	

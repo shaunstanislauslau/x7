@@ -17,7 +17,8 @@
 package x7.repository.dao;
 
 import x7.core.bean.Criteria;
-import x7.core.bean.CriteriaCondition;
+import x7.core.bean.condition.InCondition;
+import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -62,7 +63,7 @@ public interface Dao {
 	
 	<T> T getOne(T conditionObj, String orderBy, Direction sc);
 	
-	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
+	<T> List<T> in(InCondition inCondition);
 	
 	Pagination<Map<String, Object>> find(Criteria.ResultMapped resultMapped);
 	
@@ -70,7 +71,7 @@ public interface Dao {
 	
 	<T> Pagination<T> find(Criteria criteria);
 
-	Object reduce(Criteria.ReduceType type, String property, Criteria criteria);
+	<T> Object reduce(ReduceCondition<T> reduceCondition);
 
 	@Deprecated
 	boolean execute(Object obj, String sql);

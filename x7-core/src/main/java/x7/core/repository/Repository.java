@@ -17,7 +17,8 @@
 package x7.core.repository;
 
 import x7.core.bean.Criteria;
-import x7.core.bean.CriteriaCondition;
+import x7.core.bean.condition.InCondition;
+import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -116,20 +117,16 @@ public interface Repository {
 	
 	/**
 	 * 支持单一的指定property的in查询, 包括主键
-	 * @param clz
-	 * @param inProperty
-	 * @param inList
+	 * @param inCondition
 	 */
-	<T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList);
+	<T> List<T> in(InCondition inCondition);
 
 	
 	/**
 	 * 条件查询累计
-	 * @param property
-	 * @param criteria
 	 * 
 	 */
-	Object reduce(Criteria.ReduceType type, String property, Criteria criteria);
+	<T> Object reduce(ReduceCondition<T> reduceCondition);
 
 	
 	/**

@@ -18,8 +18,9 @@ package x7.repository.dao;
 
 import com.mysql.jdbc.Statement;
 import x7.core.bean.*;
+import x7.core.bean.condition.InCondition;
+import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
-import x7.core.repository.Mapped;
 import x7.core.repository.X;
 import x7.core.util.*;
 import x7.core.web.Direction;
@@ -832,7 +833,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public Object reduce(Criteria.ReduceType type, String property, Criteria criteria) {
+	public <T> Object reduce(ReduceCondition<T> reduceCondition) {
 
 		Connection conn = null;
 		try {
@@ -840,28 +841,28 @@ public class DaoImpl implements Dao {
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return reduce(type, property, criteria, conn);
+		return reduce(reduceCondition, conn);
 	}
 
-	protected Object reduce(Criteria.ReduceType type, String property, Criteria criteria, Connection conn) {
+	protected <T> Object reduce(ReduceCondition<T> reduceCondition, Connection conn) {
 
-		Class<?> clz = criteria.getClz();
+		Class<?> clz = reduceCondition.getClz();
 		Parsed parsed = Parser.get(clz);
 
-		List<Object> valueList = criteria.getValueList();
+		String conditionSql = CriteriaBuilder.parseCondition(reduceCondition.getCondition());
 
-		String[] sqlArr = CriteriaBuilder.parse(criteria);
-
-		String sql = sqlArr[2];
-
-		String returnStr = type.toString().toLowerCase();
-		String script = type.toString() + "("+property+") " + returnStr;
-
-		sql = sql.replace(Mapped.TAG, script);
+		String type = reduceCondition.getType().toString();
+		String returnStr = type.toLowerCase();
+		String property = reduceCondition.getReduceProperty();
 		if (StringUtil.isNotNull(property)) {
 			property = parsed.getMapper(property);
-			sql = sql.replace(SqlScript.STAR, property);
 		}
+		String script = type + "("+property+") " + returnStr;
+
+		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
+
+		sql = sql.replace("*",script);
+		sql += conditionSql;
 
 		System.out.println(sql);
 
@@ -874,6 +875,8 @@ public class DaoImpl implements Dao {
 			pstmt = conn.prepareStatement(sql);
 
 			int i = 1;
+
+			List<Object> valueList = reduceCondition.getCondition().getValueList();
 			for (Object o : valueList) {
 				pstmt.setObject(i++, o);
 			}
@@ -1125,9 +1128,13 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList) {
+	public <T> List<T> in(InCondition inCondition) {
 
 		List<T> list = new ArrayList<T>();
+
+		Class<T> clz = inCondition.getClz();
+		String inProperty = inCondition.getProperty();
+		List<? extends Object> inList = inCondition.getInList();
 
 		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
 		List<BeanElement> eles = MapperFactory.getElementList(clz);

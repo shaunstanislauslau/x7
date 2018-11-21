@@ -2,12 +2,13 @@ package x7.core.bean.condition;
 
 import java.util.List;
 
-/**
- * Created by Sim on 2018/8/20.
- */
+
 public class InCondition {
+
     private String property;
     private List<? extends Object> inList;
+
+    private transient Class clz;
 
     public String getProperty() {
         return property;
@@ -22,6 +23,22 @@ public class InCondition {
     }
 
     public void setInList(List<? extends Object> inList) {
+        this.inList = inList;
+    }
+
+    public Class getClz() {
+        return clz;
+    }
+
+    public void setClz(Class clz) {
+        this.clz = clz;
+    }
+
+    public InCondition(){
+    }
+
+    public InCondition(String property,List<? extends Object> inList ){
+        this.property = property;
         this.inList = inList;
     }
 

@@ -1,14 +1,20 @@
 package x7.core.bean.condition;
 
 import x7.core.bean.Criteria;
+import x7.core.bean.CriteriaBuilder;
+import x7.core.bean.CriteriaCondition;
 
-/**
- * Created by Sim on 2018/8/20.
- */
-public class ReduceCondition {
+import java.util.Objects;
+
+
+public class ReduceCondition<T> {
+
     private Criteria.ReduceType type;
     private String reduceProperty;
-    private Criteria criteria;
+    private CriteriaCondition condition;
+
+    private transient Class clz;
+    private transient CriteriaBuilder builder;
 
     public Criteria.ReduceType getType() {
         return type;
@@ -26,12 +32,41 @@ public class ReduceCondition {
         this.reduceProperty = reduceProperty;
     }
 
-    public Criteria getCriteria() {
-        return criteria;
+    public CriteriaCondition getCondition() {
+        if (Objects.nonNull(this.builder)) {
+            this.condition = builder.get();
+        }
+        return this.condition;
     }
 
-    public void setCriteria(Criteria criteria) {
-        this.criteria = criteria;
+    public void setCondition(CriteriaCondition condition) {
+        this.condition = condition;
+    }
+
+    public Class getClz() {
+        return clz;
+    }
+
+    public void setClz(Class clz) {
+        this.clz = clz;
+    }
+
+    public CriteriaBuilder getBuilder() {
+        return builder;
+    }
+
+    public void setBuilder(CriteriaBuilder builder) {
+        this.builder = builder;
+    }
+
+    public ReduceCondition(){
+    }
+
+    public ReduceCondition(Criteria.ReduceType type,String reduceProperty){
+        this.type= type;
+        this.reduceProperty = reduceProperty;
+        CriteriaBuilder builder = CriteriaBuilder.buildCondition();
+        this.builder = builder;
     }
 
     @Override
@@ -39,7 +74,7 @@ public class ReduceCondition {
         return "ReduceCondition{" +
                 "type=" + type +
                 ", reduceProperty='" + reduceProperty + '\'' +
-                ", criteria=" + criteria +
+                ", condition=" + condition +
                 '}';
     }
 }

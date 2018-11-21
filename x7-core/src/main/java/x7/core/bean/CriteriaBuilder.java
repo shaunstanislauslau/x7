@@ -540,10 +540,12 @@ public class CriteriaBuilder {
         boolean isResultMap = (criteria instanceof ResultMapped);
         if (isResultMap) {
             // sqlArr[1]: core sql
+
+            String tabledSql = sqlArr[1];
             ResultMapped resultMapped = (ResultMapped) criteria;
             Map<String, List<String>> map = new HashMap<>();
             {
-                String[] arr = sqlArr[1].split(SqlScript.SPACE);
+                String[] arr = tabledSql.split(SqlScript.SPACE);
                 for (String ele : arr) {
                     if (ele.contains(SqlScript.POINT)) {
                         ele = ele.replace(",", "");
@@ -610,7 +612,6 @@ public class CriteriaBuilder {
             }
         }
 
-        System.out.println(sqlArr[0]);
         System.out.println(sqlArr[1]);
 
         return sqlArr;

@@ -18,11 +18,12 @@ package x7.repository;
 
 import org.apache.log4j.Logger;
 import x7.core.bean.*;
+import x7.core.bean.condition.InCondition;
+import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
 import x7.core.repository.CacheResolver;
 import x7.core.repository.Repository;
 import x7.core.repository.X;
-import x7.core.util.BeanUtilX;
 import x7.core.util.JsonX;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -543,15 +544,14 @@ public class SqlRepository implements Repository {
 	}
 
 	@Override
-	public Object reduce(Criteria.ReduceType type, String property, Criteria criteria) {
+	public <T> Object reduce(ReduceCondition<T> reduceCondition) {
 		testAvailable();
-		Class clz = criteria.getClz();
+		Class clz = reduceCondition.getClz();
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
-			throw new ShardingException(
-					"Sharding not supported: getSum(Object conditionObj, String property, Criteria criteria)");
+			return shardingDao.reduce(reduceCondition);
 		} else {
-			return syncDao.reduce(type,property, criteria);
+			return syncDao.reduce(reduceCondition);
 		}
 	}
 
@@ -579,27 +579,30 @@ public class SqlRepository implements Repository {
 
 
 	@Override
-	public <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> allList) {
+	public <T> List<T> in(InCondition inCondition) {
 		testAvailable();
 		
 		List<Object> inList = new ArrayList<Object>();
 
-		for (Object obj : allList) {
+		for (Object obj : inCondition.getInList()) {
 			if (Objects.isNull(obj))
 				continue;
 			if (!inList.contains(obj)) {
 				inList.add(obj);
 			}
 		}
+
+		Class clz = inCondition.getClz();
+		String inProperty = inCondition.getProperty();
 		
 		Parsed parsed = Parser.get(clz);
 		if (parsed.isSharding()) {
 			throw new ShardingException(
-					"Sharding not supported now: in(Class<T> clz, String inProperty, List<Object> inList)");
+					"Sharding not supported now: in(inCondition)");
 		}
 
 		if (cacheResolver == null || parsed.isNoCache()) {
-			return syncDao.in(clz, inProperty, inList);
+			return syncDao.in(inCondition);
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -615,7 +618,7 @@ public class SqlRepository implements Repository {
 
 		if (keyList == null || keyList.isEmpty()) {
 
-			list = syncDao.in(clz, inProperty, inList);
+			list = syncDao.in(inCondition);
 
 			keyList = new ArrayList<String>();
 

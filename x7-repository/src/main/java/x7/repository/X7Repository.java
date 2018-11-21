@@ -19,6 +19,8 @@ package x7.repository;
 import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
 import x7.core.bean.IQuantity;
+import x7.core.bean.condition.InCondition;
+import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
@@ -98,7 +100,7 @@ public interface X7Repository<T> {
 
 	T getOne(T conditionObj);
 
-	List<T> in(String inProperty, List<? extends Object> inList);
+	List<T> in(InCondition inCondition);
 
 	/**
 	 * Standard query pageable API
@@ -115,5 +117,5 @@ public interface X7Repository<T> {
 	 */
 	Pagination<Map<String, Object>> find(Criteria.ResultMapped criteria);
 
-	Object reduce(Criteria.ReduceType type, String property, Criteria criteria);
+	Object reduce(ReduceCondition<T> condition);
 }

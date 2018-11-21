@@ -20,6 +20,7 @@ import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
+import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
 import x7.core.config.Configs;
 import x7.core.repository.X;
@@ -644,26 +645,21 @@ public class ShardingDaoImpl implements ShardingDao {
 		return pagination;
 	}
 
-	private Object reduce(Criteria.ReduceType type, String property, Criteria criteria, String key) {
+	private Object reduce(ReduceCondition condition, String key) {
 		Connection conn = null;
 		try {
 			conn = getConnection(key, true);// FIXME true, need a policy
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return DaoImpl.getInstance().reduce(type, property, criteria, conn);
+		return DaoImpl.getInstance().reduce(condition, conn);
 	}
 
 	@Override
-	public Object reduce(Criteria.ReduceType type, String property, Criteria criteria) {
+	public <T> Object reduce(ReduceCondition<T> reduceCondition) {
 
-		tryToParse(criteria.getClz());
+		tryToParse(reduceCondition.getClz());
 
-		String key = getKey(criteria);
-
-		if (StringUtil.isNotNull(key)) {
-			return reduce(type, property, criteria, key);
-		}
 
 		String policy = Configs.getString("x7.db.sharding.policy");
 		String[] keyArr = ShardingPolicy.get(policy).getSuffixArr();
@@ -682,7 +678,7 @@ public class ShardingDaoImpl implements ShardingDao {
 
 					Object result = null;
 					try {
-						result = reduce(type,property, criteria, k);
+						result = reduce(reduceCondition, k);
 					} catch (Exception e) {
 						for (Future<Object> f : futureMap.values()) {
 							f.cancel(true);
@@ -700,6 +696,7 @@ public class ShardingDaoImpl implements ShardingDao {
 
 		}
 
+		Criteria.ReduceType type = reduceCondition.getType();
 		/*
 		 * reduce script
 		 */

@@ -9,12 +9,12 @@ import java.util.Objects;
 
 public class RefreshCondition<T> {
 
-    private Class clz;
     private T obj;
     private CriteriaCondition condition;
     private List<Criteria.X> refreshList = new ArrayList<>();
     private String sourceStript;
 
+    private transient Class clz;
     private transient  CriteriaBuilder builder;
 
     public Class getClz() {
