@@ -383,6 +383,8 @@ public class CriteriaBuilder {
             if (StringUtil.isNullOrEmpty(sql))
                 return instance;
 
+            sql = BeanUtilX.normalizeSql(sql);
+
             x.setPredicate(Predicate.X);
             x.setValue(sql);
 

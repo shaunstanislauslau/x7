@@ -18,6 +18,7 @@ package x7.repository.dao;
 
 import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.web.Pagination;
 
 import java.util.Map;
@@ -43,7 +44,7 @@ public interface ShardingDao {
 	 */
 	boolean refresh(Object obj);
 	
-	boolean refresh(Object obj, CriteriaCondition conditon);
+	<T> boolean refreshByCondition(RefreshCondition<T> conditon);
 
 	boolean remove(Object obj);
 

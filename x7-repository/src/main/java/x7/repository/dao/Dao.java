@@ -18,6 +18,7 @@ package x7.repository.dao;
 
 import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
@@ -37,10 +38,11 @@ public interface Dao {
 	boolean createBatch(List<Object> objList);
 
 	boolean refresh(Object obj);
-	
-	boolean refresh(Object obj, CriteriaCondition condition);
 
 	boolean remove(Object obj);
+
+	<T> boolean refreshByCondition(RefreshCondition<T> conditon);
+
 	
 	/**
 	 * 适合单主键

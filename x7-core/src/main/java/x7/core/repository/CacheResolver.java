@@ -41,6 +41,8 @@ public interface CacheResolver {
 	
 	void remove(Class clz, String key);
 
+	void remove(Class clz);
+
 	
 	/**
 	 * 高效的缓存单个对象<br>

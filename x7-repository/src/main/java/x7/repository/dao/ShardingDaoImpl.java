@@ -20,6 +20,7 @@ import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
 import x7.core.bean.Parsed;
 import x7.core.bean.Parser;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.config.Configs;
 import x7.core.repository.X;
 import x7.core.util.BeanUtilX;
@@ -307,7 +308,7 @@ public class ShardingDaoImpl implements ShardingDao {
 		return refresh(obj, key);
 	}
 
-	private boolean refresh(Object obj, CriteriaCondition condition, String key) {
+	private boolean refresh(RefreshCondition refreshCondition, String key) {
 
 		Connection conn = null;
 		try {
@@ -316,16 +317,18 @@ public class ShardingDaoImpl implements ShardingDao {
 			throw new RuntimeException("NO CONNECTION");
 		}
 
-		boolean flag = DaoImpl.getInstance().refresh(obj, condition, conn);
+		boolean flag = DaoImpl.getInstance().refreshByCondition(refreshCondition, conn);
 		return flag;
 
 	}
 
 	@Override
-	public boolean refresh(Object obj, CriteriaCondition condition) {
+	public <T> boolean refreshByCondition(RefreshCondition<T> refreshcondition) {
+		Object obj = refreshcondition.getObj();
+		CriteriaCondition condition = refreshcondition.getCondition();
 		tryToParse(obj.getClass());
 		String key = getKey(obj);
-		return refresh(obj, condition, key);
+		return refresh(condition, key);
 	}
 
 	private boolean remove(Object obj, String key) {

@@ -27,7 +27,7 @@ import x7.repository.exception.PersistenceException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 
 
 /**
@@ -74,6 +74,20 @@ public class LevelTwoCacheResolver implements CacheResolver {
 		if (!flag)
 			throw new CacheException("remove failed");
 	}
+
+	public void remove(Class clz) {
+
+		String key = getSimpleKey(clz);
+
+		Set<String> keySet = JedisConnector_Cache.getInstance().keys(key);
+
+		for (String k : keySet) {
+			boolean flag = JedisConnector_Cache.getInstance().delete(k.getBytes());
+			if (!flag)
+				throw new CacheException("remove failed");
+		}
+
+	}
 	
 	@SuppressWarnings("rawtypes")
 	private String getNSKey(Class clz){
@@ -114,6 +128,10 @@ public class LevelTwoCacheResolver implements CacheResolver {
 	@SuppressWarnings("rawtypes")
 	private String getSimpleKey(Class clz, String condition){
 		return "{"+clz.getName()+"}." + condition;
+	}
+
+	private String getSimpleKey(Class clz){
+		return "{"+clz.getName()+"}.*" ;
 	}
 	
 	

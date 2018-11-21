@@ -23,6 +23,7 @@ import x7.core.config.Configs;
 import x7.core.util.StringUtil;
 
 import java.util.List;
+import java.util.Set;
 
 public class JedisConnector_Cache {
 
@@ -182,6 +183,20 @@ public class JedisConnector_Cache {
 		}
 		return true;
 	}
-	
+
+	public Set<String> keys(String pattern){
+		Jedis jedis = null;
+		try{
+			jedis = get();
+			if (jedis == null)
+				throw new RuntimeException("no redis connection");
+			Set<String> keySet = jedis.keys(pattern);
+			pool.returnResource(jedis);
+			return keySet;
+		}catch(Exception e){
+			pool.returnBrokenResource(jedis);
+			return null;
+		}
+	}
 
 }

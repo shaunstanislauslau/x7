@@ -304,6 +304,9 @@ public class BeanUtilX extends BeanUtil {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 
+		if (Objects.isNull(obj))
+			return map;
+
 		Class clz = obj.getClass();
 		
 		if (obj instanceof DataPermission){
@@ -799,6 +802,40 @@ public class BeanUtilX extends BeanUtil {
 			}
 		}
 		return mapper;
+	}
+
+
+
+	private final static Map<String,String> opMap = new HashMap<String,String>(){
+		{
+			put("=", " = ");
+			put("+", " + ");
+			put("-", " - ");
+			put("*", " * ");
+			put("/", " / ");
+			put("(", "( ");
+			put(")", " )");
+			put(","," , ");
+
+		}
+	};
+
+
+	public static String normalizeSql(String manuSql){
+		StringBuilder valueSb = new StringBuilder();
+
+		int length = manuSql.length();
+		for (int j = 0; j < length; j++){
+			String strEle = String.valueOf(manuSql.charAt(j));
+			if (" ".equals(strEle))
+				continue;
+			if (opMap.containsKey(strEle))
+				strEle = opMap.get(strEle);
+			valueSb.append(strEle);
+		}
+
+		String target = valueSb.toString();
+		return target;
 	}
 
 }

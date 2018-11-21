@@ -18,6 +18,7 @@ package x7.core.repository;
 
 import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
@@ -54,11 +55,10 @@ public interface Repository {
 	
 	/**
 	 * 带条件支持局部更新
-	 * @param obj
-	 * @param condition
+	 * @param refreshCondition
 	 * @return
 	 */
-	boolean refresh(Object obj, CriteriaCondition condition);
+	<T> boolean refresh(RefreshCondition<T> refreshCondition);
 
 	/**
 	 * 删除

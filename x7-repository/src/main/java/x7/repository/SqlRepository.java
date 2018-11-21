@@ -18,6 +18,7 @@ package x7.repository;
 
 import org.apache.log4j.Logger;
 import x7.core.bean.*;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.repository.CacheResolver;
 import x7.core.repository.Repository;
 import x7.core.repository.X;
@@ -199,25 +200,35 @@ public class SqlRepository implements Repository {
 	}
 
 	@Override
-	public boolean refresh(Object obj, CriteriaCondition condition) {
+	public <T> boolean refresh(RefreshCondition<T> refreshCondition) {
 		testAvailable();
 		boolean flag = false;
-		Class clz = obj.getClass();
+
+		CriteriaCondition condition = refreshCondition.getCondition();
+		Class clz = refreshCondition.getClz();
 		if (condition instanceof Criteria){
 			Criteria criteria = (Criteria)condition;
-			criteria.setClz(clz);
+			criteria.setClz(refreshCondition.getClz());
 		}
 		Parsed parsed = Parser.get(clz);
-		String key = getCacheKey(obj, parsed);
+
 		if (parsed.isSharding()) {
-			flag = shardingDao.refresh(obj, condition);
+			flag = shardingDao.refreshByCondition(refreshCondition);
 		} else {
-			flag = syncDao.refresh(obj, condition);
+			flag = syncDao.refreshByCondition(refreshCondition);
 		}
 		if (cacheResolver != null && !parsed.isNoCache()) {
-			if (key != null)
-				cacheResolver.remove(clz, key);
-			cacheResolver.markForRefresh(clz);
+
+			T obj = refreshCondition.getObj();
+			if (Objects.isNull(obj)){
+				cacheResolver.remove(clz);
+				cacheResolver.markForRefresh(clz);
+			}else {
+				String key = getCacheKey(obj, parsed);
+				if (key != null)
+					cacheResolver.remove(clz, key);
+				cacheResolver.markForRefresh(clz);
+			}
 		}
 		return flag;
 	}

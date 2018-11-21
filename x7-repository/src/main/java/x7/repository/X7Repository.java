@@ -19,6 +19,7 @@ package x7.repository;
 import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
 import x7.core.bean.IQuantity;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
 
@@ -63,13 +64,8 @@ public interface X7Repository<T> {
 	 */
 	boolean refresh(T obj);
 
-	/**
-	 * @param obj
-	 * @param condition
-	 * @return true | false
-	 */
-	boolean refresh(T obj, CriteriaCondition condition);
-
+	boolean refresh(RefreshCondition<T> refreshCondition);
+	boolean refreshUnSafe(RefreshCondition<T> refreshCondition);
 	/**
 	 * @param obj
 	 */

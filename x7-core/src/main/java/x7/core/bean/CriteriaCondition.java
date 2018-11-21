@@ -9,7 +9,9 @@ public interface CriteriaCondition{
     List<Criteria.X> getListX();
     List<Object> getValueList();
 
-    default void addX(Criteria.X x){
-        getListX().add(x);
-    }
+//    default void addX(Criteria.X x){
+//        getListX().add(x);
+//    }
+//
+//
 }

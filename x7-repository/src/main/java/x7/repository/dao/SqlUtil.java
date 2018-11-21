@@ -17,6 +17,7 @@
 package x7.repository.dao;
 
 import x7.core.bean.*;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.repository.X;
 import x7.core.util.BeanUtil;
 import x7.core.util.BeanUtilX;
@@ -27,12 +28,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class SqlUtil {
+
 
 	protected static void adpterSqlKey(PreparedStatement pstmt, String keyOne, Object obj, int i)
 			throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException,
@@ -58,6 +57,7 @@ public class SqlUtil {
 		 * 处理KEY
 		 */
 		Object value = keyOneF.get(obj);
+
 		pstmt.setObject(i++, value);
 
 	}
@@ -111,7 +111,6 @@ public class SqlUtil {
 			if (i < size - 1) {
 				sb.append(SqlScript.COMMA);
 			}
-
 			i++;
 		}
 
@@ -128,8 +127,7 @@ public class SqlUtil {
 	 *
 	 */
 	protected static String concatRefresh(StringBuilder sb, Parsed parsed, Map<String, Object> refreshMap,
-										  CriteriaCondition condition) {
-
+										  RefreshCondition refreshCondition) {
 
 		String keyOne = parsed.getKey(X.KEY_ONE);
 		Object keyOneValue = refreshMap.get(keyOne);
@@ -154,8 +152,39 @@ public class SqlUtil {
 		}
 
 		sb.append(SqlScript.SET);
-		int size = refreshMap.size();
+
+		List<Criteria.X> refreshList = refreshCondition.getRefreshList();
+
+		int size = refreshList.size();
 		int i = 0;
+		for (Criteria.X x : refreshList){
+			if (x.getPredicate() == Predicate.X){
+
+				Object value = x.getValue();
+
+				String str = value.toString();
+
+				if (str.contains(","))
+					throw new RuntimeException("RefreshCondition.refresh(), para can not contains(,)");
+
+				String target = BeanUtilX.normalizeSql(str);
+
+				target = BeanUtilX.mapper(target,parsed);
+
+				sb.append(target);
+
+				if (i < size + refreshMap.size() - 1) {
+					sb.append(SqlScript.COMMA);
+				}
+			}else{
+				refreshMap.put(x.getKey(),x.getValue());
+			}
+
+			i++;
+		}
+
+		size = refreshMap.size();
+		i = 0;
 		for (String key : refreshMap.keySet()) {
 
 			String mapper = parsed.getMapper(key);
@@ -167,6 +196,9 @@ public class SqlUtil {
 
 			i++;
 		}
+
+
+		CriteriaCondition condition = refreshCondition.getCondition();
 
 		List<Criteria.X> xList = condition.getListX();
 
@@ -201,6 +233,7 @@ public class SqlUtil {
 					IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
 		if (Objects.nonNull(condition)) {
+			System.out.println("_______________concatRefresh: condition.getValueList: " + condition.getValueList());
 			for (Object v : condition.getValueList()) {
 				if(Objects.nonNull(v) && v.getClass().isEnum()){
 					pstmt.setObject(i++, v.toString());
@@ -220,5 +253,6 @@ public class SqlUtil {
 
 		return value;
 	}
+
 
 }

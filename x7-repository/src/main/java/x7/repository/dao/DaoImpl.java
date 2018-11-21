@@ -18,6 +18,7 @@ package x7.repository.dao;
 
 import com.mysql.jdbc.Statement;
 import x7.core.bean.*;
+import x7.core.bean.condition.RefreshCondition;
 import x7.core.repository.Mapped;
 import x7.core.repository.X;
 import x7.core.util.*;
@@ -437,7 +438,6 @@ public class DaoImpl implements Dao {
 		sb.append("UPDATE ").append(tableName).append(" ");
 		String sql = SqlUtil.concatRefresh(sb, parsed, refreshMap);
 
-		System.out.println("queryMap: " + refreshMap);
 		System.out.println("refresh normally: " + sql);
 
 		boolean flag = false;
@@ -1032,19 +1032,20 @@ public class DaoImpl implements Dao {
 		return b;
 	}
 
-	protected boolean refresh(Object obj, CriteriaCondition condition, Connection conn) {
+	protected boolean refreshByCondition(RefreshCondition refreshCondition, Connection conn) {
 
 		@SuppressWarnings("rawtypes")
-		Class clz = obj.getClass();
+		Class clz = refreshCondition.getClz();
+		Object obj = refreshCondition.getObj();
 
 		Parsed parsed = Parser.get(clz);
 
-		Map<String, Object> queryMap = BeanUtilX.getRefreshMap(parsed, obj);
+		Map<String, Object> refreshMap = BeanUtilX.getRefreshMap(parsed, obj);
 
 		String simpleName = BeanUtil.getByFirstLower(clz.getSimpleName());
 		StringBuilder sb = new StringBuilder();
 		sb.append(SqlScript.UPDATE).append(SqlScript.SPACE).append(simpleName).append(SqlScript.SPACE);
-		String sql = SqlUtil.concatRefresh(sb, parsed, queryMap, condition);
+		String sql = SqlUtil.concatRefresh(sb, parsed, refreshMap, refreshCondition);
 		sql = BeanUtilX.mapperName(sql, parsed);
 
 		System.out.println("________SQL: refreshByCondition: " + sql);
@@ -1061,9 +1062,9 @@ public class DaoImpl implements Dao {
 			if (!isNoBizTx) {
 				Tx.add(pstmt);
 			}
-
+			System.out.println("_______________concatRefresh: refreshMap. " + refreshMap);
 			int i = 1;
-			for (Object value : queryMap.values()) {
+			for (Object value : refreshMap.values()) {
 				value = SqlUtil.filter(value);
 				if ( value instanceof Boolean && DbType.ORACLE.equals(DbType.value)) {
 					Boolean b = (Boolean) value;
@@ -1079,7 +1080,7 @@ public class DaoImpl implements Dao {
 			Field keyOneField = parsed.getKeyField(X.KEY_ONE);
 			if (Objects.isNull(keyOneField))
 				throw new PersistenceException("No setting of PrimaryKey by @X.Key");
-			SqlUtil.adpterRefreshCondition(pstmt, keyOneField, obj, i, condition);
+			SqlUtil.adpterRefreshCondition(pstmt, keyOneField, obj, i, refreshCondition.getCondition());
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
@@ -1112,7 +1113,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public boolean refresh(Object obj, CriteriaCondition condition) {
+	public <T> boolean refreshByCondition(RefreshCondition<T> refreshCondition) {
 
 		Connection conn = null;
 		try {
@@ -1120,7 +1121,7 @@ public class DaoImpl implements Dao {
 		} catch (SQLException e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
-		return refresh(obj, condition, conn);
+		return refreshByCondition(refreshCondition, conn);
 	}
 
 	@Override
