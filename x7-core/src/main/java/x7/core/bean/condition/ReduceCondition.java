@@ -69,6 +69,10 @@ public class ReduceCondition<T> {
         this.builder = builder;
     }
 
+    public CriteriaBuilder.ConditionBuilder  and(){
+        return this.builder.and();
+    }
+
     @Override
     public String toString() {
         return "ReduceCondition{" +

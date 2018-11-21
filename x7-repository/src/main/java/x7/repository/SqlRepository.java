@@ -244,7 +244,6 @@ public class SqlRepository implements Repository {
 		if (cacheResolver != null && !parsed.isNoCache()) {
 			cacheResolver.markForRefresh(clz);
 		}
-
 	}
 
 	@Override
@@ -313,7 +312,6 @@ public class SqlRepository implements Repository {
 		}
 
 		List<T> list = null;
-
 
 		List<String> keyList = cacheResolver.getResultKeyList(clz, conditionObj);
 
