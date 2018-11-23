@@ -864,6 +864,8 @@ public class DaoImpl implements Dao {
 		sql = sql.replace("*",script);
 		sql += conditionSql;
 
+		sql = BeanUtilX.mapper(sql, parsed);
+
 		System.out.println(sql);
 
 		Object result = null;

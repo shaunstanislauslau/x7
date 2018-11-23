@@ -12,7 +12,7 @@ public class RefreshCondition<T> {
     private T obj;
     private CriteriaCondition condition;
     private List<Criteria.X> refreshList = new ArrayList<>();
-    private String sourceStript;
+    private String sourceStript;//FIXME fetch
 
     private transient Class clz;
     private transient  CriteriaBuilder builder;
