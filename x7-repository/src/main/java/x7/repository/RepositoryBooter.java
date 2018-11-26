@@ -33,7 +33,9 @@ import x7.repository.pool.DataSourcePool;
 import x7.repository.redis.JedisConnector_Persistence;
 import x7.repository.redis.LevelTwoCacheResolver;
 
+import javax.sql.DataSource;
 import java.util.List;
+import java.util.Objects;
 
 
 public class RepositoryBooter {
@@ -61,11 +63,13 @@ public class RepositoryBooter {
 			});
 		}
 	}
-	
-	public static void boot(String dataSourceType) {
+
+
+
+	public static void boot(DataSource ds_W, DataSource ds_R) {
 		if (instance == null) {
 			instance = new RepositoryBooter();
-			init(dataSourceType);
+			init(ds_W,ds_R);
 			HealthChecker.onStarted();
 			CasualWorker.accept(new IAsyncTask() {
 				@Override
@@ -107,12 +111,20 @@ public class RepositoryBooter {
 	}
 	
 	private static void init(){
-		init(null);
+		onDriver(null);
+		init(null,null);
 	}
-	
-	private static void init(String dataSourceType){
-		
-		String driver = Configs.getString("x7.db.driver");
+
+
+	public static void onDriver(String driverClassName){
+
+		String driver = null;
+		if (Objects.isNull(driverClassName)){
+			driver = Configs.getString("x7.db.driver");
+		}else{
+			driver = driverClassName;
+		}
+
 		driver = driver.toLowerCase();
 
 		if (driver.contains(DbType.MYSQL)){
@@ -128,14 +140,23 @@ public class RepositoryBooter {
 			DbType.value = DbType.SQLSERVER;
 			initDialect(new MySqlDialect());//FIXME
 		}
+	}
+	
+	private static void init(DataSource ds_W, DataSource ds_R){
+		
+
 
 		
 		switch (DbType.value){
 		
 		default:
-			DataSourcePool pool = DataSourceFactory.get(dataSourceType);
-			DaoInitializer.init(pool.get(), pool.getR());
-			DaoInitializer.init(pool.getDsMapW(), pool.getDsMapR());
+			if (Objects.nonNull(ds_W)){
+				DaoInitializer.init(ds_W,ds_R);
+			}else {
+				DataSourcePool pool = DataSourceFactory.get(null);
+				DaoInitializer.init(pool.get(), pool.getR());
+				DaoInitializer.init(pool.getDsMapW(), pool.getDsMapR());
+			}
 			SqlRepository.getInstance().setSyncDao(DaoImpl.getInstance());
 			SqlRepository.getInstance().setShardingDao(ShardingDaoImpl.getInstance());
 			break;

@@ -57,7 +57,7 @@ public class Configs {
 		for (String key : keyList) {
 			Object obj = tempMap.get(key);
 			if (obj == null)
-				return tempMap = null;
+				return null;
 			if (obj instanceof Map) {
 				tempMap = (Map<String, Object>) obj;
 			} else {

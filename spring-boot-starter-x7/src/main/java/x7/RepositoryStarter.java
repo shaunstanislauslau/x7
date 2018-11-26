@@ -3,7 +3,7 @@ package x7;
 import x7.core.config.Configs;
 import x7.repository.RepositoryBooter;
 
-import java.util.Objects;
+import javax.sql.DataSource;
 
 public class RepositoryStarter {
 
@@ -11,7 +11,7 @@ public class RepositoryStarter {
 
 	}
 
-	public RepositoryStarter(Boolean isRemote) {
+	public RepositoryStarter(Boolean isRemote,DataSource ds_W, DataSource ds_R,String driverClassName) {
 
 		boolean remote = false;
 		if (isRemote == null){
@@ -23,19 +23,13 @@ public class RepositoryStarter {
 		}else{
 			remote = isRemote;
 		}
-		System.out.println("_________Will start repository: " + !remote);
+		System.out.println("_________Will start repository: " + !remote + "\n");
 		if (!remote) {
 
-			String dataSourceType = null;
-			try{
-				dataSourceType = Configs.getString("x7.repository.dataSourceType");
-			}catch (Exception e){
+			RepositoryBooter.onDriver(driverClassName);
 
-			}
-			Object key = Configs.get("x7.db");
-			if (Objects.isNull(key))
-				return;
-			RepositoryBooter.boot(dataSourceType);
+			RepositoryBooter.boot(ds_W,ds_R);
+
 		}
 
 	}

@@ -857,11 +857,14 @@ public class DaoImpl implements Dao {
 		if (StringUtil.isNotNull(property)) {
 			property = parsed.getMapper(property);
 		}
+		if (Objects.isNull(property)){
+			property = SqlScript.STAR;
+		}
 		String script = type + "("+property+") " + returnStr;
 
 		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
 
-		sql = sql.replace("*",script);
+		sql = sql.replace(SqlScript.STAR,script);
 		sql += conditionSql;
 
 		sql = BeanUtilX.mapper(sql, parsed);
