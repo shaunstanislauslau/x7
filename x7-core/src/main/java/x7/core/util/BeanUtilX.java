@@ -285,12 +285,7 @@ public class BeanUtilX extends BeanUtil {
 				f.setAccessible(true);
 				keyFieldMap.put(X.KEY_ONE, f);
 			}
-			X.Sharding s = f.getAnnotation(X.Sharding.class);
-			if (s != null){
-				map.put(X.KEY_SHARDING, f.getName());
-				f.setAccessible(true);
-				keyFieldMap.put(X.KEY_SHARDING, f);
-			}
+
 		}
 	}
 

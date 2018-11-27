@@ -78,16 +78,16 @@ public class DaoImpl implements Dao {
 		}
 		if (dataSource_R == null) {
 
-			if (!isRead) {
-				if (!Tx.isNoBizTx()) {
-					Connection connection = Tx.getConnection();
-					if (connection == null) {
-						connection = getConnection(dataSource);
-						Tx.add(connection);
-					}
-					return connection;
-				}
-			}
+//			if (!isRead) {
+//				if (!Tx.isNoBizTx()) {
+//					Connection connection = Tx.getConnection();
+//					if (connection == null) {
+//						connection = getConnection(dataSource);
+//						Tx.add(connection);
+//					}
+//					return connection;
+//				}
+//			}
 
 			return getConnection(dataSource);
 		}
@@ -96,14 +96,14 @@ public class DaoImpl implements Dao {
 			return getConnection(dataSource_R);
 		}
 
-		if (!Tx.isNoBizTx()) {
-			Connection connection = Tx.getConnection();
-			if (connection == null) {
-				connection = getConnection(dataSource);
-				Tx.add(connection);
-			}
-			return connection;
-		}
+//		if (!Tx.isNoBizTx()) {
+//			Connection connection = Tx.getConnection();
+//			if (connection == null) {
+//				connection = getConnection(dataSource);
+//				Tx.add(connection);
+//			}
+//			return connection;
+//		}
 
 		return getConnection(dataSource);
 	}
@@ -159,7 +159,7 @@ public class DaoImpl implements Dao {
 
 		List<BeanElement> eles = MapperFactory.getElementList(clz);
 
-		boolean isNoBizTx = false;
+//		boolean isNoBizTx = false;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -174,7 +174,7 @@ public class DaoImpl implements Dao {
 				keyOneValue = keyOneField.getLong(obj);
 			}
 
-			conn = getConnection(false);
+			conn = DataSourceUtil.getConnection(this.dataSource);
 
 			conn.setAutoCommit(false);
 			if (keyOneType != String.class && (keyOneValue == null || keyOneValue == 0)) {
@@ -183,10 +183,10 @@ public class DaoImpl implements Dao {
 				pstmt = conn.prepareStatement(sql);
 			}
 
-			isNoBizTx = Tx.isNoBizTx();
-			if (!isNoBizTx) {
-				Tx.add(pstmt);
-			}
+//			isNoBizTx = Tx.isNoBizTx();
+//			if (!isNoBizTx) {
+//				Tx.add(pstmt);
+//			}
 
 			for (Object o : objList) {
 
@@ -230,29 +230,30 @@ public class DaoImpl implements Dao {
 
 			pstmt.executeBatch();
 
-			if (isNoBizTx) {
-				conn.commit();
-			}
+//			if (isNoBizTx) {
+//				conn.commit();
+//			}
 
 		} catch (Exception e) {
 			System.out.println("Exception occured, while create: " + obj);
 			e.printStackTrace();
-			if (isNoBizTx) {
-				try {
-					conn.rollback();
-					e.printStackTrace();
+//			if (isNoBizTx) {
+//				try {
+//					conn.rollback();
+//					e.printStackTrace();
+//
+//				} catch (SQLException e1) {
+//					e1.printStackTrace();
+//				}
+//			}
+			throw new RollbackException("RollbackException: " + e.getMessage());
 
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			} else {
-				throw new RollbackException("RollbackException: " + e.getMessage());
-			}
 		} finally {
-			if (isNoBizTx) {
-				close(pstmt);
-				close(conn);
-			}
+//			if (isNoBizTx) {
+//				close(pstmt);
+//				close(conn);
+//			}
+			DataSourceUtil.releaseConnection(conn,dataSource);
 		}
 
 		return true;
@@ -265,7 +266,7 @@ public class DaoImpl implements Dao {
 		String sql = MapperFactory.getSql(clz, Mapper.REMOVE);
 
 		boolean flag = false;
-		boolean isNoBizTx = false;
+//		boolean isNoBizTx = false;
 
 		PreparedStatement pstmt = null;
 		try {
@@ -273,10 +274,10 @@ public class DaoImpl implements Dao {
 			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
 
-			isNoBizTx = Tx.isNoBizTx();
-			if (!isNoBizTx) {
-				Tx.add(pstmt);
-			}
+//			isNoBizTx = Tx.isNoBizTx();
+//			if (!isNoBizTx) {
+//				Tx.add(pstmt);
+//			}
 
 			Parsed parsed = Parser.get(clz);
 
@@ -289,27 +290,28 @@ public class DaoImpl implements Dao {
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
-			if (isNoBizTx) {
-				conn.commit();
-			}
+//			if (isNoBizTx) {
+//				conn.commit();
+//			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			if (isNoBizTx) {
-				try {
-					conn.rollback();
-					e.printStackTrace();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			} else {
-				throw new RollbackException("RollbackException: " + e.getMessage());
-			}
+//			if (isNoBizTx) {
+//				try {
+//					conn.rollback();
+//					e.printStackTrace();
+//				} catch (SQLException e1) {
+//					e1.printStackTrace();
+//				}
+//			}
+			throw new RollbackException("RollbackException: " + e.getMessage());
+
 		} finally {
-			if (isNoBizTx) {
-				close(pstmt);
-				close(conn);
-			}
+//			if (isNoBizTx) {
+//				close(pstmt);
+//				close(conn);
+//			}
+			DataSourceUtil.releaseConnection(conn,this.dataSource);
 		}
 
 		return flag;
@@ -324,7 +326,7 @@ public class DaoImpl implements Dao {
 
 		List<BeanElement> eles = MapperFactory.getElementList(clz);
 
-		boolean isNoBizTx = false;
+//		boolean isNoBizTx = false;
 		PreparedStatement pstmt = null;
 		try {
 			Parsed parsed = Parser.get(clz);
@@ -348,10 +350,10 @@ public class DaoImpl implements Dao {
 				pstmt = conn.prepareStatement(sql);
 			}
 
-			isNoBizTx = Tx.isNoBizTx();
-			if (!isNoBizTx) {
-				Tx.add(pstmt);
-			}
+//			isNoBizTx = Tx.isNoBizTx();
+//			if (!isNoBizTx) {
+//				Tx.add(pstmt);
+//			}
 
 			int i = 1;
 			for (BeanElement ele : eles) {
@@ -396,30 +398,32 @@ public class DaoImpl implements Dao {
 			} else {
 				id = keyOneValue;
 			}
-
-			if (isNoBizTx) {
-				conn.commit();
-			}
+//
+//			if (isNoBizTx) {
+//				conn.commit();
+//			}
 
 		} catch (Exception e) {
 			System.out.println("Exception occured, while create: " + obj);
 			e.printStackTrace();
-			if (isNoBizTx) {
-				try {
-					conn.rollback();
-					e.printStackTrace();
+//			if (isNoBizTx) {
+//				try {
+//					conn.rollback();
+//					e.printStackTrace();
+//
+//				} catch (SQLException e1) {
+//					e1.printStackTrace();
+//				}
+//			}
+			throw new RollbackException("RollbackException: " + e.getMessage());
 
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			} else {
-				throw new RollbackException("RollbackException: " + e.getMessage());
-			}
 		} finally {
-			if (isNoBizTx) {
-				close(pstmt);
-				close(conn);
-			}
+//			if (isNoBizTx) {
+//				close(pstmt);
+//				close(conn);
+//			}
+
+			DataSourceUtil.releaseConnection(conn,this.dataSource);
 		}
 
 		return id;
@@ -442,16 +446,16 @@ public class DaoImpl implements Dao {
 		System.out.println("refresh normally: " + sql);
 
 		boolean flag = false;
-		boolean isNoBizTx = false;
+//		boolean isNoBizTx = false;
 		PreparedStatement pstmt = null;
 		try {
 			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
 
-			isNoBizTx = Tx.isNoBizTx();
-			if (!isNoBizTx) {
-				Tx.add(pstmt);
-			}
+//			isNoBizTx = Tx.isNoBizTx();
+//			if (!isNoBizTx) {
+//				Tx.add(pstmt);
+//			}
 
 			int i = 1;
 			for (Object value : refreshMap.values()) {
@@ -474,27 +478,28 @@ public class DaoImpl implements Dao {
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
-			if (isNoBizTx) {
-				conn.commit();
-			}
+//			if (isNoBizTx) {
+//				conn.commit();
+//			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			if (isNoBizTx) {
-				try {
-					conn.rollback();
-					e.printStackTrace();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			} else {
-				throw new RollbackException("RollbackException: " + e.getMessage());
-			}
+//			if (isNoBizTx) {
+//				try {
+//					conn.rollback();
+//					e.printStackTrace();
+//				} catch (SQLException e1) {
+//					e1.printStackTrace();
+//				}
+//			}
+			throw new RollbackException("RollbackException: " + e.getMessage());
+
 		} finally {
-			if (isNoBizTx) {
-				close(pstmt);
-				close(conn);
-			}
+//			if (isNoBizTx) {
+//				close(pstmt);
+//				close(conn);
+//			}
+			DataSourceUtil.releaseConnection(conn,this.dataSource);
 		}
 
 		return flag;
@@ -505,8 +510,8 @@ public class DaoImpl implements Dao {
 
 		Connection conn = null;
 		try {
-			conn = getConnection(false);
-		} catch (SQLException e) {
+			conn = DataSourceUtil.getConnection(this.dataSource);
+		} catch (Exception e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
 		return create(obj, conn);
@@ -517,8 +522,8 @@ public class DaoImpl implements Dao {
 
 		Connection conn = null;
 		try {
-			conn = getConnection(false);
-		} catch (SQLException e) {
+			conn = DataSourceUtil.getConnection(this.dataSource);
+		} catch (Exception e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
 		return refresh(obj, conn);
@@ -528,8 +533,8 @@ public class DaoImpl implements Dao {
 	public boolean remove(Object obj) {
 		Connection conn = null;
 		try {
-			conn = getConnection(false);
-		} catch (SQLException e) {
+			conn = DataSourceUtil.getConnection(this.dataSource);
+		} catch (Exception e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
 		return remove(obj, conn);
@@ -563,9 +568,7 @@ public class DaoImpl implements Dao {
 			}
 
 		} catch (Exception e) {
-
 			e.printStackTrace();
-
 			throw new RollbackException(
 					"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 
@@ -1058,7 +1061,7 @@ public class DaoImpl implements Dao {
 
 		System.out.println("________SQL: refreshByCondition: " + sql);
 
-		boolean isNoBizTx = false;
+//		boolean isNoBizTx = false;
 		boolean flag = false;
 
 		PreparedStatement pstmt = null;
@@ -1066,10 +1069,10 @@ public class DaoImpl implements Dao {
 			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
 
-			isNoBizTx = Tx.isNoBizTx();
-			if (!isNoBizTx) {
-				Tx.add(pstmt);
-			}
+//			isNoBizTx = Tx.isNoBizTx();
+//			if (!isNoBizTx) {
+//				Tx.add(pstmt);
+//			}
 			System.out.println("_______________concatRefresh: refreshMap. " + refreshMap);
 			int i = 1;
 			for (Object value : refreshMap.values()) {
@@ -1092,43 +1095,52 @@ public class DaoImpl implements Dao {
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
-			if (isNoBizTx) {
-				conn.commit();
-			}
+//			if (isNoBizTx) {
+//				conn.commit();
+//			}
 
 		} catch (Exception e) {
 			flag = false;
 			e.printStackTrace();
-			if (isNoBizTx) {
-				try {
-					conn.rollback();
-					e.printStackTrace();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			} else {
-				throw new RollbackException(
+//			if (isNoBizTx) {
+//				try {
+//					conn.rollback();
+//					e.printStackTrace();
+//				} catch (SQLException e1) {
+//					e1.printStackTrace();
+//				}
+//			}
+			throw new RollbackException(
 						"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
-			}
+
 		} finally {
-			if (isNoBizTx) {
-				close(pstmt);
-				close(conn);
-			}
+//			if (isNoBizTx) {
+//				close(pstmt);
+//				close(conn);
+//			}
+			DataSourceUtil.releaseConnection(conn,dataSource);
 		}
 
 		return flag;
 	}
 
+//	@Override
+//	public <T> boolean refreshByCondition(RefreshCondition<T> refreshCondition) {
+//
+//		Connection conn = null;
+//		try {
+//			conn = getConnection(false);
+//		} catch (SQLException e) {
+//			throw new RuntimeException("NO CONNECTION");
+//		}
+//		return refreshByCondition(refreshCondition, conn);
+//	}
+
 	@Override
 	public <T> boolean refreshByCondition(RefreshCondition<T> refreshCondition) {
 
-		Connection conn = null;
-		try {
-			conn = getConnection(false);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
+		Connection conn = DataSourceUtil.getConnection(dataSource);
+
 		return refreshByCondition(refreshCondition, conn);
 	}
 
@@ -1155,7 +1167,7 @@ public class DaoImpl implements Dao {
 		BeanElement be = parsed.getElement(inProperty);
 		if (be == null)
 			throw new RuntimeException(
-					"Exception in method: <T> List<T> in(Class<T> clz, String inProperty, List<? extends Object> inList), no property: "
+					"Exception in method: <T> List<T> in(inCondition), no property: "
 							+ inProperty);
 
 		Class<?> keyType = be.getMethod.getReturnType();

@@ -28,7 +28,6 @@ import x7.core.util.JsonX;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
 import x7.repository.dao.Dao;
-import x7.repository.dao.ShardingDao;
 import x7.repository.exception.PersistenceException;
 import x7.repository.exception.ShardingException;
 
@@ -60,11 +59,6 @@ public class SqlRepository implements Repository {
 		this.syncDao = syncDao;
 	}
 
-	private ShardingDao shardingDao;
-
-	public void setShardingDao(ShardingDao shardingDao) {
-		this.shardingDao = shardingDao;
-	}
 
 	private CacheResolver cacheResolver;
 
@@ -110,22 +104,17 @@ public class SqlRepository implements Repository {
 					}
 
 					List<T> tempList = null;
-					if (parsed.isSharding()) {
-						throw new ShardingException("Sharding not supported");
-					} else {
-						tempList = syncDao.list(condition);
-					}
+					tempList = syncDao.list(condition);
+
 					if (!tempList.isEmpty()) {
 						obj = tempList.get(0);
 					}
 
 				} else {
 					long idOne = Long.valueOf(key);
-					if (parsed.isSharding()) {
-						obj = shardingDao.get(clz, idOne);
-					} else {
-						obj = syncDao.get(clz, idOne);
-					}
+
+					obj = syncDao.get(clz, idOne);
+
 				}
 
 				/*
@@ -167,12 +156,8 @@ public class SqlRepository implements Repository {
 		testAvailable();
 		Class clz = obj.getClass();
 		Parsed parsed = Parser.get(clz);
-		long id = 0;
-		if (parsed.isSharding()) {
-			id = shardingDao.create(obj);
-		} else {
-			id = syncDao.create(obj);
-		}
+		long id = syncDao.create(obj);
+
 		if (cacheResolver != null && !parsed.isNoCache())
 			cacheResolver.markForRefresh(clz);
 		return id;
@@ -184,11 +169,8 @@ public class SqlRepository implements Repository {
 		boolean flag = false;
 		Class clz = obj.getClass();
 		Parsed parsed = Parser.get(clz);
-		if (parsed.isSharding()) {
-			shardingDao.refresh(obj);// FIXME
-		} else {
-			flag = syncDao.refresh(obj);
-		}
+		flag = syncDao.refresh(obj);
+
 		if (flag) {
 			String key = getCacheKey(obj, parsed);
 			if (cacheResolver != null && !parsed.isNoCache()) {
@@ -213,11 +195,8 @@ public class SqlRepository implements Repository {
 		}
 		Parsed parsed = Parser.get(clz);
 
-		if (parsed.isSharding()) {
-			flag = shardingDao.refreshByCondition(refreshCondition);
-		} else {
-			flag = syncDao.refreshByCondition(refreshCondition);
-		}
+		flag = syncDao.refreshByCondition(refreshCondition);
+
 		if (cacheResolver != null && !parsed.isNoCache()) {
 
 			T obj = refreshCondition.getObj();
@@ -253,11 +232,8 @@ public class SqlRepository implements Repository {
 		Class clz = obj.getClass();
 		Parsed parsed = Parser.get(clz);
 		String key = getCacheKey(obj, parsed);
-		if (parsed.isSharding()) {
-			shardingDao.remove(obj);// FIXME
-		} else {
-			flag = syncDao.remove(obj);
-		}
+		flag = syncDao.remove(obj);
+
 		if (cacheResolver != null && !parsed.isNoCache()) {
 			if (key != null)
 				cacheResolver.remove(clz, key);
@@ -272,22 +248,16 @@ public class SqlRepository implements Repository {
 		Parsed parsed = Parser.get(clz);
 
 		if (cacheResolver == null || parsed.isNoCache()) {
-			if (parsed.isSharding()) {
-				return shardingDao.get(clz, idOne);
-			} else {
-				return syncDao.get(clz, idOne);
-			}
+			return syncDao.get(clz, idOne);
+
 		}
 
 		String key = String.valueOf(idOne);
 		T obj = cacheResolver.get(clz, key);
 
 		if (obj == null) {
-			if (parsed.isSharding()) {
-				obj = shardingDao.get(clz, idOne);
-			} else {
-				obj = syncDao.get(clz, idOne);
-			}
+			obj = syncDao.get(clz, idOne);
+
 			cacheResolver.set(clz, key, obj);
 		}
 
@@ -304,11 +274,8 @@ public class SqlRepository implements Repository {
 		Parsed parsed = Parser.get(clz);
 
 		if (cacheResolver == null || parsed.isNoCache()) {
-			if (parsed.isSharding()) {
-				throw new ShardingException("Sharding not supported");
-			} else {
-				return syncDao.list(conditionObj);
-			}
+			return syncDao.list(conditionObj);
+
 		}
 
 		List<T> list = null;
@@ -316,11 +283,7 @@ public class SqlRepository implements Repository {
 		List<String> keyList = cacheResolver.getResultKeyList(clz, conditionObj);
 
 		if (keyList == null || keyList.isEmpty()) {
-			if (parsed.isSharding()) {
-				throw new ShardingException("Sharding not supported");
-			} else {
-				list = syncDao.list(conditionObj);
-			}
+			list = syncDao.list(conditionObj);
 
 			keyList = new ArrayList<String>();
 
@@ -353,14 +316,11 @@ public class SqlRepository implements Repository {
 		Parsed parsed = Parser.get(clz);
 
 		if (cacheResolver == null || parsed.isNoCache()) {
-			if (parsed.isSharding()) {
-				return shardingDao.getOne(conditionObj);
-			} else {
-				List<T> list = syncDao.list(conditionObj);
+			List<T> list = syncDao.list(conditionObj);
 				if (list.isEmpty())
 					return null;
 				return list.get(0);
-			}
+
 		}
 
 		String condition = JsonX.toJson(conditionObj);
@@ -368,16 +328,13 @@ public class SqlRepository implements Repository {
 
 		if (obj == null) {
 			T t = null;
-			if (parsed.isSharding()) {
-				t = shardingDao.getOne(conditionObj);
-			} else {
-				List<T> list = syncDao.list(conditionObj);
+			List<T> list = syncDao.list(conditionObj);
 				if (list.isEmpty()) {
 					t = null;
 				} else {
 					t = list.get(0);
 				}
-			}
+
 
 			cacheResolver.set(clz, condition, obj);
 
@@ -394,11 +351,8 @@ public class SqlRepository implements Repository {
 		Parsed parsed = Parser.get(clz);
 
 		if (cacheResolver == null || parsed.isNoCache()) {
-			if (parsed.isSharding()) {
-				throw new ShardingException("Sharding not supported");
-			} else {
-				return (T) syncDao.getOne(conditionObj, orderBy, sc);
-			}
+			return (T) syncDao.getOne(conditionObj, orderBy, sc);
+
 		}
 
 		String condition = JsonX.toJson(conditionObj) + orderBy + sc;
@@ -406,13 +360,7 @@ public class SqlRepository implements Repository {
 		T obj = cacheResolver.get(clz, condition);
 
 		if (obj == null) {
-			T t = null;
-			if (parsed.isSharding()) {
-				throw new ShardingException("Sharding not supported");
-			} else {
-				t = syncDao.getOne(conditionObj, orderBy, sc);
-
-			}
+			T t = syncDao.getOne(conditionObj, orderBy, sc);
 
 			cacheResolver.set(clz, condition, obj);
 
@@ -430,11 +378,8 @@ public class SqlRepository implements Repository {
 		
 
 		if (cacheResolver == null) {
-			if (parsed.isSharding()) {
-				return shardingDao.find(criteria);
-			} else {
-				return syncDao.find(criteria);
-			}
+			return syncDao.find(criteria);
+
 		}
 
 		List<T> list = null;
@@ -442,11 +387,7 @@ public class SqlRepository implements Repository {
 		Pagination<T> p = cacheResolver.getResultKeyListPaginated(clz, criteria);// FIXME
 
 		if (p == null) {
-			if (parsed.isSharding()) {
-				p = shardingDao.find(criteria);
-			} else {
-				p = syncDao.find(criteria);
-			}
+			syncDao.find(criteria);
 
 			list = p.getList(); // 结果
 
@@ -496,11 +437,8 @@ public class SqlRepository implements Repository {
 		Parsed parsed = Parser.get(clz);
 
 		if (cacheResolver == null || parsed.isNoCache()) {
-			if (parsed.isSharding()) {
-				throw new ShardingException("Sharding not supported: List<T> list(Class<T> clz)");
-			} else {
-				return syncDao.list(clz);
-			}
+			return syncDao.list(clz);
+
 		}
 
 		List<T> list = null;
@@ -510,12 +448,7 @@ public class SqlRepository implements Repository {
 		List<String> keyList = cacheResolver.getResultKeyList(clz, condition);
 
 		if (keyList == null || keyList.isEmpty()) {
-			if (parsed.isSharding()) {
-				throw new ShardingException(
-						"Sharding not supported: List<T> list(Class<T> clz, String sql, List<Object> conditionList)");
-			} else {
-				list = syncDao.list(clz);
-			}
+			list = syncDao.list(clz);
 
 			keyList = new ArrayList<String>();
 
@@ -546,22 +479,15 @@ public class SqlRepository implements Repository {
 		testAvailable();
 		Class clz = reduceCondition.getClz();
 		Parsed parsed = Parser.get(clz);
-		if (parsed.isSharding()) {
-			return shardingDao.reduce(reduceCondition);
-		} else {
-			return syncDao.reduce(reduceCondition);
-		}
+		return syncDao.reduce(reduceCondition);
+
 	}
 
 	protected <T> boolean execute(Object obj, String sql) {
 		testAvailable();
 		boolean b;
 		Parsed parsed = Parser.get(obj.getClass());
-		if (parsed.isSharding()) {
-			b = shardingDao.execute(obj, sql);
-		} else {
-			b = syncDao.execute(obj, sql);
-		}
+		b = syncDao.execute(obj, sql);
 
 		if (b) {
 			String key = getCacheKey(obj, parsed);
@@ -594,10 +520,6 @@ public class SqlRepository implements Repository {
 		String inProperty = inCondition.getProperty();
 		
 		Parsed parsed = Parser.get(clz);
-		if (parsed.isSharding()) {
-			throw new ShardingException(
-					"Sharding not supported now: in(inCondition)");
-		}
 
 		if (cacheResolver == null || parsed.isNoCache()) {
 			return syncDao.in(inCondition);
@@ -648,11 +570,8 @@ public class SqlRepository implements Repository {
 		Class clz = resultMapped.getClz();
 		Parsed parsed = Parser.get(clz);
 		
-		if (parsed.isSharding()) {
-			return shardingDao.find(resultMapped);
-		} else {
-			return syncDao.find(resultMapped);
-		}
+		return syncDao.find(resultMapped);
+
 	}
 
 	@Override
@@ -661,12 +580,8 @@ public class SqlRepository implements Repository {
 		Class clz = resultMapped.getClz();
 		Parsed parsed = Parser.get(clz);
 
-		if (parsed.isSharding()) {
-			throw new ShardingException(
-					"Sharding not supported: List<Map<String, Object>> list(Criteria.ResultMapped resultMapped)");
-		} else {
-			return syncDao.list(resultMapped);
-		}
+		return syncDao.list(resultMapped);
+
 	}
 
 	@Override
@@ -685,12 +600,7 @@ public class SqlRepository implements Repository {
 		
 		Parsed parsed = Parser.get(clz);
 		if (cacheResolver == null || parsed.isNoCache()) {
-			if (parsed.isSharding()) {
-				throw new ShardingException(
-						"Sharding not supported: List<Map<String,Object>>  list(Class<T> clz, String sql, List<Object> conditionList)");
-			} else {
-				return syncDao.list(clz, sql, conditionList);
-			}
+			return syncDao.list(clz, sql, conditionList);
 		}
 
 		String condition = sql + conditionList.toString();

@@ -22,7 +22,6 @@ import x7.core.async.IAsyncTask;
 import x7.core.config.Configs;
 import x7.repository.BaseRepository.HealthChecker;
 import x7.repository.dao.DaoImpl;
-import x7.repository.dao.ShardingDaoImpl;
 import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
 import x7.repository.mapper.MySqlDialect;
@@ -159,10 +158,8 @@ public class RepositoryBooter {
 			}else {
 				DataSourcePool pool = DataSourceFactory.get(null);
 				DataSourceSetter.set(pool.get(), pool.getR());
-				DataSourceSetter.set(pool.getDsMapW(), pool.getDsMapR());
 			}
 			SqlRepository.getInstance().setSyncDao(DaoImpl.getInstance());
-			SqlRepository.getInstance().setShardingDao(ShardingDaoImpl.getInstance());
 			break;
 		
 		}

@@ -33,7 +33,6 @@ import java.lang.annotation.Target;
 public @interface X {
 	
 	int KEY_ONE = 1;
-	int KEY_SHARDING = 7;
 	
 	/**
 	 * just string(60<=length < 512), datetime, text<br>
@@ -81,9 +80,5 @@ public @interface X {
 	@Target({ElementType.FIELD})
 	@interface Key{
 	}
-	
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target({ElementType.FIELD})
-	@interface Sharding{
-	}
+
 }

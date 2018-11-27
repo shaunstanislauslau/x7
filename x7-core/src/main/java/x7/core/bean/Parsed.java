@@ -43,8 +43,6 @@ public class Parsed {
 	private Map<String, BeanElement> elementMap = new HashMap<String, BeanElement>();
 	private Map<String,String> propertyMapperMap = new HashMap<String,String>();
 	private Map<String,String> mapperPropertyMap = new HashMap<String,String>();
-
-	private boolean isNotAutoIncreament;
 	
 	private boolean isNoCache;
 	
@@ -123,10 +121,6 @@ public class Parsed {
 	
 	public void checked(){
 		this.isChecked = true;
-	}
-	
-	public boolean isSharding(){
-		return keyMap.containsKey(X.KEY_SHARDING);
 	}
 
 	public String getTableName() {
@@ -210,8 +204,8 @@ public class Parsed {
 	@Override
 	public String toString() {
 		return "Parsed [clz=" + clz + ", tableName=" + tableName + ", keyMap=" + keyMap + ", keyFieldMap=" + keyFieldMap
-				+ ", beanElementList=" + beanElementList + ", elementMap=" + elementMap + ", isNotAutoIncreament="
-				+ isNotAutoIncreament + ", isNoCache=" + isNoCache + ", keywordsList=" + keywordsList
+				+ ", beanElementList=" + beanElementList + ", elementMap=" + elementMap +
+				", isNoCache=" + isNoCache + ", keywordsList=" + keywordsList
 				+ ", isSearchable=" + isSearchable + ", tagMap=" + tagMap +  "]";
 	}
 

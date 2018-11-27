@@ -17,10 +17,8 @@
 package x7.repository;
 
 import x7.repository.dao.DaoImpl;
-import x7.repository.dao.ShardingDaoImpl;
 
 import javax.sql.DataSource;
-import java.util.Map;
 
 
 public class DataSourceSetter {
@@ -29,9 +27,5 @@ public class DataSourceSetter {
 		DaoImpl.getInstance().setDataSource(dsW);
 		DaoImpl.getInstance().setDataSource_R(dsR);
 	}
-	
-	protected static void set(Map<String,DataSource> dsWMap,Map<String,DataSource> dsRMap){
-		ShardingDaoImpl.getInstance().setDsWMap(dsWMap);
-		ShardingDaoImpl.getInstance().setDsRMap(dsRMap);
-	}
+
 }
