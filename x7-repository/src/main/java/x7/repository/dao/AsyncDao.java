@@ -16,8 +16,6 @@
  */
 package x7.repository.dao;
 
-import java.util.List;
-
 public interface AsyncDao {
 
 	/**
@@ -44,6 +42,5 @@ public interface AsyncDao {
 	 * @throws Exception
 	 */
 	void remove(Object obj);
-	
-	<T> List<T> listSync(Class<T> clz);
+
 }

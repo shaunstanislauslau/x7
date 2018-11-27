@@ -14,29 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package x7.core.tx;
+package x7.repository;
 
+import x7.repository.dao.DaoImpl;
+import x7.repository.dao.ShardingDaoImpl;
+
+import javax.sql.DataSource;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class TxTraceManager {
 
-	private final static Map<String, TxTraceable> map = new ConcurrentHashMap<String, TxTraceable>();
-
-	public static Map<String, TxTraceable> getMap() {
-		return map;
+public class DataSourceSetter {
+	
+	protected static void set(DataSource dsW, DataSource dsR){
+		DaoImpl.getInstance().setDataSource(dsW);
+		DaoImpl.getInstance().setDataSource_R(dsR);
 	}
 	
-	public static void add(TxTraceable obj) {
-		String key = obj.getTxKeyed().key();
-		map.put(key, obj);
-	}
-	
-	public static TxTraceable get(String key) {
-		return map.get(key);
-	}
-	
-	public static TxTraceable remove(String key){
-		return map.remove(key);
+	protected static void set(Map<String,DataSource> dsWMap,Map<String,DataSource> dsRMap){
+		ShardingDaoImpl.getInstance().setDsWMap(dsWMap);
+		ShardingDaoImpl.getInstance().setDsRMap(dsRMap);
 	}
 }

@@ -15,7 +15,7 @@ public class RepositoryStarter {
 
 		boolean remote = false;
 		if (isRemote == null){
-			try {
+			try {//old codes
 				remote = Configs.isTrue("x7.repository.local");
 			}catch (Exception e){
 
@@ -27,7 +27,6 @@ public class RepositoryStarter {
 		if (!remote) {
 
 			RepositoryBooter.onDriver(driverClassName);
-
 			RepositoryBooter.boot(ds_W,ds_R);
 
 		}

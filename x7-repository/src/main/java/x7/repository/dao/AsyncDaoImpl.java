@@ -16,6 +16,8 @@
  */
 package x7.repository.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import x7.core.async.AsyncService;
 import x7.core.async.HeartBeator;
 import x7.core.async.IAsyncTask;
@@ -32,7 +34,6 @@ import javax.sql.DataSource;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,9 +46,10 @@ import java.util.concurrent.Executors;
 /**
  * 
  * 
- * @author wyan
+ * @author Sim
  * 
  */
+@Component
 public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 
 	/**
@@ -62,18 +64,12 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 
 	private final ExecutorService inner = Executors.newSingleThreadExecutor();
 
-	private static AsyncDaoImpl instance;
-	public static AsyncDaoImpl getInstance(){
-		if (instance == null){
-			instance = new AsyncDaoImpl();
-		}
-		return instance;
-	}
 
-	private AsyncDaoImpl() {
+	public AsyncDaoImpl() {
 		HeartBeator.add(this);
 	}
 
+	@Autowired
 	private DataSource dataSource;
 
 	public void setDataSource(DataSource dataSource) {
@@ -602,6 +598,7 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 	 * 内部机制, 永远不能调用此方法
 	 */
 	@Override
+	@Deprecated
 	public void tick(long now) {
 		onHeartBeat(now);
 
@@ -679,65 +676,5 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 
 	}
 
-	@Override
-	public <T> List<T> listSync(Class<T> clz) {
-
-		filterTryToCreate(clz);
-
-		List<T> list = new ArrayList<T>();
-
-		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
-		List<BeanElement> eles = MapperFactory.getElementList(clz);
-
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		BeanElement tempEle = null;
-		try {
-			conn = getConnection();
-			conn.setAutoCommit(true);
-			pstmt = conn.prepareStatement(sql);
-
-			ResultSet rs = pstmt.executeQuery();
-
-			if (rs != null) {
-				while (rs.next()) {
-					T obj = clz.newInstance();
-					list.add(obj);
-					for (BeanElement ele : eles) {
-						Method method = ele.setMethod;
-						// try {
-						// method = obj.getClass().getDeclaredMethod(ele.setter,
-						// ele.clz);
-						// } catch (NoSuchMethodException e) {
-						// method =
-						// obj.getClass().getSuperclass().getDeclaredMethod(ele.setter,
-						// ele.clz);
-						// }
-						if (ele.clz.getSimpleName().toLowerCase().equals("double")) {
-							Object v = rs.getObject(ele.property);
-							if (v != null) {
-								method.invoke(obj, Double.valueOf(String.valueOf(v)));
-							}
-						} else {
-							tempEle = ele;
-							method.invoke(obj, rs.getObject(ele.property));
-						}
-					}
-				}
-			}
-
-		} catch (Exception e) {
-			if (tempEle != null) {
-				System.out
-						.println("Exception occured by class = " + clz.getName() + ", property = " + tempEle.property);
-			}
-			e.printStackTrace();
-		} finally {
-			close(pstmt);
-			close(conn);
-		}
-
-		return list;
-	}
 
 }

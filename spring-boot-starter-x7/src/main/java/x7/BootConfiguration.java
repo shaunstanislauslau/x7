@@ -15,7 +15,6 @@ import x7.config.ConfigProperties;
 import x7.core.bean.SpringHelper;
 import x7.core.config.Configs;
 import x7.repository.RepositoryProperties;
-import x7.repository.RepositoryProperties_W;
 import x7.repository.pool.DataSourceFactory;
 import x7.repository.pool.DataSourcePool;
 
@@ -26,7 +25,6 @@ import java.util.Objects;
 @EnableConfigurationProperties({
 		ConfigProperties.class,
 		RepositoryProperties.class,
-		RepositoryProperties_W.class,
 		DataSourceProperties.class,
 		DataSourceProperties_R.class})
 public class BootConfiguration {

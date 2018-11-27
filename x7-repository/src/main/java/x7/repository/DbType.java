@@ -16,9 +16,7 @@
  */
 package x7.repository;
 
-/**
- * Created by Sim on 2018/3/20.
- */
+
 public class DbType {
 
     public static final String MYSQL = "mysql";

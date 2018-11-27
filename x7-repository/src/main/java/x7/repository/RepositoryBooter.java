@@ -22,7 +22,6 @@ import x7.core.async.IAsyncTask;
 import x7.core.config.Configs;
 import x7.repository.BaseRepository.HealthChecker;
 import x7.repository.dao.DaoImpl;
-import x7.repository.dao.DaoInitializer;
 import x7.repository.dao.ShardingDaoImpl;
 import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
@@ -69,7 +68,8 @@ public class RepositoryBooter {
 	public static void boot(DataSource ds_W, DataSource ds_R) {
 		if (instance == null) {
 			instance = new RepositoryBooter();
-			init(ds_W,ds_R);
+			setDataSource(ds_W, ds_R);
+			initCache();
 			HealthChecker.onStarted();
 			CasualWorker.accept(new IAsyncTask() {
 				@Override
@@ -112,9 +112,15 @@ public class RepositoryBooter {
 	
 	private static void init(){
 		onDriver(null);
-		init(null,null);
+		setDataSource(null, null);
+		initCache();
 	}
 
+	public static void initCache(){
+		if (Configs.isTrue(ConfigKey.IS_CACHEABLE)){
+			SqlRepository.getInstance().setCacheResolver(LevelTwoCacheResolver.getInstance());
+		}
+	}
 
 	public static void onDriver(String driverClassName){
 
@@ -142,20 +148,18 @@ public class RepositoryBooter {
 		}
 	}
 	
-	private static void init(DataSource ds_W, DataSource ds_R){
+	private static void setDataSource(DataSource ds_W, DataSource ds_R){
 		
 
-
-		
 		switch (DbType.value){
 		
 		default:
 			if (Objects.nonNull(ds_W)){
-				DaoInitializer.init(ds_W,ds_R);
+				DataSourceSetter.set(ds_W, ds_R);
 			}else {
 				DataSourcePool pool = DataSourceFactory.get(null);
-				DaoInitializer.init(pool.get(), pool.getR());
-				DaoInitializer.init(pool.getDsMapW(), pool.getDsMapR());
+				DataSourceSetter.set(pool.get(), pool.getR());
+				DataSourceSetter.set(pool.getDsMapW(), pool.getDsMapR());
 			}
 			SqlRepository.getInstance().setSyncDao(DaoImpl.getInstance());
 			SqlRepository.getInstance().setShardingDao(ShardingDaoImpl.getInstance());
@@ -164,10 +168,7 @@ public class RepositoryBooter {
 		}
 
 			
-		
-		if (Configs.isTrue(ConfigKey.IS_CACHEABLE)){
-			SqlRepository.getInstance().setCacheResolver(LevelTwoCacheResolver.getInstance());
-		}
+
 	}
 	
 	private static void initDialect(Mapper.Dialect dialect){
