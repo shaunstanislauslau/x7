@@ -11,25 +11,20 @@ public class RepositoryStarter {
 
 	}
 
-	public RepositoryStarter(Boolean isRemote,DataSource ds_W, DataSource ds_R,String driverClassName) {
+	public RepositoryStarter(DataSource ds_W, DataSource ds_R,String driverClassName) {
 
-		boolean remote = false;
-		if (isRemote == null){
-			try {//old codes
-				remote = Configs.isTrue("x7.repository.local");
-			}catch (Exception e){
 
-			}
-		}else{
-			remote = isRemote;
-		}
-		System.out.println("_________Will start repository: " + !remote + "\n");
-		if (!remote) {
 
-			RepositoryBooter.onDriver(driverClassName);
-			RepositoryBooter.boot(ds_W,ds_R);
+		RepositoryBooter.onDriver(driverClassName);
+		RepositoryBooter.boot(ds_W,ds_R);
 
-		}
+
+
+	}
+
+	public static boolean isLocal(Boolean isRemote){
+		System.out.println("\n_________Will start repository: " + !isRemote + (isRemote?"\n":""));
+		return !isRemote;
 
 	}
 }
