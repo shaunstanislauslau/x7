@@ -54,7 +54,10 @@ public class HikariPoolUtil {
 		if (isWriteable){
 			address = Configs.getString("x7.db.address.w");
 		}
+		int num = Configs.getIntValue("x7.db.read");
 		if (StringUtil.isNullOrEmpty(address))
+			return null;
+		if (!isWriteable && num < 1)
 			return null;
 
 		String url = Configs.getString("x7.db.url");
@@ -62,7 +65,7 @@ public class HikariPoolUtil {
 				.replace("${name}", Configs.getString("x7.db.name"));
 
 		System.out.println("\n_________x7.db.url: " + url);
-		dataSource.setReadOnly(false);
+		dataSource.setReadOnly(!isWriteable);
 		dataSource.setJdbcUrl(url);
 		dataSource.setUsername(Configs.getString("x7.db.username"));
 		dataSource.setPassword(Configs.getString("x7.db.password"));

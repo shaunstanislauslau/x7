@@ -119,7 +119,7 @@ public class BootConfiguration {
 
 		Object key = Configs.get("x7.db");
 		if (Objects.nonNull(key)){
-			ds = HikariPoolUtil.create(true);
+			ds = HikariPoolUtil.create(false);
 		}
 
 		if (Objects.nonNull(ds))
@@ -169,8 +169,6 @@ public class BootConfiguration {
 
 		DataSource dsW = (DataSource)SpringHelper.getObject("dataSource");
 		DataSource dsR = (DataSource)SpringHelper.getObject("x7DataSourceRead");
-
-		System.out.println("_________DataSource Got : " + dsW + "\n");
 
 		if (Objects.isNull(dsW))
 			throw new RuntimeException("Readable DataSource Got NULL");
