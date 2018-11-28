@@ -14,9 +14,11 @@ import org.springframework.core.annotation.Order;
 import x7.config.ConfigProperties;
 import x7.core.bean.SpringHelper;
 import x7.core.config.Configs;
+import x7.core.util.BeanUtilX;
 import x7.repository.RepositoryProperties;
 import x7.repository.pool.DataSourceFactory;
 import x7.repository.pool.DataSourcePool;
+import x7.repository.pool.HikariPoolUtil;
 
 import javax.sql.DataSource;
 import java.util.Objects;
@@ -50,9 +52,8 @@ public class BootConfiguration {
     }
 
 
-	@Bean(name = "x7DataSourceWrite")
-	@Qualifier("x7DataSourceWrite")
-	@ConfigurationProperties(prefix="spring.datasource")
+	@Bean(name = "dataSource")
+	@Qualifier("dataSource")
 	@Primary
 	@Order(2)
 	public DataSource getDataSource(){
@@ -71,8 +72,9 @@ public class BootConfiguration {
 
 		Object key = Configs.get("x7.db");
 		if (Objects.nonNull(key)){
-			DataSourcePool pool = DataSourceFactory.get(dataSourceType);
-			return pool.get();
+			DataSource ds = HikariPoolUtil.create(true);
+
+			return ds;
 		}
 
 		DataSource ds =  DataSourceBuilder.create().build();
@@ -82,7 +84,14 @@ public class BootConfiguration {
 			dataSource.setUsername(dataSourceProperties.getUsername());
 			dataSource.setPassword(dataSourceProperties.getPassword());
 			dataSource.setDriverClassName(dataSourceProperties.getDriverClassName());
+
+			System.out.println("_________springBootConfig: "+ dataSourceProperties.getUrl());
+			System.out.println("_________springBootConfig: "+ dataSourceProperties.getUsername());
+			System.out.println("_________springBootConfig: "+ dataSourceProperties.getPassword());
+			System.out.println("_________springBootConfig: "+ dataSourceProperties.getDriverClassName());
+
 		}
+		System.out.println("_________DataSource Write Created By SpringBoot Config: " + ds);
 		return ds;
 	}
 
@@ -90,6 +99,8 @@ public class BootConfiguration {
 	@Qualifier("x7DataSourceRead")
 	@Order(3)
 	public DataSource getReadDataSource(){
+
+		System.out.println("\n_________DataSource Read creating....");
 
 		if (repositoryProperties.getIsRemote())
 			return null;
@@ -102,14 +113,13 @@ public class BootConfiguration {
 		}
 
 
-		System.out.println("\n_________Readable DataSource Config Key: x7(x7.db.address.r) or springBoot(spring.datasource.read.url)");
+		System.out.println("_________Readable DataSource Config Key: x7(x7.db.address.r) or springBoot(spring.datasource.read.url)");
 
 		DataSource ds = null;
 
 		Object key = Configs.get("x7.db");
 		if (Objects.nonNull(key)){
-			DataSourcePool pool = DataSourceFactory.get(dataSourceType);
-			ds =  pool.getR();
+			ds = HikariPoolUtil.create(true);
 		}
 
 		if (Objects.nonNull(ds))
@@ -118,6 +128,7 @@ public class BootConfiguration {
 		if (Objects.isNull(dataSourceProperties_r.getUrl())) {
 			System.out.println("_________Readable DataSource Config Value: null");
 			System.out.println("_________Readable DataSource Ignored\n");
+
 			return null;
 		}
 
@@ -145,6 +156,8 @@ public class BootConfiguration {
 			dataSource.setPassword(password);
 			dataSource.setDriverClassName(driverClassName);
 		}
+
+
 		return ds;
 	}
 
@@ -152,8 +165,15 @@ public class BootConfiguration {
 	@Order(4)
 	public RepositoryStarter x7RepsositoryStarter(){
 
-		DataSource dsW = (DataSource)SpringHelper.getObject("x7DataSourceWrite");
+		System.out.println("_________X7RepsositoryStarter....");
+
+		DataSource dsW = (DataSource)SpringHelper.getObject("dataSource");
 		DataSource dsR = (DataSource)SpringHelper.getObject("x7DataSourceRead");
+
+		System.out.println("_________DataSource Got : " + dsW + "\n");
+
+		if (Objects.isNull(dsW))
+			throw new RuntimeException("Readable DataSource Got NULL");
 
 		return new RepositoryStarter(repositoryProperties.getIsRemote(),dsW,dsR,dataSourceProperties.getDriverClassName());
 	}

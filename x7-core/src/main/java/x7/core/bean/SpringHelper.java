@@ -1,6 +1,6 @@
 package x7.core.bean;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class SpringHelper implements ApplicationContextAware {
 
-	private static Logger logger = Logger.getLogger(SpringHelper.class);
+//	private static Logger logger = Logger.getLogger(SpringHelper.class);
 
 	private static ApplicationContext applicationContext;
 
@@ -24,7 +24,7 @@ public class SpringHelper implements ApplicationContextAware {
 	public void setApplicationContext(ApplicationContext arg0) throws BeansException {
 		applicationContext = arg0;
 		getMapPaths();
-		logger.info("SpringHelper started, static methods[getContext,getObject,getRequestMapping] ");
+//		logger.info("SpringHelper started, static methods[getContext,getObject,getRequestMapping] ");
 	}
 
 	public static Object getObject(String beanName) {
@@ -32,7 +32,7 @@ public class SpringHelper implements ApplicationContextAware {
 		try {
 			object = applicationContext.getBean(beanName);
 		} catch (Exception e) {
-			logger.error(e);
+//			logger.error(e);
 		}
 		return object;
 	}
@@ -45,7 +45,7 @@ public class SpringHelper implements ApplicationContextAware {
 		try {
 			return applicationContext.getBean(clazz);
 		} catch (Exception e) {
-			logger.error(e);
+//			logger.error(e);
 		}
 		return null;
 	}

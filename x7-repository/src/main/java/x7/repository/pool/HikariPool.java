@@ -82,7 +82,7 @@ public class HikariPool implements DataSourcePool{
 			url = url.replace("${address}", address)
 					.replace("${name}", Configs.getString("x7.db.name"));
 
-			System.err.println("x7.db.url: " + url);
+			System.out.println("\n_________x7.db.url: " + url);
 			dsW.setReadOnly(false);
 			dsW.setJdbcUrl(url);
 			dsW.setUsername(Configs.getString("x7.db.username"));
