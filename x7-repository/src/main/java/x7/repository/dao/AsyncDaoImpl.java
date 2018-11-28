@@ -676,5 +676,4 @@ public class AsyncDaoImpl extends AsyncService implements IHeartBeat, AsyncDao {
 
 	}
 
-
 }
