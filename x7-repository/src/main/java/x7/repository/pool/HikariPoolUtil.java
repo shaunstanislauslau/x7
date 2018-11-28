@@ -54,10 +54,11 @@ public class HikariPoolUtil {
 		if (isWriteable){
 			address = Configs.getString("x7.db.address.w");
 		}
-		int num = Configs.getIntValue("x7.db.read");
+
 		if (StringUtil.isNullOrEmpty(address))
 			return null;
-		if (!isWriteable && num < 1)
+		int num = Configs.getIntValue("x7.db.read");
+		if ((!isWriteable) && num < 1)
 			return null;
 
 		String url = Configs.getString("x7.db.url");
