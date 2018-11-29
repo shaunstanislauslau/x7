@@ -17,6 +17,7 @@
 package x7.repository.pool;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import x7.core.config.Configs;
 import x7.core.util.StringUtil;
 import x7.repository.exception.PersistenceException;
@@ -47,8 +48,6 @@ public class HikariPoolUtil {
 
 	public static  HikariDataSource create(boolean isWriteable) {
 
-		HikariDataSource dataSource = new HikariDataSource();
-
 
 		String address = Configs.getString("x7.db.address.r");
 		if (isWriteable){
@@ -60,6 +59,10 @@ public class HikariPoolUtil {
 		int num = Configs.getIntValue("x7.db.read");
 		if ((!isWriteable) && num < 1)
 			return null;
+
+//		DataSource ds = DataSourceBuilder.create().build();
+//		HikariDataSource dataSource = (HikariDataSource)ds;
+		HikariDataSource dataSource = new HikariDataSource();
 
 		String url = Configs.getString("x7.db.url");
 		url = url.replace("${address}", address)
