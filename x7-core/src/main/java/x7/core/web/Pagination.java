@@ -17,11 +17,17 @@
 package x7.core.web;
 
 
+import com.alibaba.fastjson.JSONObject;
 import x7.core.search.Tag;
+import x7.core.util.JsonX;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Pagination
@@ -43,6 +49,8 @@ public class Pagination<T> implements Paged, Serializable{
 	private Direction direction = Direction.DESC;
 	
 	private Tag tag;
+
+	private Class<T> clz;
 	
 	public Pagination(){
 	}
@@ -114,8 +122,45 @@ public class Pagination<T> implements Paged, Serializable{
 		return list;
 	}
 
-	public void setList(List<T> list) {
+	/**
+	 * Codeable Method,instead of setList
+	 * @param list
+	 */
+	public void reSetList(List<T> list){
 		this.list = list;
+	}
+
+	@Deprecated
+	public void setList(List<T> list) {
+		if (Objects.isNull(this.clz)){
+			this.list = list;
+			return;
+		}
+		if (Objects.nonNull(this.list) && !this.list.isEmpty()) {
+			this.list = list;
+			return;
+		}
+
+
+		/*
+		 * Maybe from Json
+		 */
+		if (Objects.isNull(this.list)){
+			this.list = new ArrayList<>();
+		}
+		for (T t : list){
+
+			if (this.clz == Map.class){
+				this.list.add(t);
+			}else {
+				if (t instanceof JSONObject){
+					T obj = JsonX.toObject(t,this.clz);
+					this.list.add(obj);
+				}else{
+					this.list.add(t);
+				}
+			}
+		}
 	}
 
 	public List<String> getKeyList() {
@@ -140,6 +185,14 @@ public class Pagination<T> implements Paged, Serializable{
 
 	public void setTag(Tag tag) {
 		this.tag = tag;
+	}
+
+	public Class<T> getClz() {
+		return clz;
+	}
+
+	public void setClz(Class clz) {
+		this.clz = clz;
 	}
 
 	public int getTotalPages() {

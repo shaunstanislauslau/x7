@@ -399,12 +399,12 @@ public class SqlRepository implements Repository {
 				keyList.add(key);
 			}
 
-			p.setList(null);
+			p.reSetList(null);
 
 			cacheResolver.setResultKeyListPaginated(clz, criteria, p, 120);
 
 			p.setKeyList(null);
-			p.setList(list);
+			p.reSetList(list);
 
 			return p;
 		}
@@ -418,7 +418,7 @@ public class SqlRepository implements Repository {
 		list = cacheResolver.list(clz, keyList);
 
 		if (keyList.size() == list.size()) {
-			p.setList(list);
+			p.reSetList(list);
 			return p;
 		}
 
@@ -426,7 +426,7 @@ public class SqlRepository implements Repository {
 
 		List<T> sortedList = sort(keyList, list, parsed);
 
-		p.setList(sortedList);
+		p.reSetList(sortedList);
 
 		return p;
 	}

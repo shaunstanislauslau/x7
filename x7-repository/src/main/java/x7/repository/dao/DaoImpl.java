@@ -774,6 +774,7 @@ public class DaoImpl implements Dao {
 		int rows = criteria.getRows();
 
 		Pagination<T> pagination = new Pagination<T>();
+		pagination.setClz(clz);
 		pagination.setRows(rows);
 		pagination.setPage(page);
 		pagination.setOrderBy(criteria.getOrderBy());
@@ -1268,6 +1269,7 @@ public class DaoImpl implements Dao {
 		int rows = criteriaResultMapped.getRows();
 
 		Pagination<Map<String, Object>> pagination = new Pagination<Map<String, Object>>();
+		pagination.setClz(Map.class);
 		pagination.setPage(page);
 		pagination.setRows(rows);
 		pagination.setOrderBy(criteriaResultMapped.getOrderBy());
@@ -1326,7 +1328,7 @@ public class DaoImpl implements Dao {
 		List<Map<String, Object>> stringKeyMapList = pagination.getList();
 		if (!stringKeyMapList.isEmpty()) {
 			List<Map<String, Object>> jsonableMapList = BeanMapUtil.toJsonableMapList(stringKeyMapList);
-			pagination.setList(jsonableMapList);
+			pagination.reSetList(jsonableMapList);
 		}
 
 		return pagination;
