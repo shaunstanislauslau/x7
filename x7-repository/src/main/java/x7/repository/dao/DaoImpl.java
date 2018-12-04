@@ -176,7 +176,7 @@ public class DaoImpl implements Dao {
 
 			conn = DataSourceUtil.getConnection(this.dataSource);
 
-			conn.setAutoCommit(false);
+//			conn.setAutoCommit(false);
 			if (keyOneType != String.class && (keyOneValue == null || keyOneValue == 0)) {
 				pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			} else {
@@ -271,7 +271,7 @@ public class DaoImpl implements Dao {
 		PreparedStatement pstmt = null;
 		try {
 
-			conn.setAutoCommit(false);
+//			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
 
 //			isNoBizTx = Tx.isNoBizTx();
@@ -343,7 +343,8 @@ public class DaoImpl implements Dao {
 			 * 返回自增键
 			 */
 
-			conn.setAutoCommit(false);
+//			conn.setAutoCommit(false);
+
 			if (keyOneType != String.class && (keyOneValue == null || keyOneValue == 0)) {
 				pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			} else {
@@ -449,7 +450,7 @@ public class DaoImpl implements Dao {
 //		boolean isNoBizTx = false;
 		PreparedStatement pstmt = null;
 		try {
-			conn.setAutoCommit(false);
+//			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
 
 //			isNoBizTx = Tx.isNoBizTx();
@@ -1022,23 +1023,23 @@ public class DaoImpl implements Dao {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		try {
-			conn = getConnection(false);
-			conn.setAutoCommit(false);
+//			conn = getConnection(false);
+			conn = DataSourceUtil.getConnection(dataSource);
+//			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
 
 			b = pstmt.executeUpdate() == 0 ? false : true;
-			conn.commit();
+//			conn.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
-			try {
-				conn.rollback();
-				e.printStackTrace();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+//			try {
+//				conn.rollback();
+//				e.printStackTrace();
+//			} catch (SQLException e1) {
+//				e1.printStackTrace();
+//			}
 		} finally {
-			close(pstmt);
-			close(conn);
+			DataSourceUtil.releaseConnection(conn,dataSource);
 		}
 
 		return b;
@@ -1067,7 +1068,7 @@ public class DaoImpl implements Dao {
 
 		PreparedStatement pstmt = null;
 		try {
-			conn.setAutoCommit(false);
+//			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
 
 //			isNoBizTx = Tx.isNoBizTx();

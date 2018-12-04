@@ -174,7 +174,7 @@ public class BeanUtilX extends BeanUtil {
 						element.length = 40;
 				}else {
 					element.isJson = true;
-					if (clz == List.class) {
+					if (ec == List.class) {
 						Field field = null;
 						try {
 							field = clz.getDeclaredField(element.getProperty());
@@ -182,8 +182,9 @@ public class BeanUtilX extends BeanUtil {
 							e.printStackTrace();
 						}
 						ParameterizedType pt = (ParameterizedType) field.getGenericType();
-						Class geneTyep = (Class) pt.getActualTypeArguments()[0];
-						element.geneType = geneTyep;
+
+						Class geneType = (Class) pt.getActualTypeArguments()[0];
+						element.geneType = geneType;
 					}
 					element.sqlType = SqlFieldType.VARCHAR;
 					if (element.length == 0)
