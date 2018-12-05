@@ -86,8 +86,6 @@ public class SqlUtil {
 
 		sql += sb.toString();
 
-		System.out.println(sql);
-
 		return sql;
 	}
 
@@ -233,7 +231,6 @@ public class SqlUtil {
 					IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
 		if (Objects.nonNull(condition)) {
-			System.out.println("_______________concatRefresh: condition.getValueList: " + condition.getValueList());
 			for (Object v : condition.getValueList()) {
 				if(Objects.nonNull(v) && v.getClass().isEnum()){
 					pstmt.setObject(i++, v.toString());

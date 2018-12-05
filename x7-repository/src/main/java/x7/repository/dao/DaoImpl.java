@@ -446,6 +446,9 @@ public class DaoImpl implements Dao {
 
 		System.out.println("refresh normally: " + sql);
 
+		if (sql.contains("SET  WHERE"))
+			return false;
+
 		boolean flag = false;
 //		boolean isNoBizTx = false;
 		PreparedStatement pstmt = null;
@@ -1063,6 +1066,9 @@ public class DaoImpl implements Dao {
 
 		System.out.println("________SQL: refreshByCondition: " + sql);
 
+		if (sql.contains("SET  WHERE"))
+			return false;
+
 //		boolean isNoBizTx = false;
 		boolean flag = false;
 
@@ -1075,7 +1081,6 @@ public class DaoImpl implements Dao {
 //			if (!isNoBizTx) {
 //				Tx.add(pstmt);
 //			}
-			System.out.println("_______________concatRefresh: refreshMap. " + refreshMap);
 			int i = 1;
 			for (Object value : refreshMap.values()) {
 				value = SqlUtil.filter(value);
