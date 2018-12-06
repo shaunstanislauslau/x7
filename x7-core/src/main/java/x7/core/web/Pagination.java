@@ -99,6 +99,8 @@ public class Pagination<T> implements Paged, Serializable{
 	}
 
 	public int getRows() {
+		if (rows == 0)
+			return 20;
 		return rows;
 	}
 
@@ -196,8 +198,8 @@ public class Pagination<T> implements Paged, Serializable{
 	}
 
 	public int getTotalPages() {
-		int totalPages = (int) (totalRows / rows);
-		if (totalRows % rows > 0)
+		int totalPages = (int) (totalRows / getRows());
+		if (totalRows % getRows() > 0)
 			totalPages += 1;
 		return totalPages;
 	}
@@ -210,8 +212,8 @@ public class Pagination<T> implements Paged, Serializable{
 			return page;
 		if (totalRows == 0)
 			return 1;
-		int maxPage = (int) (totalRows / rows);
-		if (totalRows % rows > 0)
+		int maxPage = (int) (totalRows / getRows());
+		if (totalRows % getRows() > 0)
 			maxPage += 1;
 		if (page > maxPage)
 			page = maxPage;
