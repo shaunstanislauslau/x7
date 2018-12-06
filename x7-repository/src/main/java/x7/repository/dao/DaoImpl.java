@@ -841,7 +841,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public <T> Object reduce(ReduceCondition<T> reduceCondition) {
+	public Object reduce(ReduceCondition reduceCondition) {
 
 		Connection conn = null;
 		try {
@@ -852,7 +852,7 @@ public class DaoImpl implements Dao {
 		return reduce(reduceCondition, conn);
 	}
 
-	protected <T> Object reduce(ReduceCondition<T> reduceCondition, Connection conn) {
+	protected Object reduce(ReduceCondition reduceCondition, Connection conn) {
 
 		Class<?> clz = reduceCondition.getClz();
 		Parsed parsed = Parser.get(clz);

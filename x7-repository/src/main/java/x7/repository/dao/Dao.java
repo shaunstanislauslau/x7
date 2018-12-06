@@ -71,8 +71,8 @@ public interface Dao {
 	
 	<T> Pagination<T> find(Criteria criteria);
 
-	<T> Object reduce(ReduceCondition<T> reduceCondition);
+	Object reduce(ReduceCondition reduceCondition);
 
 	@Deprecated
-	boolean execute(Object obj, String sql);
+	<T>boolean execute(T obj, String sql);
 }

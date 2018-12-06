@@ -1,8 +1,6 @@
 package x7.core.bean;
 
-/**
- * Created by Sim on 2018/9/11.
- */
+
 public class Reduce {
     private Criteria.ReduceType type;
     private String property;

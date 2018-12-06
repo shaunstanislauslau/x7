@@ -117,5 +117,5 @@ public interface X7Repository<T> {
 	 */
 	Pagination<Map<String, Object>> find(Criteria.ResultMapped criteria);
 
-	Object reduce(ReduceCondition<T> condition);
+	Object reduce(ReduceCondition condition);
 }

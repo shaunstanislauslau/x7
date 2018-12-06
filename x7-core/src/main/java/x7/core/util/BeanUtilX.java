@@ -34,6 +34,9 @@ import java.util.*;
 
 public class BeanUtilX extends BeanUtil {
 
+	public final static String SPACE = " ";
+	public final static String SQL_REF = "`";
+	public final static String COMMA = ",";
 	@SuppressWarnings("rawtypes")
 	public static List<BeanElement> getElementList(Class clz) {
 
@@ -643,17 +646,17 @@ public class BeanUtilX extends BeanUtil {
 		if (parsed.isNoSpec())
 			return sql;
 
-		if (!sql.contains(","))
+		if (!sql.contains(COMMA))
 			return sql;
 
 		for (String property : parsed.getPropertyMapperMap().keySet()){
-			String key = " "+property+",";
-			String value = " "+parsed.getMapper(property)+",";
+			String key = SPACE+property+COMMA;
+			String value = SPACE+parsed.getMapper(property)+COMMA;
 			sql = sql.replaceAll(key, value);
 		}
 		for (String property : parsed.getPropertyMapperMap().keySet()){
-			String key = ","+property+",";
-			String value = ","+parsed.getMapper(property)+",";
+			String key = COMMA+property+COMMA;
+			String value = COMMA+parsed.getMapper(property)+COMMA;
 			sql = sql.replaceAll(key, value);
 		}
 		return sql;
@@ -667,14 +670,14 @@ public class BeanUtilX extends BeanUtil {
 
 		sql = mapperName(sql, parsed);
 
-		boolean flag = sql.contains("`");
+		boolean flag = sql.contains(SQL_REF);
 		for (String property : parsed.getPropertyMapperMap().keySet()){
-			String key = " "+property+" ";
-			String value = " "+parsed.getMapper(property)+" ";
+			String key = SPACE+property+SPACE;
+			String value = SPACE+parsed.getMapper(property)+SPACE;
 			sql = sql.replaceAll(key, value);
 			if (flag){
-				key = "`"+property+"`";
-				value = "`"+parsed.getMapper(property)+"`";
+				key = SQL_REF+property+SQL_REF;
+				value = SQL_REF+parsed.getMapper(property)+SQL_REF;
 				sql = sql.replace(key,value);
 			}
 		}
@@ -693,11 +696,11 @@ public class BeanUtilX extends BeanUtil {
 	public static String mapperName(String sql, String clzName, String tableName) {
 		
 		if (sql.endsWith(clzName)){
-			sql += " ";
+			sql += SPACE;
 		}
-		sql = sql.replace(" " +clzName+" ", " "+tableName+" ");
-		if (sql.contains("`")) {
-			sql = sql.replace("`" +clzName+"`", "`"+tableName+"`");
+		sql = sql.replace(SPACE +clzName+SPACE, SPACE+tableName+SPACE);
+		if (sql.contains(SQL_REF)) {
+			sql = sql.replace(SQL_REF +clzName+SQL_REF, SQL_REF+tableName+SQL_REF);
 		}
 		
 		return sql;
@@ -794,7 +797,7 @@ public class BeanUtilX extends BeanUtil {
 	public static String filterSQLKeyword(String mapper){
 		for (String keyWord : keyWordArr){
 			if (keyWord.equals(mapper.toLowerCase())){
-				return "`"+mapper+"`";
+				return SQL_REF+mapper+SQL_REF;
 			}
 		}
 		return mapper;
@@ -809,9 +812,11 @@ public class BeanUtilX extends BeanUtil {
 			put("-", " - ");
 			put("*", " * ");
 			put("/", " / ");
+			put("%", " % ");
 			put("(", "( ");
 			put(")", " )");
-			put(","," , ");
+			put(",", " , ");
+			put(";", " ;");
 
 		}
 	};
@@ -823,7 +828,7 @@ public class BeanUtilX extends BeanUtil {
 		int length = manuSql.length();
 		for (int j = 0; j < length; j++){
 			String strEle = String.valueOf(manuSql.charAt(j));
-			if (" ".equals(strEle))
+			if (SPACE.equals(strEle))
 				continue;
 			if (opMap.containsKey(strEle))
 				strEle = opMap.get(strEle);
@@ -832,6 +837,76 @@ public class BeanUtilX extends BeanUtil {
 
 		String target = valueSb.toString();
 		return target;
+	}
+
+
+	public static String normalizeSql(String sql, Map<String,String> mapperMap) {
+
+		StringBuilder sb = new StringBuilder();
+
+		boolean flag = true;
+		int length = sql.length();
+		for (int j = 0; j < length; j++) {
+			String strEle = String.valueOf(sql.charAt(j));
+			if (" ".equals(strEle)) {
+				if (flag) {
+					sb.append(strEle);
+					flag = false;
+				}
+				continue;
+			}
+			if (opMap.containsKey(strEle)) {
+				if (flag) {
+					sb.append(SPACE);
+				}
+				sb.append(strEle).append(SPACE);
+				flag = false;
+				continue;
+			} else {
+				sb.append(strEle);
+			}
+			flag = true;
+		}
+
+		String target = sb.toString();// times:  80ms / 100000
+
+		String[] arr = target.split(SPACE);// times: 170ms / 100000
+
+		int l = arr.length;
+		for (int i = 0; i < l; i++) {
+			String key = arr[i];
+			if (key.contains(SQL_REF)) {
+				key = key.substring(1, key.length() - 1);
+				String mapper = mapperMap.get(key);
+				if (StringUtil.isNotNull(mapper)) {
+					arr[i] = SQL_REF + mapper + SQL_REF;
+				}
+			} else {
+				String mapper = mapperMap.get(key);
+				if (StringUtil.isNotNull(mapper)) {
+					arr[i] = mapper;
+				}
+			}
+		}
+
+		sb = new StringBuilder();
+		int i = 0;
+		for (String s : arr) {
+			sb.append(s);
+			i++;
+			if (i < l) {
+				sb.append(SPACE);
+			}
+		}
+
+		return sb.toString();
+	}
+
+
+	public static String normalizeSql(String sql, Parsed parsed) {
+		sql = mapperName(sql,parsed);
+
+		return normalizeSql(sql, parsed.getPropertyMapperMap());
 	}
 
 }

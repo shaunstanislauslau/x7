@@ -12,13 +12,17 @@ import java.util.Objects;
  */
 public interface DataPermission {
 
+    String LIKE_BASE = "DP0";
+    String IN_BASE_ZERO = "0";
+    String IN_BASE_ONE = "1";
+
     String getDataPermissionKey();
 
     void setDataPermissionValue(Object dataPermissionValue);
 
     Object getDataPermissionValue();
 
-    public class Chain {
+    class Chain {
 
         public static void beforeHandle(DataPermission dataPermission, Object userDataPermissionValue) {
             DataPermission dp = (DataPermission) dataPermission;
@@ -34,14 +38,31 @@ public interface DataPermission {
             } else {
                 dp.setDataPermissionValue(userDataPermissionValue);
             }
+
+            dataPermissionValue = dp.getDataPermissionValue();
+            if (dataPermissionValue instanceof List){//optimize
+                List<Object> dpList = (List<Object>) dataPermissionValue;
+                for (Object obj : dpList){
+                    if (obj.toString().equals(IN_BASE_ZERO) || obj.toString().equals(IN_BASE_ONE)){
+                        dp.setDataPermissionValue(null);
+                        break;
+                    }
+                }
+            }else{
+                if (dataPermissionValue.equals(LIKE_BASE)){
+                    dp.setDataPermissionValue(null);
+                }
+            }
         }
 
         protected static void onBuild(Criteria criteria, Object obj) {
+            if (Objects.isNull(obj))
+                return;
             if (obj instanceof DataPermission) {
-                if (Objects.isNull(obj))
-                    return;
                 DataPermission dp = (DataPermission) obj;
-                criteria.setDataPermission(dp);
+                if (Objects.nonNull(dp.getDataPermissionValue())) {
+                    criteria.setDataPermission(dp);
+                }
             }
         }
 

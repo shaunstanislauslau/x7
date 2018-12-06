@@ -7,7 +7,7 @@ import x7.core.bean.CriteriaCondition;
 import java.util.Objects;
 
 
-public class ReduceCondition<T> {
+public class ReduceCondition {
 
     private Criteria.ReduceType type;
     private String reduceProperty;

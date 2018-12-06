@@ -126,7 +126,7 @@ public interface Repository {
 	 * 条件查询累计
 	 * 
 	 */
-	<T> Object reduce(ReduceCondition<T> reduceCondition);
+	Object reduce(ReduceCondition reduceCondition);
 
 	
 	/**

@@ -26,8 +26,6 @@ import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
 import x7.repository.mapper.MySqlDialect;
 import x7.repository.mapper.OracleDialect;
-import x7.repository.pool.DataSourceFactory;
-import x7.repository.pool.DataSourcePool;
 import x7.repository.redis.JedisConnector_Persistence;
 import x7.repository.redis.LevelTwoCacheResolver;
 
@@ -38,140 +36,125 @@ import java.util.Objects;
 
 public class RepositoryBooter {
 
+    private static RepositoryBooter instance = null;
 
-	private static RepositoryBooter instance = null;
-	
-	
-	
-	public static void boot() {
-		if (instance == null) {
-			instance = new RepositoryBooter();
-			init();
-			HealthChecker.onStarted();
-			CasualWorker.accept(new IAsyncTask() {
-				@Override
-				public void execute() throws Exception {
-					try {
-						Thread.sleep(1000);
-						generateId();
-					}catch (Exception e){
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-	}
+    public static void boot() {
+        if (instance == null) {
+            instance = new RepositoryBooter();
+            init();
+            HealthChecker.onStarted();
+            CasualWorker.accept(new IAsyncTask() {
+                @Override
+                public void execute() throws Exception {
+                    try {
+                        Thread.sleep(1000);
+                        generateId();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
 
 
+    public static void boot(DataSource ds_W, DataSource ds_R) {
+        if (instance == null) {
+            instance = new RepositoryBooter();
+            setDataSource(ds_W, ds_R);
+            initCache();
+            HealthChecker.onStarted();
+            CasualWorker.accept(new IAsyncTask() {
+                @Override
+                public void execute() throws Exception {
+                    try {
+                        Thread.sleep(1000);
+                        generateId();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
 
-	public static void boot(DataSource ds_W, DataSource ds_R) {
-		if (instance == null) {
-			instance = new RepositoryBooter();
-			setDataSource(ds_W, ds_R);
-			initCache();
-			HealthChecker.onStarted();
-			CasualWorker.accept(new IAsyncTask() {
-				@Override
-				public void execute() throws Exception {
-					try {
-						Thread.sleep(1000);
-						generateId();
-					}catch (Exception e){
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-	}
-	
-	public static void generateId(){
-		System.out.println("\n" +"----------------------------------------");
-		List<IdGenerator> idGeneratorList = SqlRepository.getInstance().list(IdGenerator.class);
-		for (IdGenerator generator : idGeneratorList) {
-			String name = generator.getClzName();
-			long maxId = generator.getMaxId();
-			
-			String idInRedis = JedisConnector_Persistence.getInstance().hget(BaseRepository.ID_MAP_KEY, name);
-			
-			System.out.println(name + ",test, idInDB = " + maxId + ", idInRedis = " + idInRedis);
-			
+    public static void generateId() {
+        System.out.println("\n" + "----------------------------------------");
+        List<IdGenerator> idGeneratorList = SqlRepository.getInstance().list(IdGenerator.class);
+        for (IdGenerator generator : idGeneratorList) {
+            String name = generator.getClzName();
+            long maxId = generator.getMaxId();
 
-			if (idInRedis == null){
-				JedisConnector_Persistence.getInstance().hset(BaseRepository.ID_MAP_KEY, name, String.valueOf(maxId));
-			}else if (idInRedis != null && maxId > Long.valueOf(idInRedis)){
-				JedisConnector_Persistence.getInstance().hset(BaseRepository.ID_MAP_KEY, name, String.valueOf(maxId));
-			}
-			
-			System.out.println(name + ",final, idInRedis = " + JedisConnector_Persistence.getInstance().hget(BaseRepository.ID_MAP_KEY, name));
+            String idInRedis = JedisConnector_Persistence.getInstance().hget(BaseRepository.ID_MAP_KEY, name);
 
-		
-		}
-		System.out.println("----------------------------------------"+"\n");
-	}
-	
-	private static void init(){
-		onDriver(null);
-		setDataSource(null, null);
-		initCache();
-	}
+            System.out.println(name + ",test, idInDB = " + maxId + ", idInRedis = " + idInRedis);
 
-	public static void initCache(){
-		if (Configs.isTrue(ConfigKey.IS_CACHEABLE)){
-			SqlRepository.getInstance().setCacheResolver(LevelTwoCacheResolver.getInstance());
-		}
-	}
 
-	public static void onDriver(String driverClassName){
+            if (idInRedis == null) {
+                JedisConnector_Persistence.getInstance().hset(BaseRepository.ID_MAP_KEY, name, String.valueOf(maxId));
+            } else if (idInRedis != null && maxId > Long.valueOf(idInRedis)) {
+                JedisConnector_Persistence.getInstance().hset(BaseRepository.ID_MAP_KEY, name, String.valueOf(maxId));
+            }
 
-		String driver = null;
-		if (Objects.isNull(driverClassName)){
-			driver = Configs.getString("x7.db.driver");
-		}else{
-			driver = driverClassName;
-		}
+            System.out.println(name + ",final, idInRedis = " + JedisConnector_Persistence.getInstance().hget(BaseRepository.ID_MAP_KEY, name));
 
-		driver = driver.toLowerCase();
 
-		if (driver.contains(DbType.MYSQL)){
-			DbType.value = DbType.MYSQL;
-			initDialect(new MySqlDialect());
-		}else if (driver.contains(DbType.ORACLE)){
-			DbType.value = DbType.ORACLE;
-			initDialect(new OracleDialect());
-		}else if (driver.contains(DbType.DB2)){
-			DbType.value = DbType.DB2;
-			initDialect(new MySqlDialect());//FIXME
-		}else if (driver.contains(DbType.SQLSERVER)){
-			DbType.value = DbType.SQLSERVER;
-			initDialect(new MySqlDialect());//FIXME
-		}
-	}
-	
-	private static void setDataSource(DataSource ds_W, DataSource ds_R){
-		
+        }
+        System.out.println("----------------------------------------" + "\n");
+    }
 
-		switch (DbType.value){
-		
-		default:
-			if (Objects.nonNull(ds_W)){
-				DataSourceSetter.set(ds_W, ds_R);
-			}else {
-				DataSourcePool pool = DataSourceFactory.get(null);
-				DataSourceSetter.set(pool.get(), pool.getR());
-			}
-			SqlRepository.getInstance().setSyncDao(DaoImpl.getInstance());
-			break;
-		
-		}
+    private static void init() {
+        onDriver(null);
+        setDataSource(null, null);
+        initCache();
+    }
 
-			
+    public static void initCache() {
+        if (Configs.isTrue(ConfigKey.IS_CACHEABLE)) {
+            SqlRepository.getInstance().setCacheResolver(LevelTwoCacheResolver.getInstance());
+        }
+    }
 
-	}
-	
-	private static void initDialect(Mapper.Dialect dialect){
-		MapperFactory.Dialect = dialect;
-		DaoImpl.dialect = dialect;
-		ResultSetUtil.dialect = dialect;
-	}
-	
+    public static void onDriver(String driverClassName) {
+
+        String driver = null;
+        if (Objects.isNull(driverClassName)) {
+            driver = Configs.getString("x7.db.driver");
+        } else {
+            driver = driverClassName;
+        }
+
+        driver = driver.toLowerCase();
+
+        if (driver.contains(DbType.MYSQL)) {
+            DbType.value = DbType.MYSQL;
+            initDialect(new MySqlDialect());
+        } else if (driver.contains(DbType.ORACLE)) {
+            DbType.value = DbType.ORACLE;
+            initDialect(new OracleDialect());
+        } else if (driver.contains(DbType.DB2)) {
+            DbType.value = DbType.DB2;
+            initDialect(new MySqlDialect());//FIXME
+        } else if (driver.contains(DbType.SQLSERVER)) {
+            DbType.value = DbType.SQLSERVER;
+            initDialect(new MySqlDialect());//FIXME
+        }
+    }
+
+    private static void setDataSource(DataSource ds_W, DataSource ds_R) {
+
+        if (Objects.isNull(ds_W))
+            throw new RuntimeException("Primary DataSource start failed");
+
+        DataSourceSetter.set(ds_W, ds_R);
+        SqlRepository.getInstance().setSyncDao(DaoImpl.getInstance());
+
+    }
+
+    private static void initDialect(Mapper.Dialect dialect) {
+        MapperFactory.Dialect = dialect;
+        DaoImpl.dialect = dialect;
+        ResultSetUtil.dialect = dialect;
+    }
+
 }

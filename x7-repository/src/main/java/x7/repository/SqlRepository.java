@@ -475,7 +475,7 @@ public class SqlRepository implements Repository {
 	}
 
 	@Override
-	public <T> Object reduce(ReduceCondition<T> reduceCondition) {
+	public Object reduce(ReduceCondition reduceCondition) {
 		testAvailable();
 		Class clz = reduceCondition.getClz();
 		Parsed parsed = Parser.get(clz);
@@ -483,7 +483,7 @@ public class SqlRepository implements Repository {
 
 	}
 
-	protected <T> boolean execute(Object obj, String sql) {
+	protected <T> boolean execute(T obj, String sql) {
 		testAvailable();
 		boolean b;
 		Parsed parsed = Parser.get(obj.getClass());

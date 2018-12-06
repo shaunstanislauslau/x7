@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class ManuRepository {
 
-	public static <T> boolean execute(Object obj, String sql){
+	public static <T> boolean execute(T obj, String sql){
 		return SqlRepository.getInstance().execute(obj, sql);
 		
 	}

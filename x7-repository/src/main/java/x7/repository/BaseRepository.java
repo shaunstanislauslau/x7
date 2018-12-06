@@ -24,9 +24,11 @@ import x7.core.bean.condition.InCondition;
 import x7.core.bean.condition.ReduceCondition;
 import x7.core.bean.condition.RefreshCondition;
 import x7.core.repository.X;
+import x7.core.util.BeanUtilX;
 import x7.core.util.StringUtil;
 import x7.core.web.Direction;
 import x7.core.web.Pagination;
+import x7.repository.dao.SqlUtil;
 import x7.repository.exception.PersistenceException;
 import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
@@ -338,7 +340,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
     }
 
     @Override
-    public Object reduce(ReduceCondition<T> reduceCondition) {
+    public Object reduce(ReduceCondition reduceCondition) {
         reduceCondition.setClz(this.clz);
         return SqlRepository.getInstance().reduce(reduceCondition);
     }
@@ -367,6 +369,7 @@ public abstract class BaseRepository<T> implements X7Repository<T> {
         protected static void onStarted() {
 
             Parsed parsed = Parser.get(IdGenerator.class);
+
 
             String sql = "CREATE TABLE IF NOT EXISTS `idGenerator` ( "
                     + "`clzName` varchar(120) NOT NULL, "

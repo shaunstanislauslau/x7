@@ -1,6 +1,7 @@
 package x7.core.bean.condition;
 
 import x7.core.bean.*;
+import x7.core.util.JsonX;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,9 @@ public class RefreshCondition<T> {
 
     public void setClz(Class clz) {
         this.clz = clz;
+        if (this.obj.getClass() != clz){
+            this.obj = (T)JsonX.toObject(this.obj,clz);
+        }
     }
 
     public T getObj() {
