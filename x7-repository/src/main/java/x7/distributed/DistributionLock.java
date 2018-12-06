@@ -42,6 +42,10 @@ public class DistributionLock {
         System.out.println("Release distribution lock");
     }
 
+    private static void unLockAsync( String key){
+        System.out.println("Release distribution lock");
+    }
+
     public static Lock by(String key){
         Lock ml = new Lock();
         ml.setKey(key);
@@ -67,8 +71,27 @@ public class DistributionLock {
                 }else {
                     throw new RuntimeException(e.getMessage());
                 }
+            }finally {
+                DistributionLock.unLock(key);
             }
-            DistributionLock.unLock(key);
+            return o;
+        }
+
+        public <T> T lockAsync(Task<T> obj){
+            DistributionLock.lock(key);
+            T o = null;
+            try {
+                o = obj.run(obj);
+            }catch (Exception e) {
+                DistributionLock.unLock(key);
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }else {
+                    throw new RuntimeException(e.getMessage());
+                }
+            }finally {
+                DistributionLock.unLockAsync(key);
+            }
             return o;
         }
     }
