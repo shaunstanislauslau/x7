@@ -20,9 +20,6 @@ import org.apache.log4j.Logger;
 import x7.repository.redis.JedisConnector_Persistence;
 
 
-/**
- * Created by Sim on 2018/9/6.
- */
 public class DistributionLock {
 
     private static Logger logger = Logger.getLogger(DistributionLock.class);
