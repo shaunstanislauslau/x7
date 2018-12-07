@@ -587,6 +587,8 @@ public class SqlRepository implements Repository {
 	@Override
 	public boolean createBatch(List<? extends Object> objList) {
 		testAvailable();
+		if (objList.isEmpty())
+			return false;
 		Class clz = objList.get(0).getClass();
 		Parsed parsed = Parser.get(clz);
 		List<Object> list = new ArrayList<Object>();
