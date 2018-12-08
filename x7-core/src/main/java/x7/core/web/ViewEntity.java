@@ -29,6 +29,7 @@ public class ViewEntity {
 	private Object body;
 	private long handledTimeMillis;
 
+
 	public void setStatus(ViewStatus status) {
 		this.status = status;
 	}

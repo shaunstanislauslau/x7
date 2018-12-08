@@ -36,7 +36,7 @@ public interface Dao {
 
 	long create(Object obj);
 
-	boolean createBatch(List<Object> objList);
+	boolean createBatch(List<? extends Object> objList);
 
 	boolean refresh(Object obj);
 

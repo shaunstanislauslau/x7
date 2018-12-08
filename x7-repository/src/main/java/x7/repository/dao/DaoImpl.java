@@ -148,7 +148,7 @@ public class DaoImpl implements Dao {
 	}
 
 	@Override
-	public boolean createBatch(List<Object> objList) {
+	public boolean createBatch(List<? extends Object> objList) {
 
 		if (objList.isEmpty())
 			return false;

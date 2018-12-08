@@ -591,11 +591,9 @@ public class SqlRepository implements Repository {
 			return false;
 		Class clz = objList.get(0).getClass();
 		Parsed parsed = Parser.get(clz);
-		List<Object> list = new ArrayList<Object>();
-		list.addAll(objList);
 		if (cacheResolver != null && !parsed.isNoCache())
 			cacheResolver.markForRefresh(clz);
-		return this.syncDao.createBatch(list);
+		return this.syncDao.createBatch(objList);
 	}
 
 	protected List<Map<String, Object>> list(Class clz, String sql, List<Object> conditionList) {
