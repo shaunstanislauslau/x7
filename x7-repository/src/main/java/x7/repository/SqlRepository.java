@@ -516,8 +516,11 @@ public class SqlRepository implements Repository {
 			}
 		}
 
+		inCondition.setInList(inList);
+
 		Class clz = inCondition.getClz();
 		String inProperty = inCondition.getProperty();
+
 		
 		Parsed parsed = Parser.get(clz);
 
