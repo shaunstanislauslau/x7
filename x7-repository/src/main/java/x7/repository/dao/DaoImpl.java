@@ -38,7 +38,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 
@@ -58,83 +57,16 @@ public class DaoImpl implements Dao {
 	private DaoImpl() {
 	}
 
-	private DataSource dataSource;
-
-	private DataSource dataSource_R;
-	
 	public static Mapper.Dialect dialect;
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
 
-	public void setDataSource_R(DataSource dataSource_R) {
-		this.dataSource_R = dataSource_R;
-	}
-
-	private Connection getConnection(boolean isRead) throws SQLException {
-		if (dataSource == null) {
-			throw new PersistenceException("NO DataSource");
-		}
-		if (dataSource_R == null) {
-
-//			if (!isRead) {
-//				if (!Tx.isNoBizTx()) {
-//					Connection connection = Tx.getConnection();
-//					if (connection == null) {
-//						connection = getConnection(dataSource);
-//						Tx.add(connection);
-//					}
-//					return connection;
-//				}
-//			}
-
-			return getConnection(dataSource);
-		}
-
-		if (isRead) {
-			return getConnection(dataSource_R);
-		}
-
-//		if (!Tx.isNoBizTx()) {
-//			Connection connection = Tx.getConnection();
-//			if (connection == null) {
-//				connection = getConnection(dataSource);
-//				Tx.add(connection);
-//			}
-//			return connection;
-//		}
-
-		return getConnection(dataSource);
-	}
-
-	private Connection getConnection(DataSource ds) throws SQLException {
-		Connection c = ds.getConnection();
-
-		if (c == null) {
-			try {
-				TimeUnit.MICROSECONDS.sleep(5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return ds.getConnection();
-		}
-
-		return c;
-	}
 
 	/**
 	 * 放回连接池,<br>
 	 * 连接池已经重写了关闭连接的方法
 	 */
 	private static void close(Connection conn) {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		RcDataSourceUtil.releaseConnection(conn);
 	}
 
 	private static void close(PreparedStatement pstmt) {
@@ -159,7 +91,6 @@ public class DaoImpl implements Dao {
 
 		List<BeanElement> eles = MapperFactory.getElementList(clz);
 
-//		boolean isNoBizTx = false;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		try {
@@ -174,19 +105,13 @@ public class DaoImpl implements Dao {
 				keyOneValue = keyOneField.getLong(obj);
 			}
 
-			conn = DataSourceUtil.getConnection(this.dataSource);
+			conn = DataSourceUtil.getConnection();
 
-//			conn.setAutoCommit(false);
 			if (keyOneType != String.class && (keyOneValue == null || keyOneValue == 0)) {
 				pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			} else {
 				pstmt = conn.prepareStatement(sql);
 			}
-
-//			isNoBizTx = Tx.isNoBizTx();
-//			if (!isNoBizTx) {
-//				Tx.add(pstmt);
-//			}
 
 			for (Object o : objList) {
 
@@ -230,30 +155,15 @@ public class DaoImpl implements Dao {
 
 			pstmt.executeBatch();
 
-//			if (isNoBizTx) {
-//				conn.commit();
-//			}
 
 		} catch (Exception e) {
 			System.out.println("Exception occured, while create: " + obj);
 			e.printStackTrace();
-//			if (isNoBizTx) {
-//				try {
-//					conn.rollback();
-//					e.printStackTrace();
-//
-//				} catch (SQLException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
+
 			throw new RollbackException("RollbackException: " + e.getMessage());
 
 		} finally {
-//			if (isNoBizTx) {
-//				close(pstmt);
-//				close(conn);
-//			}
-			DataSourceUtil.releaseConnection(conn,dataSource);
+			DataSourceUtil.releaseConnection(conn);
 		}
 
 		return true;
@@ -266,18 +176,11 @@ public class DaoImpl implements Dao {
 		String sql = MapperFactory.getSql(clz, Mapper.REMOVE);
 
 		boolean flag = false;
-//		boolean isNoBizTx = false;
 
 		PreparedStatement pstmt = null;
 		try {
 
-//			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
-
-//			isNoBizTx = Tx.isNoBizTx();
-//			if (!isNoBizTx) {
-//				Tx.add(pstmt);
-//			}
 
 			Parsed parsed = Parser.get(clz);
 
@@ -290,28 +193,12 @@ public class DaoImpl implements Dao {
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
-//			if (isNoBizTx) {
-//				conn.commit();
-//			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
-//			if (isNoBizTx) {
-//				try {
-//					conn.rollback();
-//					e.printStackTrace();
-//				} catch (SQLException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
 			throw new RollbackException("RollbackException: " + e.getMessage());
 
 		} finally {
-//			if (isNoBizTx) {
-//				close(pstmt);
-//				close(conn);
-//			}
-			DataSourceUtil.releaseConnection(conn,this.dataSource);
+			DataSourceUtil.releaseConnection(conn);
 		}
 
 		return flag;
@@ -326,7 +213,6 @@ public class DaoImpl implements Dao {
 
 		List<BeanElement> eles = MapperFactory.getElementList(clz);
 
-//		boolean isNoBizTx = false;
 		PreparedStatement pstmt = null;
 		try {
 			Parsed parsed = Parser.get(clz);
@@ -343,18 +229,11 @@ public class DaoImpl implements Dao {
 			 * 返回自增键
 			 */
 
-//			conn.setAutoCommit(false);
-
 			if (keyOneType != String.class && (keyOneValue == null || keyOneValue == 0)) {
 				pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			} else {
 				pstmt = conn.prepareStatement(sql);
 			}
-
-//			isNoBizTx = Tx.isNoBizTx();
-//			if (!isNoBizTx) {
-//				Tx.add(pstmt);
-//			}
 
 			int i = 1;
 			for (BeanElement ele : eles) {
@@ -399,32 +278,16 @@ public class DaoImpl implements Dao {
 			} else {
 				id = keyOneValue;
 			}
-//
-//			if (isNoBizTx) {
-//				conn.commit();
-//			}
 
 		} catch (Exception e) {
 			System.out.println("Exception occured, while create: " + obj);
 			e.printStackTrace();
-//			if (isNoBizTx) {
-//				try {
-//					conn.rollback();
-//					e.printStackTrace();
-//
-//				} catch (SQLException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
+
 			throw new RollbackException("RollbackException: " + e.getMessage());
 
 		} finally {
-//			if (isNoBizTx) {
-//				close(pstmt);
-//				close(conn);
-//			}
 
-			DataSourceUtil.releaseConnection(conn,this.dataSource);
+			DataSourceUtil.releaseConnection(conn);
 		}
 
 		return id;
@@ -450,16 +313,11 @@ public class DaoImpl implements Dao {
 			return false;
 
 		boolean flag = false;
-//		boolean isNoBizTx = false;
+
 		PreparedStatement pstmt = null;
 		try {
-//			conn.setAutoCommit(false);
-			pstmt = conn.prepareStatement(sql);
 
-//			isNoBizTx = Tx.isNoBizTx();
-//			if (!isNoBizTx) {
-//				Tx.add(pstmt);
-//			}
+			pstmt = conn.prepareStatement(sql);
 
 			int i = 1;
 			for (Object value : refreshMap.values()) {
@@ -482,28 +340,13 @@ public class DaoImpl implements Dao {
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
-//			if (isNoBizTx) {
-//				conn.commit();
-//			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
-//			if (isNoBizTx) {
-//				try {
-//					conn.rollback();
-//					e.printStackTrace();
-//				} catch (SQLException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
+
 			throw new RollbackException("RollbackException: " + e.getMessage());
 
 		} finally {
-//			if (isNoBizTx) {
-//				close(pstmt);
-//				close(conn);
-//			}
-			DataSourceUtil.releaseConnection(conn,this.dataSource);
+			DataSourceUtil.releaseConnection(conn);
 		}
 
 		return flag;
@@ -514,7 +357,7 @@ public class DaoImpl implements Dao {
 
 		Connection conn = null;
 		try {
-			conn = DataSourceUtil.getConnection(this.dataSource);
+			conn = DataSourceUtil.getConnection();
 		} catch (Exception e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
@@ -526,7 +369,7 @@ public class DaoImpl implements Dao {
 
 		Connection conn = null;
 		try {
-			conn = DataSourceUtil.getConnection(this.dataSource);
+			conn = DataSourceUtil.getConnection();
 		} catch (Exception e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
@@ -537,7 +380,7 @@ public class DaoImpl implements Dao {
 	public boolean remove(Object obj) {
 		Connection conn = null;
 		try {
-			conn = DataSourceUtil.getConnection(this.dataSource);
+			conn = DataSourceUtil.getConnection();
 		} catch (Exception e) {
 			throw new RuntimeException("NO CONNECTION");
 		}
@@ -588,12 +431,8 @@ public class DaoImpl implements Dao {
 
 	@Override
 	public <T> T get(Class<T> clz, long idOne) {
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
+		Connection conn = RcDataSourceUtil.getConnection();
+
 		return get(clz, idOne, conn);
 	}
 
@@ -654,12 +493,7 @@ public class DaoImpl implements Dao {
 	}
 
 	public List<Map<String, Object>> list(Class clz, String sql, List<Object> conditionList) {
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
+		Connection conn = RcDataSourceUtil.getConnection();
 
 		return list(clz, sql, conditionList, conn);
 	}
@@ -676,7 +510,7 @@ public class DaoImpl implements Dao {
 		PreparedStatement pstmt = null;
 		BeanElement tempEle = null;
 		try {
-			conn = getConnection(true);
+			conn = RcDataSourceUtil.getConnection();
 			conn.setAutoCommit(true);
 			pstmt = conn.prepareStatement(sql);
 
@@ -750,12 +584,8 @@ public class DaoImpl implements Dao {
 
 	@Override
 	public <T> List<T> list(Object conditionObj) {
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
+		Connection conn = RcDataSourceUtil.getConnection();
+
 		return list(conditionObj, conn);
 	}
 
@@ -831,24 +661,14 @@ public class DaoImpl implements Dao {
 	@Override
 	public <T> Pagination<T> find(Criteria criteria) {
 
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
+		Connection conn = RcDataSourceUtil.getConnection();
 		return find(criteria, conn);
 	}
 
 	@Override
 	public Object reduce(ReduceCondition reduceCondition) {
 
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
+		Connection conn = RcDataSourceUtil.getConnection();
 		return reduce(reduceCondition, conn);
 	}
 
@@ -883,7 +703,7 @@ public class DaoImpl implements Dao {
 
 		PreparedStatement pstmt = null;
 		try {
-			conn = getConnection(true);
+			conn = RcDataSourceUtil.getConnection();
 			conn.setAutoCommit(true);
 			pstmt = conn.prepareStatement(sql);
 
@@ -923,7 +743,7 @@ public class DaoImpl implements Dao {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		try {
-			conn = getConnection(true);
+			conn = RcDataSourceUtil.getConnection();
 			conn.setAutoCommit(true);
 			pstmt = conn.prepareStatement(sql);
 
@@ -974,7 +794,7 @@ public class DaoImpl implements Dao {
 		PreparedStatement pstmt = null;
 		BeanElement tempEle = null;
 		try {
-			conn = getConnection(true);
+			conn = RcDataSourceUtil.getConnection();
 			conn.setAutoCommit(true);
 			pstmt = conn.prepareStatement(sql);
 
@@ -1026,23 +846,17 @@ public class DaoImpl implements Dao {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		try {
-//			conn = getConnection(false);
-			conn = DataSourceUtil.getConnection(dataSource);
-//			conn.setAutoCommit(false);
+
+			conn = DataSourceUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 
 			b = pstmt.executeUpdate() == 0 ? false : true;
-//			conn.commit();
+
 		} catch (Exception e) {
 			e.printStackTrace();
-//			try {
-//				conn.rollback();
-//				e.printStackTrace();
-//			} catch (SQLException e1) {
-//				e1.printStackTrace();
-//			}
+			throw new RuntimeException(e.getMessage());
 		} finally {
-			DataSourceUtil.releaseConnection(conn,dataSource);
+			DataSourceUtil.releaseConnection(conn);
 		}
 
 		return b;
@@ -1069,18 +883,12 @@ public class DaoImpl implements Dao {
 		if (sql.contains("SET  WHERE"))
 			return false;
 
-//		boolean isNoBizTx = false;
 		boolean flag = false;
 
 		PreparedStatement pstmt = null;
 		try {
-//			conn.setAutoCommit(false);
 			pstmt = conn.prepareStatement(sql);
 
-//			isNoBizTx = Tx.isNoBizTx();
-//			if (!isNoBizTx) {
-//				Tx.add(pstmt);
-//			}
 			int i = 1;
 			for (Object value : refreshMap.values()) {
 				value = SqlUtil.filter(value);
@@ -1102,51 +910,24 @@ public class DaoImpl implements Dao {
 
 			flag = pstmt.executeUpdate() == 0 ? false : true;
 
-//			if (isNoBizTx) {
-//				conn.commit();
-//			}
-
 		} catch (Exception e) {
 			flag = false;
 			e.printStackTrace();
-//			if (isNoBizTx) {
-//				try {
-//					conn.rollback();
-//					e.printStackTrace();
-//				} catch (SQLException e1) {
-//					e1.printStackTrace();
-//				}
-//			}
 			throw new RollbackException(
 						"Exception occured by class = " + clz.getName()  + ", message: " + e.getMessage());
 
 		} finally {
-//			if (isNoBizTx) {
-//				close(pstmt);
-//				close(conn);
-//			}
-			DataSourceUtil.releaseConnection(conn,dataSource);
+			DataSourceUtil.releaseConnection(conn);
 		}
 
 		return flag;
 	}
 
-//	@Override
-//	public <T> boolean refreshByCondition(RefreshCondition<T> refreshCondition) {
-//
-//		Connection conn = null;
-//		try {
-//			conn = getConnection(false);
-//		} catch (SQLException e) {
-//			throw new RuntimeException("NO CONNECTION");
-//		}
-//		return refreshByCondition(refreshCondition, conn);
-//	}
 
 	@Override
 	public <T> boolean refreshByCondition(RefreshCondition<T> refreshCondition) {
 
-		Connection conn = DataSourceUtil.getConnection(dataSource);
+		Connection conn = DataSourceUtil.getConnection();
 
 		return refreshByCondition(refreshCondition, conn);
 	}
@@ -1221,7 +1002,7 @@ public class DaoImpl implements Dao {
 		PreparedStatement pstmt = null;
 		BeanElement tempEle = null;
 		try {
-			conn = getConnection(true);
+			conn = RcDataSourceUtil.getConnection();
 			conn.setAutoCommit(true);
 			pstmt = conn.prepareStatement(sql);
 
@@ -1250,12 +1031,7 @@ public class DaoImpl implements Dao {
 	@Override
 	public Pagination<Map<String, Object>> find(Criteria.ResultMapped criteriaResultMapped) {
 
-		Connection conn = null;
-		try {
-			conn = getConnection(true);
-		} catch (SQLException e) {
-			throw new RuntimeException("NO CONNECTION");
-		}
+		Connection conn = RcDataSourceUtil.getConnection();
 
 		return this.find(criteriaResultMapped, conn);
 	}
@@ -1366,7 +1142,7 @@ public class DaoImpl implements Dao {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		try {
-			conn = getConnection(true);
+			conn = RcDataSourceUtil.getConnection();
 			conn.setAutoCommit(true);
 			pstmt = conn.prepareStatement(sql);
 

@@ -94,7 +94,8 @@ public class MySqlDialect implements Mapper.Dialect {
 					if (ele.clz == Map.class) {
 						method.invoke(obj, JsonX.toMap(str));
 					} else if (ele.clz == List.class) {
-						method.invoke(obj, JsonX.toList(str, ele.geneType));
+						Object list = JsonX.toList(str, ele.geneType);
+						method.invoke(obj, list);
 					} else {
 						method.invoke(obj, JsonX.toObject(str, ele.clz));
 					}

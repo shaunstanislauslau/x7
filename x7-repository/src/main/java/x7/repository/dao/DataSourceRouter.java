@@ -16,26 +16,28 @@
  */
 package x7.repository.dao;
 
-import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 
+public class DataSourceRouter {
 
-public class DataSourceUtil {
+    private static DataSource dataSource;
+    private static DataSource dataSourceReadable;
 
-
-    public static Connection getConnection() {
-
-        DataSource ds = DataSourceRouter.getDataSource();
-
-        return DataSourceUtils.getConnection(ds);
+    public static DataSource getDataSource() {
+        return dataSource;
     }
 
-    public static void releaseConnection(Connection conn){
-
-        DataSource ds = DataSourceRouter.getDataSource();
-
-        DataSourceUtils.releaseConnection(conn,ds);
+    public static void setDataSource(DataSource dataSource) {
+        DataSourceRouter.dataSource = dataSource;
     }
+
+    public static DataSource getDataSourceReadable() {
+        return dataSourceReadable;
+    }
+
+    public static void setDataSourceReadable(DataSource dataSourceReadable) {
+        DataSourceRouter.dataSourceReadable = dataSourceReadable;
+    }
+
 }

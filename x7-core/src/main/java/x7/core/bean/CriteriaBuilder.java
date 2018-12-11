@@ -690,8 +690,24 @@ public class CriteriaBuilder {
     private static void groupBy(StringBuilder sb, Criteria criteria) {
         if (criteria instanceof ResultMapped) {
             ResultMapped rm = (ResultMapped) criteria;
-            if (StringUtil.isNotNull(rm.getGroupBy())) {
-                sb.append(Conjunction.GROUP_BY.sql()).append(rm.getGroupBy());
+
+            String groupByS = rm.getGroupBy();
+            if (StringUtil.isNotNull(groupByS)){
+                sb.append(Conjunction.GROUP_BY.sql());
+            }
+
+            String[] arr = groupByS.split(SqlScript.COMMA);
+
+            int i = 0, l = arr.length;
+            for (String groupBy : arr) {
+                groupBy = groupBy.trim();
+                if (StringUtil.isNotNull(groupBy)) {
+                    sb.append(groupBy).append(SqlScript.SPACE);
+                    i++;
+                    if (i<l){
+                        sb.append(SqlScript.COMMA);
+                    }
+                }
             }
         }
     }

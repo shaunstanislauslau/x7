@@ -59,9 +59,12 @@ public class Tx {
 		String key = getKey();
 		map.put(key,status);
 
+		RcDataSourceUtil.key();
 	}
 
 	public static void commit(){
+
+		RcDataSourceUtil.closeConnection();
 
 		String key = getKey();
 		TransactionStatus status = map.remove(key);
@@ -71,6 +74,8 @@ public class Tx {
 	}
 
 	public static void rollback(){
+
+		RcDataSourceUtil.closeConnection();
 
 		String key = getKey();
 		TransactionStatus status = map.remove(key);
