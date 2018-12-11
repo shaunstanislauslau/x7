@@ -66,11 +66,13 @@ public class RcDataSourceUtil {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                return ds.getConnection();
+                conn = ds.getConnection();
             }
 
-            if (conn == null)
+            if (conn == null) {
+                System.out.println("_______NO CONNECTION");
                 throw new RuntimeException("NO CONNECTION");
+            }
 
             return conn;
 
@@ -88,8 +90,10 @@ public class RcDataSourceUtil {
                     conn = ds.getConnection();
                 }
 
-                if (conn == null)
+                if (conn == null) {
+                    System.out.println("_______NO CONNECTION");
                     throw new RuntimeException("NO CONNECTION");
+                }
 
                 connectionMap.put(key, conn);
 
