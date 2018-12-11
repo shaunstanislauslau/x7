@@ -51,7 +51,7 @@ public class RcDataSourceUtil {
         }
     }
 
-    private static Connection getConnection0() throws SQLException {
+    private static Connection getConnection0() throws Exception {
 
         String key = getKey();
 
