@@ -112,6 +112,7 @@ public class RcDataSourceUtil {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+                throw new RuntimeException("RcDataSourceUtil.releaseConnection Exception: " + e.getMessage());
             }
             return;
         }
