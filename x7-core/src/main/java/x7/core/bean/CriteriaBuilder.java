@@ -1110,7 +1110,8 @@ public class CriteriaBuilder {
         private void xAddResultKey(ResultMappedKey mappedKey) {
             if (mappedKey == null)
                 return;
-            List<String> list = mappedKey.getResultKeyList();
+            String[] arr = mappedKey.getResultKeys();
+            List<String> list = Arrays.asList(arr);
             xAddResultKey(list);
         }
 
