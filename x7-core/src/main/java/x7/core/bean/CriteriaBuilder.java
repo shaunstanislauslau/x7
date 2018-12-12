@@ -22,6 +22,7 @@ import x7.core.repository.Mapped;
 import x7.core.util.*;
 import x7.core.web.Fetched;
 import x7.core.web.Paged;
+import x7.core.web.ResultMappedKey;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -1088,15 +1089,6 @@ public class CriteriaBuilder {
             init();
             init(clz);
         }
-//
-//        public ResultMappedBuilder(Class<?> clz, Fetched fetchResult) {
-//
-//            init();
-//            init(clz);
-//
-//            paged(fetchResult);
-//
-//        }
 
 
         private void xAddResultKey(List<String> xExpressionList) {
@@ -1115,11 +1107,20 @@ public class CriteriaBuilder {
             xAddResultKey(xExpressionList);
         }
 
+        private void xAddResultKey(ResultMappedKey mappedKey) {
+            if (mappedKey == null)
+                return;
+            List<String> list = mappedKey.getResultKeyList();
+            xAddResultKey(list);
+        }
+
         @Override
         public void paged(Paged paged) {
             super.criteria.paged(paged);
             if (paged instanceof Fetched) {
                 xAddResultKey((Fetched) paged);
+            }else if (paged instanceof ResultMappedKey){
+                xAddResultKey((ResultMappedKey) paged);
             }
             DataPermission.Chain.onBuild(super.criteria, paged);
         }

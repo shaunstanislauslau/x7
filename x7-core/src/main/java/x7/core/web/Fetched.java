@@ -21,4 +21,5 @@ import java.util.Map;
 public interface Fetched {
 
 	Map<String, Object> getResultKeyMap();
+
 }
