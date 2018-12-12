@@ -22,7 +22,7 @@ import x7.core.repository.Mapped;
 import x7.core.util.*;
 import x7.core.web.Fetched;
 import x7.core.web.Paged;
-import x7.core.web.ResultMappedKey;
+import x7.core.web.ResultMapping;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -463,6 +463,21 @@ public class CriteriaBuilder {
     }
 
     public static ResultMappedBuilder buildResultMapped(Class<?> clz, Fetched ro) {
+        CriteriaBuilder b = new CriteriaBuilder();
+        ResultMappedBuilder builder = b.new ResultMappedBuilder(clz);
+
+        if (ro != null) {
+
+            if (ro instanceof Paged) {
+                builder.paged((Paged) ro);
+            }
+
+        }
+
+        return builder;
+    }
+
+    public static ResultMappedBuilder buildResultMapped(Class<?> clz, ResultMapping ro) {
         CriteriaBuilder b = new CriteriaBuilder();
         ResultMappedBuilder builder = b.new ResultMappedBuilder(clz);
 
@@ -1107,7 +1122,7 @@ public class CriteriaBuilder {
             xAddResultKey(xExpressionList);
         }
 
-        private void xAddResultKey(ResultMappedKey mappedKey) {
+        private void xAddResultKey(ResultMapping mappedKey) {
             if (mappedKey == null)
                 return;
             String[] arr = mappedKey.getResultKeys();
@@ -1120,8 +1135,8 @@ public class CriteriaBuilder {
             super.criteria.paged(paged);
             if (paged instanceof Fetched) {
                 xAddResultKey((Fetched) paged);
-            }else if (paged instanceof ResultMappedKey){
-                xAddResultKey((ResultMappedKey) paged);
+            }else if (paged instanceof ResultMapping){
+                xAddResultKey((ResultMapping) paged);
             }
             DataPermission.Chain.onBuild(super.criteria, paged);
         }

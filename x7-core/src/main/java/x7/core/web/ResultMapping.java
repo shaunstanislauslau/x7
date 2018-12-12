@@ -1,6 +1,6 @@
 package x7.core.web;
 
-public interface ResultMappedKey {
+public interface ResultMapping {
 
     String[] getResultKeys();
 
