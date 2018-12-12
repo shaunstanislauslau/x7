@@ -24,7 +24,6 @@ import javax.sql.DataSource;
 public class DataSourceSetter {
 	
 	protected static void set(DataSource dsW, DataSource dsR){
-
 		DataSourceRouter.setDataSource(dsW);
 		DataSourceRouter.setDataSourceReadable(dsR);
 	}

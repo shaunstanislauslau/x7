@@ -31,9 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Created by Sim on 2018/7/10.
- */
 public class MessageEventBeanPostProcesser implements BeanPostProcessor {
 
     private static Logger logger = Logger.getLogger(MessageEventBeanPostProcesser.class);

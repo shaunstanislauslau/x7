@@ -24,12 +24,10 @@ public class ManuRepository {
 
 	public static <T> boolean execute(T obj, String sql){
 		return SqlRepository.getInstance().execute(obj, sql);
-		
 	}
 	
 	
 	public static List<Map<String,Object>> list(Class clz, String sql, List<Object> conditionList){
-		
 		return SqlRepository.getInstance().list(clz, sql, conditionList);
 	}
 }

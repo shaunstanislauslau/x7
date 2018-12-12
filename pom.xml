@@ -96,6 +96,10 @@
 			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client -->
 		<dependency>

@@ -66,6 +66,11 @@ public class BootConfiguration {
             return null;
 
         DataSource writeDataSource = getWriteDataSource();
+        /*
+         * Spring Boot多数据源不友好,另外读库可以不需要事务<br>
+         * 1. 对于Sharding, 可以用动态数据源<br>
+         * 2. 只读库，一个请求只需并成一个连接，可绕开事务<br>
+         */
         DataSource readDataSource = getReadDataSource();
 
         startX7Repsository(writeDataSource, readDataSource);

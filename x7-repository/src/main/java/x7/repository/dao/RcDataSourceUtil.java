@@ -57,9 +57,11 @@ public class RcDataSourceUtil {
 
         DataSource ds = getDataSourceReadable();
 
+        Connection conn = null;
+
         if (key == null) {
 
-            Connection conn = ds.getConnection();
+            conn = ds.getConnection();
             if (conn == null) {
                 try {
                     TimeUnit.MICROSECONDS.sleep(10);
@@ -69,15 +71,10 @@ public class RcDataSourceUtil {
                 conn = ds.getConnection();
             }
 
-            if (conn == null) {
-                System.out.println("_______NO CONNECTION");
-                throw new RuntimeException("NO CONNECTION");
-            }
 
-            return conn;
 
         } else {
-            Connection conn = connectionMap.get(key);
+            conn = connectionMap.get(key);
             if (conn == null) {
 
                 conn = ds.getConnection();
@@ -90,18 +87,17 @@ public class RcDataSourceUtil {
                     conn = ds.getConnection();
                 }
 
-                if (conn == null) {
-                    System.out.println("_______NO CONNECTION");
-                    throw new RuntimeException("NO CONNECTION");
-                }
-
                 connectionMap.put(key, conn);
 
             }
-
-            return conn;
         }
 
+        if (conn == null) {
+            System.out.println("_______NO CONNECTION");
+            throw new RuntimeException("NO CONNECTION");
+        }
+
+        return conn;
     }
 
 
@@ -123,7 +119,7 @@ public class RcDataSourceUtil {
 
     }
 
-    protected static void closeConnection(){
+    public static void closeConnection(){
 
         String key = getKey();
 
@@ -158,7 +154,7 @@ public class RcDataSourceUtil {
         return ds;
     }
 
-    protected static void key(){
+    public static void key(){
         String threadId = String.valueOf(Thread.currentThread().getId());
         String key = "rcTx."+threadId;
         keyMap.put(threadId,key);
