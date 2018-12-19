@@ -18,6 +18,7 @@ package x7.config;
 
 import x7.config.zk.ZkBase;
 import x7.core.config.Configs;
+import x7.core.util.StringUtil;
 
 public class ConfigBuilder {
 
@@ -32,22 +33,32 @@ public class ConfigBuilder {
 	public static void build(boolean centralized, String configSpace, String localAddress, String remoteAddress){
 		if (instance == null){
 			instance = new ConfigBuilder();
-			init(centralized, configSpace, localAddress, remoteAddress);
+			init(centralized,configSpace, localAddress, remoteAddress);
 		}
 	}
 	
 	private static void init(boolean centralized, String configSpace, String localAddress, String remoteAddress) {
 		
 		Configs.setConfigSpace(configSpace);
-		
+
+		if (StringUtil.isNullOrEmpty(remoteAddress) && StringUtil.isNullOrEmpty(localAddress))
+			return;
+
 		if (centralized){
-			ZkBase.getInstance().init(remoteAddress);
-			ZkBase.getInstance().add(ConfigKeeper.getInstance());
-		}else{
+			if (centralized && StringUtil.isNotNull(remoteAddress)){
+				ZkBase.getInstance().init(remoteAddress);
+				ZkBase.getInstance().add(ConfigKeeper.getInstance());
+			}
+			return;
+		}
+
+		if (StringUtil.isNotNull(localAddress)){
 			Configs.localAddress = localAddress;
 			TextParser.getInstance().load(localAddress, configSpace);
+		}else if (StringUtil.isNotNull(remoteAddress)){
+			ZkBase.getInstance().init(remoteAddress);
+			ZkBase.getInstance().add(ConfigKeeper.getInstance());
 		}
-		
 
 	}
 	
