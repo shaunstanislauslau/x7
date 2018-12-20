@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>x7</groupId>
+		<groupId>io.xream</groupId>
 		<artifactId>x7-parent</artifactId>
 		<version>1.0.0.RELEASE</version>
 	</parent>
@@ -51,14 +51,14 @@
 
 
 		<dependency>
-			<groupId>x7</groupId>
+			<groupId>io.xream</groupId>
 			<artifactId>x7-core</artifactId>
 			<version>${x7.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>x7</groupId>
+			<groupId>io.xream</groupId>
 			<artifactId>x7-config</artifactId>
 			<version>${x7.version}</version>
 			<scope>compile</scope>

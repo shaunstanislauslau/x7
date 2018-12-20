@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>x7</groupId>
+		<groupId>io.xream</groupId>
 		<artifactId>x7-parent</artifactId>
 		<version>1.0.0.RELEASE</version>
 	</parent>
@@ -16,7 +16,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>x7</groupId>
+			<groupId>io.xream</groupId>
 			<artifactId>x7-core</artifactId>
 			<version>${x7.version}</version>
 			<scope>compile</scope>
