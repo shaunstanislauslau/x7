@@ -19,17 +19,17 @@
 			<artifactId>spring-boot-autoconfigure</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>x7</groupId>
+			<groupId>io.xream</groupId>
 			<artifactId>x7-core</artifactId>
 			<version>${x7.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>x7</groupId>
+			<groupId>io.xream</groupId>
 			<artifactId>x7-config</artifactId>
 			<version>${x7.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>x7</groupId>
+			<groupId>io.xream</groupId>
 			<artifactId>x7-repository</artifactId>
 			<version>${x7.version}</version>
 		</dependency>
