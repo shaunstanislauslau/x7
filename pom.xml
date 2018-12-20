@@ -17,13 +17,13 @@
 	<version>1.0.0.RELEASE</version>
 	<packaging>pom</packaging>
 	<name>x7-parent</name>
-	<description>x7-framwork base on spring boot</description>
-	<url>https://github.com/x7-framework/x7.git</url>
+	<description>x7 base on spring boot</description>
+	<url>https://github.com/x-ream/x7.git</url>
 
 	<scm>
-		<connection>scm:git:https://github.com/x7-framework/x7</connection>
-		<developerConnection>scm:git:https://github.com/x7-framework/x7</developerConnection>
-		<url>scm:git:https://github.com/x7-framework/x7</url>
+		<connection>scm:git:https://github.com/x-ream/x7</connection>
+		<developerConnection>scm:git:https://github.com/x-ream/x7</developerConnection>
+		<url>scm:git:https://github.com/x-ream/x7</url>
 	</scm>
 
 	<licenses>
