@@ -72,7 +72,7 @@ public class HikariPoolUtil {
 		dataSource.setDriverClassName(Configs.getString("x7.db.driver"));
 		dataSource.setMaximumPoolSize(Configs.getIntValue("x7.db.max"));
 
-		return dataSource;//simsevenx
+		return dataSource;
 	}
 
 }
