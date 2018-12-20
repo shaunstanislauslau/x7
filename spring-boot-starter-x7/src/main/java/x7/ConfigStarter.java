@@ -11,6 +11,5 @@ public class ConfigStarter {
 				return;
 		}
 		ConfigBuilder.build(centralized, configSpace, localAddress, remoteAddress);
-
 	}
 }
