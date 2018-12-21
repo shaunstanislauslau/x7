@@ -22,9 +22,7 @@ import x7.repository.dao.AsyncDao;
 
 import java.util.List;
 
-/**
- * Created by Sim on 2018/11/27.
- */
+
 @Repository
 public class AsyncRepository {
 
