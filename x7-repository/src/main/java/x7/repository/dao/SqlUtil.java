@@ -30,8 +30,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
-public class SqlUtil {
 
+public class SqlUtil {
 
 	protected static void adpterSqlKey(PreparedStatement pstmt, String keyOne, Object obj, int i)
 			throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException,
@@ -250,6 +250,5 @@ public class SqlUtil {
 
 		return value;
 	}
-
 
 }

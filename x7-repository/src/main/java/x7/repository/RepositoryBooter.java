@@ -132,12 +132,6 @@ public class RepositoryBooter {
         } else if (driver.contains(DbType.ORACLE)) {
             DbType.value = DbType.ORACLE;
             initDialect(new OracleDialect());
-        } else if (driver.contains(DbType.DB2)) {
-            DbType.value = DbType.DB2;
-            initDialect(new MySqlDialect());//FIXME
-        } else if (driver.contains(DbType.SQLSERVER)) {
-            DbType.value = DbType.SQLSERVER;
-            initDialect(new MySqlDialect());//FIXME
         }
     }
 
