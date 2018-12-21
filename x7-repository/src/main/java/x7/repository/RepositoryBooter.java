@@ -16,7 +16,6 @@
  */
 package x7.repository;
 
-
 import x7.core.async.CasualWorker;
 import x7.core.async.IAsyncTask;
 import x7.core.config.Configs;
