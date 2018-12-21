@@ -5,7 +5,7 @@
 
     <groupId>io.xream.x7</groupId>
     <artifactId>x7-parent</artifactId>
-    <version>1.0.0.RELEASE</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>x7-parent</name>
     <description>x7 base on spring boot</description>
@@ -43,6 +43,20 @@
             <email>8966188@qq.com</email>
         </developer>
     </developers>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <!-- setting.xml setid -->
+            <id>oss-s</id>
+            <name>x7 snopshots repo</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>oss-r</id>
+            <name>x7 release repo</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
 
     <modules>
         <module>x7-core</module>
