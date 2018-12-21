@@ -118,7 +118,6 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
