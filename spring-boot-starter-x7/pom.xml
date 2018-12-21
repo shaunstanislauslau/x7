@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>io.xream.x7</groupId>
 		<artifactId>x7-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0.RELEASE</version>
 	</parent>
 
 	<dependencies>
@@ -21,17 +21,17 @@
 		<dependency>
 			<groupId>io.xream.x7</groupId>
 			<artifactId>x7-core</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>io.xream.x7</groupId>
 			<artifactId>x7-config</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>io.xream.x7</groupId>
 			<artifactId>x7-repository</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0.RELEASE</version>
 		</dependency>
 	</dependencies>
 
