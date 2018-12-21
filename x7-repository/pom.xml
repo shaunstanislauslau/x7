@@ -53,14 +53,14 @@
 		<dependency>
 			<groupId>io.xream.x7</groupId>
 			<artifactId>x7-core</artifactId>
-			<version>${x7.version}</version>
+			<version>1.0.0.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>io.xream.x7</groupId>
 			<artifactId>x7-config</artifactId>
-			<version>${x7.version}</version>
+			<version>1.0.0.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 
