@@ -4,7 +4,7 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>io.xream</groupId>
+		<groupId>io.xream.x7</groupId>
 		<artifactId>x7-parent</artifactId>
 		<version>1.0.0.RELEASE</version>
 	</parent>

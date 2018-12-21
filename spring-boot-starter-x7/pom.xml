@@ -8,7 +8,7 @@
 	<name>spring-boot-starter-x7</name>
 
 	<parent>
-		<groupId>io.xream</groupId>
+		<groupId>io.xream.x7</groupId>
 		<artifactId>x7-parent</artifactId>
 		<version>1.0.0.RELEASE</version>
 	</parent>
@@ -19,17 +19,17 @@
 			<artifactId>spring-boot-autoconfigure</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.xream</groupId>
+			<groupId>io.xream.x7</groupId>
 			<artifactId>x7-core</artifactId>
 			<version>${x7.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.xream</groupId>
+			<groupId>io.xream.x7</groupId>
 			<artifactId>x7-config</artifactId>
 			<version>${x7.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.xream</groupId>
+			<groupId>io.xream.x7</groupId>
 			<artifactId>x7-repository</artifactId>
 			<version>${x7.version}</version>
 		</dependency>
