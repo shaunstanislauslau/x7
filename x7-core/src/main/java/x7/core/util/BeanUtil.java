@@ -105,7 +105,6 @@ public class BeanUtil {
 	 * 
 	 * @param clz
 	 * @param origin
-	 * @return
 	 */
 	public static <T> T copy(Class<T> clz, Object origin) {
 
@@ -194,7 +193,6 @@ public class BeanUtil {
 	 * 
 	 * @param target
 	 * @param origin
-	 * @return
 	 */
 	public static void copy(Object target, Object origin) {
 
@@ -254,7 +252,6 @@ public class BeanUtil {
 	 * 
 	 * @param target
 	 * @param origin
-	 * @return
 	 */
 	public static void copyX(Object target, Object origin) {
 

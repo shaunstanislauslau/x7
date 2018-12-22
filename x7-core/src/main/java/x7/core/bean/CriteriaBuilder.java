@@ -607,6 +607,9 @@ public class CriteriaBuilder {
                 String temp = sqlArr[i];
                 if (StringUtil.isNullOrEmpty(temp))
                     continue;
+                if (!temp.endsWith(SqlScript.SPACE)){
+                    temp += SqlScript.SPACE;
+                }
                 for (String property : mapMapper.getPropertyMapperMap().keySet()) {
                     String key = SqlScript.SPACE + property + SqlScript.SPACE;
                     String value = SqlScript.SPACE + mapMapper.mapper(property) + SqlScript.SPACE;

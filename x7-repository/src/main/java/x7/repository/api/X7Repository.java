@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package x7.repository;
+package x7.repository.api;
 
 import x7.core.bean.Criteria;
 import x7.core.bean.CriteriaCondition;
@@ -100,6 +100,11 @@ public interface X7Repository<T> {
 
 	T getOne(T conditionObj);
 
+	/**
+	 * in API
+	 * @param inCondition
+	 * @return
+	 */
 	List<T> in(InCondition inCondition);
 
 	/**
@@ -117,5 +122,10 @@ public interface X7Repository<T> {
 	 */
 	Pagination<Map<String, Object>> find(Criteria.ResultMapped criteria);
 
+	/**
+	 *  SUM | COUNT | AVG | MIN | MAX
+	 * @param condition
+	 * @return Object
+	 */
 	Object reduce(ReduceCondition condition);
 }

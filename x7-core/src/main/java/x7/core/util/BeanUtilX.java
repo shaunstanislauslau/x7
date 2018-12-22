@@ -293,12 +293,12 @@ public class BeanUtilX extends BeanUtil {
 		}
 	}
 
+
 	/**
-	 * 默认值为0的不做查询条件<br>
-	 * 额外条件从另外一个map参数获得<br>
-	 * boolean必须从另外一个map参数获得
+	 *
+	 * @param parsed
+	 * @param obj
 	 */
-	@SuppressWarnings({ "rawtypes", "unused" })
 	public static Map<String, Object> getRefreshMap(Parsed parsed, Object obj) {
 
 		Map<String, Object> map = new HashMap<String, Object>();

@@ -26,29 +26,20 @@ public class MathExt {
 	 * 
 	 * @param i
 	 * @param offset
-	 * @return i << offset same as i * (2^offset)
 	 */
 	public static int moveLeft(int i, int offset) {
 		return i << offset;
 	}
 
 	/**
-	 * 
-	 * @param i
-	 *            0< result < i
-	 * @return 0<result < i
+	 *
 	 */
 	public static int random(int i) {
 		return random.nextInt(i);
 	}
 
 	/**
-	 * 
-	 * @param min
-	 *            <= result
-	 * @param i
-	 *            < i
-	 * @return min<= result < i
+	 *
 	 */
 	public static int random(int min, int i) {
 		return min + random.nextInt(i - min);
@@ -85,7 +76,6 @@ public class MathExt {
 	/**
 	 * 
 	 * @param rate
-	 *            like, 0.2×100 -> 20
 	 * @return
 	 */
 	public static boolean isHitByRate(int rate) {
@@ -159,7 +149,7 @@ public class MathExt {
 	 * 不在区间内，返回-1
 	 * 
 	 * @param level
-	 * @param levelSection
+	 * @param levelSections
 	 * @return
 	 */
 	public static int fixLevel(int level, int[] levelSections) {
@@ -174,7 +164,6 @@ public class MathExt {
 	}
 	
 	/**
-	 * n / dv , 如果小数部分 >= factor，则 + 1
 	 * @param n
 	 * @param dv
 	 * @param factor

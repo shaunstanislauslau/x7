@@ -50,7 +50,6 @@ public class IntMap implements Serializable{
 	 * 如果未来size会超过10个，请使用<br>
 
 	 * @param capacity
-	 * @throws Exception 
 	 */
 	public IntMap(int capacity) {
 		if (capacity < 1){
@@ -90,7 +89,6 @@ public class IntMap implements Serializable{
 	 * 返回对应的VALUE,如果没有则返回0
 	 * @param key
 	 * @return
-	 * @throws Exception 
 	 */
 	public int get(int key) {
 		if (key == -1){
@@ -118,7 +116,6 @@ public class IntMap implements Serializable{
 	 * 请硬编码解决<br>
 	 * @param key
 	 * @param value
-	 * @throws Exception
 	 */
 	public void put(int key, int value) {
 		if (key == -1 || value == -1){
