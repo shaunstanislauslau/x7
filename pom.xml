@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <name>x7-parent</name>
     <description>x7 base on spring boot</description>
-    <url>https://github.com/x-ream/x7.git</url>
+    <url>https://github.com/x-ream/x7</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,7 +65,6 @@
         <module>spring-boot-starter-x7</module>
     </modules>
 
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -85,9 +84,7 @@
         </dependencies>
     </dependencyManagement>
 
-
     <dependencies>
-
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -157,10 +154,8 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
