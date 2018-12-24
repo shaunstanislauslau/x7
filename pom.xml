@@ -8,7 +8,7 @@
     <packaging>pom</packaging>
     <name>x7-parent</name>
     <description>x7 base on spring boot</description>
-    <url>https://github.com/x-ream/x7</url>
+    <url>http://xream.io</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
