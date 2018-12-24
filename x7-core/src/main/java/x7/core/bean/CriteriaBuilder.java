@@ -735,8 +735,28 @@ public class CriteriaBuilder {
     private static void sort(StringBuilder sb, Criteria criteria) {
 
         if (StringUtil.isNotNull(criteria.getOrderBy())) {
-            sb.append(Conjunction.ORDER_BY.sql()).append(criteria.getOrderBy()).append(SqlScript.SPACE)
-                    .append(criteria.getDirection());
+            String orderBy = criteria.getOrderBy();
+            List<String> orderByList = new ArrayList<>();
+            if (orderBy.contains(SqlScript.COMMA)){
+                String[] arr = orderBy.split(SqlScript.COMMA);
+                for (String ob : arr){
+                    orderByList.add(ob);
+                }
+            }else{
+                orderByList.add(orderBy);
+            }
+
+            sb.append(Conjunction.ORDER_BY.sql());
+            int size = orderByList.size();
+            int i = 0;
+            for (String ob : orderByList) {
+                sb.append(criteria.getOrderBy()).append(SqlScript.SPACE);
+                i++;
+                if (i < size){
+                    sb.append(SqlScript.COMMA).append(SqlScript.SPACE);
+                }
+            }
+            sb.append(criteria.getDirection());
         }
 
     }
