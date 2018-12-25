@@ -32,7 +32,6 @@ import x7.repository.exception.RollbackException;
 import x7.repository.mapper.Mapper;
 import x7.repository.mapper.MapperFactory;
 
-import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -123,7 +122,7 @@ public class DaoImpl implements Dao {
 					if (value == null) {
 						if (ele.clz.isEnum())
 							throw new PersistenceException(
-									"ENUM CAN NOT NULL, property:" + clz.getName() + "." + ele.getProperty());
+									"ENUM CAN NOT NULL, property:" + clz.getName() + SqlScript.POINT + ele.getProperty());
 						if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
 								|| ele.clz == Double.class || ele.clz == Float.class || ele.clz == BigDecimal.class
 								|| ele.clz == Byte.class || ele.clz == Short.class)
@@ -242,7 +241,7 @@ public class DaoImpl implements Dao {
 				if (value == null) {
 					if (ele.clz.isEnum())
 						throw new PersistenceException(
-								"ENUM CAN NOT NULL, property:" + clz.getName() + "." + ele.getProperty());
+								"ENUM CAN NOT NULL, property:" + clz.getName() + SqlScript.POINT + ele.getProperty());
 					if (ele.clz == Boolean.class || ele.clz == Integer.class || ele.clz == Long.class
 							|| ele.clz == Double.class || ele.clz == Float.class || ele.clz == BigDecimal.class
 							|| ele.clz == Byte.class || ele.clz == Short.class)
@@ -304,7 +303,7 @@ public class DaoImpl implements Dao {
 
 		String tableName = MapperFactory.getTableName(clz);
 		StringBuilder sb = new StringBuilder();
-		sb.append("UPDATE ").append(tableName).append(" ");
+		sb.append(SqlScript.UPDATE).append(SqlScript.SPACE).append(tableName).append(SqlScript.SPACE);
 		String sql = SqlUtil.concatRefresh(sb, parsed, refreshMap);
 
 		System.out.println("refresh normally: " + sql);
@@ -438,7 +437,7 @@ public class DaoImpl implements Dao {
 
 	protected List<Map<String, Object>> list(Class clz, String sql, List<Object> conditionList, Connection conn) {
 
-		sql = sql.replace("drop", " ").replace("delete", " ").replace("insert", " ").replace(";", ""); // 手动拼接SQL,
+		sql = sql.replace("drop", SqlScript.SPACE).replace("delete", SqlScript.SPACE).replace("insert", SqlScript.SPACE).replace(";", SqlScript.SPACE); // 手动拼接SQL,
 																										// 必须考虑应用代码的漏
 
 		Parsed parsed = Parser.get(clz);
@@ -688,7 +687,7 @@ public class DaoImpl implements Dao {
 		if (Objects.isNull(property)){
 			property = SqlScript.STAR;
 		}
-		String script = type + "("+property+") " + returnStr;
+		String script = type + SqlScript.LEFT_PARENTTHESIS+property+SqlScript.RIGHT_PARENTTHESIS + SqlScript.SPACE+ returnStr;
 
 		String sql = MapperFactory.getSql(clz, Mapper.LOAD);
 
@@ -839,7 +838,7 @@ public class DaoImpl implements Dao {
 
 		Parsed parsed = Parser.get(obj.getClass());
 
-		sql = sql.replace(" drop ", " ").replace(" delete ", " ").replace(" insert ", " ").replace(";", ""); // 手动拼接SQL,
+		sql = sql.replace(" drop ", SqlScript.SPACE).replace(" delete ", SqlScript.SPACE).replace(" insert ", SqlScript.SPACE).replace(";", SqlScript.SPACE); // 手动拼接SQL,
 																										// 必须考虑应用代码的漏洞
 		sql = BeanUtilX.mapper(sql, parsed);
 		boolean b = false;
@@ -964,7 +963,7 @@ public class DaoImpl implements Dao {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(sql).append(SqlScript.WHERE).append(mapper);
-		sb.append(" in (");
+		sb.append(SqlScript.IN).append(SqlScript.LEFT_PARENTTHESIS);//" IN ("
 
 		boolean isNumber = (keyType == long.class || keyType == int.class || keyType == Long.class
 				|| keyType == Integer.class);
@@ -977,7 +976,7 @@ public class DaoImpl implements Dao {
 					continue;
 				sb.append(id);
 				if (i < size - 1) {
-					sb.append(",");
+					sb.append(SqlScript.COMMA);
 				}
 			}
 		} else {
@@ -985,14 +984,14 @@ public class DaoImpl implements Dao {
 				Object id = inList.get(i);
 				if (id == null || StringUtil.isNullOrEmpty(id.toString()))
 					continue;
-				sb.append("'").append(id).append("'");
+				sb.append(SqlScript.SINGLE_QUOTES).append(id).append(SqlScript.SINGLE_QUOTES);
 				if (i < size - 1) {
-					sb.append(",");
+					sb.append(SqlScript.COMMA);
 				}
 			}
 		}
 
-		sb.append(")");
+		sb.append(SqlScript.RIGHT_PARENTTHESIS);
 
 		sql = sb.toString();
 

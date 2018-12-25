@@ -564,7 +564,7 @@ public class CriteriaBuilder {
                 String[] arr = tabledSql.split(SqlScript.SPACE);
                 for (String ele : arr) {
                     if (ele.contains(SqlScript.POINT)) {
-                        ele = ele.replace(",", "");
+                        ele = ele.replace(SqlScript.COMMA, SqlScript.NONE);//remove ","
                         ele = ele.trim();
                         String[] tc = ele.split("\\.");
                         List<String> list = map.get(tc[0]);
@@ -661,7 +661,7 @@ public class CriteriaBuilder {
                 resultMapped.getResultList().add(resultKey);
                 i++;
                 if (i < size) {
-                    column.append(", ");
+                    column.append(SqlScript.COMMA).append(SqlScript.SPACE);
                 }
             }
             criteria.setCountDistinct("COUNT(" + column.toString() + ") count");
@@ -682,11 +682,14 @@ public class CriteriaBuilder {
 
             for (Reduce reduce : reduceList) {
                 if (flag) {
-                    column.append(", ");
+                    column.append(SqlScript.COMMA);
                 }
-                String alianName = reduce.getProperty() + "_" + reduce.getType().toString().toLowerCase();//property_count
-                alianName = alianName.replace(SqlScript.POINT, "_");
-                column.append(reduce.getType()).append("( ").append(reduce.getProperty()).append(" ) ")
+                String alianName = reduce.getProperty() + SqlScript.UNDER_LINE + reduce.getType().toString().toLowerCase();//property_count
+                alianName = alianName.replace(SqlScript.POINT, SqlScript.UNDER_LINE);
+                column.append(reduce.getType())
+                        .append(SqlScript.SPACE).append(SqlScript.LEFT_PARENTTHESIS).append(SqlScript.SPACE)//" ( "
+                        .append(reduce.getProperty())
+                        .append(SqlScript.SPACE).append(SqlScript.RIGHT_PARENTTHESIS).append(SqlScript.SPACE)//" ) "
                         .append(alianName);
 
                 String alainProperty = reduce.getProperty() + BeanUtil.getByFirstUpper(reduce.getType().toString().toLowerCase());
@@ -788,9 +791,9 @@ public class CriteriaBuilder {
                         final String and = Conjunction.AND.sql();
                         final String or = Conjunction.OR.sql();
                         if (script.startsWith(and)) {
-                            script = script.replaceFirst(and, "");
+                            script = script.replaceFirst(and, SqlScript.NONE);
                         } else if (script.startsWith(or)) {
-                            script = script.replaceFirst(or, "");
+                            script = script.replaceFirst(or, SqlScript.NONE);
                         }
                         x.setScript(Predicate.SUB_BEGIN.sql() + script + Predicate.SUB_END.sql());
                     }
@@ -888,8 +891,8 @@ public class CriteriaBuilder {
             sb.append(x.getKey()).append(x.getPredicate().sql());
             if (clz == String.class) {
                 String str = v.toString();
-                if (str.startsWith("#") && str.endsWith("#")) {
-                    str = str.replace("#", "");
+                if (str.startsWith(SqlScript.WELL_NO) && str.endsWith(SqlScript.WELL_NO)) {
+                    str = str.replace(SqlScript.WELL_NO, SqlScript.NONE);
                     sb.append(str);
                     return;
                 } else {
@@ -925,7 +928,7 @@ public class CriteriaBuilder {
 
         boolean isNumber = (vType == long.class || vType == int.class || vType == Long.class || vType == Integer.class);
 
-        sb.append("( ");
+        sb.append(SqlScript.LEFT_PARENTTHESIS).append(SqlScript.SPACE);//"( "
 
         int length = inList.size();
         if (isNumber) {
@@ -935,7 +938,7 @@ public class CriteriaBuilder {
                     continue;
                 sb.append(id);
                 if (j < length - 1) {
-                    sb.append(",");
+                    sb.append(SqlScript.COMMA);
                 }
             }
         } else {
@@ -943,14 +946,14 @@ public class CriteriaBuilder {
                 Object id = inList.get(j);
                 if (id == null || StringUtil.isNullOrEmpty(id.toString()))
                     continue;
-                sb.append("'").append(id).append("'");
+                sb.append(SqlScript.SINGLE_QUOTES).append(id).append(SqlScript.SINGLE_QUOTES);//'string'
                 if (j < length - 1) {
-                    sb.append(",");
+                    sb.append(SqlScript.COMMA);
                 }
             }
         }
 
-        sb.append(" )");
+        sb.append(SqlScript.SPACE).append(SqlScript.RIGHT_PARENTTHESIS);//"  )"
 
     }
 
